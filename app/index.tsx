@@ -1,9 +1,9 @@
 import { Stack, Link } from 'expo-router';
 import { YStack } from 'tamagui';
-
+import axios from 'axios';
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../tamagui.config';
 import { Input ,SizableText} from 'tamagui';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {router} from 'expo-router';
 import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
 import { register } from '~/components/auth';
@@ -11,17 +11,28 @@ export default function Page() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const handleRegistration = async () => {
-    if(password !== confirmPassword){
-      Alert.alert('Password does not match')
-      return
+  const [shouldRegister, setShouldRegister] = useState(false);
+  useEffect(() => {
+    const registerUser = async () => {
+      if(password !== confirmPassword){
+        Alert.alert('Password does not match');
+        return;
+      }
+      const successful = await register(email, password);
+      if(successful===true){
+        router.push('/auth/login');
+      }
+    };
+  
+    if (shouldRegister) {
+      registerUser();
+      setShouldRegister(false);  // reset the trigger
     }
-    const succesful = await register(email,password)
-    if(succesful){
-      Alert.alert('Registration succesful')
-      router.push('/auth/login')
-    }
-  }
+  }, [shouldRegister, email, password, confirmPassword]);
+  
+  const handleRegistration = () => {
+    setShouldRegister(true);  // trigger the registration effect
+  };
 
 
 
