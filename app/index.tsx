@@ -50,8 +50,8 @@ export default function Page() {
         </View>
         <View style={styles.formContainer}>
           <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Email' />
-          <TextInput style={styles.textInput} onChangeText={text=>setPassword(text)}value={password}placeholder='Password' />
-          <TextInput style={styles.textInput} onChangeText={text=>setConfirmPassword(text)}value={confirmPassword}placeholder='Confirm Password' />
+          <TextInput style={styles.textInput} onChangeText={text=>setPassword(text)}value={password}placeholder='Password' secureTextEntry={true}/>
+          <TextInput style={styles.textInput} onChangeText={text=>setConfirmPassword(text)}value={confirmPassword}placeholder='Confirm Password' secureTextEntry={true} />
           <TouchableOpacity
             style={styles.registerButton}
             onPress={() => handleRegistration()}
@@ -65,8 +65,25 @@ export default function Page() {
                 <Text style={{color:"#FD9F10",}}>Sign in </Text>
               </Link>
             </Text>
-  
             </View>
+        </View>
+        <View style={styles.afterContainer}>
+          <View style={styles.line} />
+            <Text style={styles.bottomText}> or continue with </Text>
+          <View style={styles.line} />
+        </View>
+        <View style={{marginTop: 20}}>
+          <View style={{flexDirection:'row', gap: 20}}>
+            <TouchableOpacity style={styles.box}>
+              <Image source={require('./assets/Google.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box}>
+              <Image source={require('./assets/outlook.png')} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.box}>
+              <Image source={require('./assets/Facebook.png')} />
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>By continuing, you agree to TagaTalk’s 
@@ -84,8 +101,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
+  box: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    borderWidth: 1, // You can adjust the border width as needed
+    borderColor: 'rgba(30, 30, 30, 0.5)', // You can set the border color as needed
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   headerContainer: {
-    marginTop: 80,
+    marginTop: 50,
     marginBottom: 5,
     justifyContent: 'center',
   },
@@ -150,5 +177,19 @@ const styles = StyleSheet.create({
   bottomImage: {
 
     height: 110,
+  },
+  line: {
+    width: 70,
+    marginHorizontal: 15,
+    height: 0,
+    borderBottomWidth: 1,
+    borderBottomColor: '#8e8e8e',
+  },
+  afterContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    fontSize: 16,
   },
 })
