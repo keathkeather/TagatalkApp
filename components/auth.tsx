@@ -3,7 +3,7 @@ import { Alert } from 'react-native'
 import { Link } from 'expo-router'
 import axios, { AxiosRequestConfig } from 'axios'; // Import AxiosRequestConfig
 import { AxiosError } from 'axios';
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 // Configure Axios instance to accept self-signed certificates
 // const axiosInstance = axios.create({
 //   httpsAgent: {
@@ -38,14 +38,16 @@ export async function register(email: string, password: string) :Promise<boolean
   }
 }
 
-export async function login(email: string, password: string): Promise<string> {
+export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const response = await axios.post('https://192.168.1.5:3000/auth/login', {
+    const response = await axios.post('http://192.168.43.57:3000/auth/login', {
       email: email,
       password: password
     });
-    const json = response.data;
-    return json.token;
+    console.log(response.data)
+    await AsyncStorage.setItem('token', response.data);
+    return true;
+    
   } catch (error) {
     console.log(error);
     throw error; // Rethrow the error for handling at the caller level
