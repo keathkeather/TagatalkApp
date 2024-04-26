@@ -25,7 +25,7 @@ const Login = () => {
           handleLogin();
           setshouldLogin(false);  // reset the trigger
         }
-      },[shouldLogin,email,password]
+      },[shouldLogin]
     )
   const handleRegistration = ()=>{
     setshouldLogin(true);

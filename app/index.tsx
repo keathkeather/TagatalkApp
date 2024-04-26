@@ -32,7 +32,7 @@ export default function Page() {
       registerUser();
       setShouldRegister(false);  // reset the trigger
     }
-  }, [shouldRegister, email, password, confirmPassword]);
+  }, [shouldRegister]);
   
   const handleRegistration = () => {
     setShouldRegister(true);  // trigger the registration effect
