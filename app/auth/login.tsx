@@ -1,11 +1,36 @@
 import { YStack } from 'tamagui';
-import { Stack, Link } from 'expo-router';
+import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput} from 'react-native'
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { login } from '~/components/auth';
 
 const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [shouldLogin, setshouldLogin] = useState(false);
+
+    useEffect(()=>{
+        const handleLogin = async() =>{
+          console.log(email)
+          console.log(password)
+          const succesful =await login(email, password);
+          if(succesful == true){
+            router.push('./homeScreen');
+          }
+        };
+        if (shouldLogin) {
+          handleLogin();
+          setshouldLogin(false);  // reset the trigger
+        }
+      },[shouldLogin,email,password]
+    )
+  const handleRegistration = ()=>{
+    setshouldLogin(true);
+  }
+
     return (
         <Container style={{backgroundColor:"#fff"}}>
             <Main> 
@@ -22,8 +47,8 @@ const Login = () => {
                         <Text style={styles.subheaderText}>missed you!</Text>
                     </View>
                     <View style={styles.formContainer}>
-                        <TextInput style={styles.textInput} placeholder='Email' />
-                        <TextInput style={styles.textInput} placeholder='Password' />
+                        <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Email' />
+                        <TextInput style={styles.textInput} onChangeText={text=>setPassword(text)}value={password}placeholder='Password' secureTextEntry={true} />
 
                         <Text style={styles.forgotPasswordText}>
                             <Text> Forgot password? </Text>
@@ -31,7 +56,7 @@ const Login = () => {
                         </Text>
                     <TouchableOpacity
                         style={styles.registerButton}
-                        onPress={() => Alert.alert('Simple Button pressed')}
+                        onPress={() => handleRegistration()}
                         >
                         <Text style={styles.buttonText}>Sign in</Text>
                         </TouchableOpacity>

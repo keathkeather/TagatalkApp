@@ -7,6 +7,10 @@ import { useEffect, useState } from 'react';
 import {router} from 'expo-router';
 import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
 import { register } from '~/components/auth';
+import {GoogleSignin, GoogleSigninButton,statusCodes} from '@react-native-google-signin/google-signin';
+
+
+
 export default function Page() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,6 +37,7 @@ export default function Page() {
   const handleRegistration = () => {
     setShouldRegister(true);  // trigger the registration effect
   };
+  
 
 
 
