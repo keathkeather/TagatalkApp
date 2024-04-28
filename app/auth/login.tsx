@@ -16,7 +16,7 @@ const Login = () => {
           console.log(password)
           const succesful =await login(email, password);
           if(succesful == true){
-            router.push('/homeScreen');
+            router.push('../(tabs)');
           }
         };
         if (shouldLogin) {
@@ -62,7 +62,7 @@ const Login = () => {
                     <View style={styles.RegisterHereContainer}>
                         <Text >
                             <Text> Don't have an account? </Text>
-                            <Link href={'./index'}>
+                            <Link href={'../'}>
                                 <Text style={{ color: '#1e1e1e', fontWeight: "bold" }}>Register Here!</Text>
                             </Link>
                         </Text>
