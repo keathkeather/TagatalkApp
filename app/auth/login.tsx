@@ -1,4 +1,3 @@
-import { YStack } from 'tamagui';
 import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput} from 'react-native'
@@ -9,7 +8,6 @@ import { login } from '~/components/auth';
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [shouldLogin, setshouldLogin] = useState(false);
 
     useEffect(()=>{
@@ -18,7 +16,7 @@ const Login = () => {
           console.log(password)
           const succesful =await login(email, password);
           if(succesful == true){
-            router.push('./homeScreen');
+            router.push('/homeScreen');
           }
         };
         if (shouldLogin) {
@@ -31,10 +29,10 @@ const Login = () => {
     setshouldLogin(true);
   }
 
-    return (
+  return (
         <Container style={{backgroundColor:"#fff"}}>
             <Main> 
-                <Stack.Screen options={{ title: 'Login', headerShown: true }} />
+                <Stack.Screen options={{ title: 'Login', headerShown: false }} />
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>Sign in</Text>
@@ -74,8 +72,6 @@ const Login = () => {
         </Container>
     );
 };
-
-
 
 export default Login
 

@@ -16,7 +16,7 @@ export async function register(email: string, password: string) :Promise<boolean
     console.log(email)
     console.log(password)
     //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://192.168.1.5:3000/auth/register', {
+    const res = await axios.post('http://52.65.15.61:3000/auth/register', {
       email: email,
       password: password
     });
@@ -40,7 +40,7 @@ export async function register(email: string, password: string) :Promise<boolean
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const response = await axios.post('http://192.168.43.57:3000/auth/login', {
+    const response = await axios.post('http://52.65.15.61:3000/auth/login', {
       email: email,
       password: password
     });

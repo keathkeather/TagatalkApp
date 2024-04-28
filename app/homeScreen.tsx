@@ -1,33 +1,82 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, Link } from 'expo-router';
+import PagerView from 'react-native-pager-view';
 
 const HomeScreen = () => {
     
   return (
-    <View>
-        <Stack.Screen options={{headerShown: false }} />
-            <View style={styles.headerContainer}>
-                <Text style={styles.textHeader}>Kumusta, John!</Text>
-                <Text style={styles.subtextHeader}>You can choose any skill you want to improve!</Text>
-                <Text style={styles.subtextHeader2}>Just swipe anywhere!</Text>
-            </View>
-            <View style={styles.imgRedRectangleContainer}>
-                <Image source={require('../app/assets/redRectangle.png')} style={styles.imgRedRectangle} />
-                <Text style={styles.imgtextHeader}>Reading Skills</Text>
-                <Text style={styles.imgsubtextHeader}>Let’s start speaking Filipino like a pro!</Text>
-                <Image source={require('../app/assets/readLogo.png')} style={styles.imgReading} />
-                <TouchableOpacity style={styles.continueButton}>
-                    <Link href={'/readGame1'}>
-                        <Text style={styles.continueText}>Proceed to Unit 1</Text>
-                    </Link>
-                </TouchableOpacity>
-            </View>
+    <View style={styles.container}>
+      <Stack.Screen options={{headerShown: false }} />
+        <View style={styles.headerContainer}>
+          <Text style={styles.textHeader}>Kumusta, John!</Text>
+          <Text style={styles.subtextHeader}>You can choose any skill you want to improve!</Text>
+          <Text style={styles.subtextHeader2}>Just swipe anywhere!</Text>
+        </View>
+        <PagerView style={styles.container} initialPage={0} overScrollMode="never">
+        <View key="1">
+        <View style={styles.imgRedRectangleContainer}>
+          <Image source={require('../app/assets/redRectangle.png')} style={styles.imgRedRectangle} />
+          <Text style={styles.imgtextHeader}>Reading Skills</Text>
+          <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
+          <Image source={require('../app/assets/readLogo.png')} style={styles.imgReading} />
+          <TouchableOpacity style={styles.continueButton}>
+            <Link href={'/readGame1'}>
+              <Text style={styles.continueText}>Start</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
+        </View>
+        <View key="2">
+        <View style={styles.imgRedRectangleContainer}>
+          <Image source={require('../app/assets/purpleRectangle.png')} style={styles.imgRedRectangle} />
+          <Text style={styles.imgtextHeader}>Speaking Skills</Text>
+          <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
+          <Image source={require('../app/assets/speakLogo.png')} style={styles.imgReading} />
+          <TouchableOpacity style={styles.continueButton}>
+            <Link href={'/readGame1'}>
+              <Text style={styles.continueText}>Start</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
+        </View>
+        {/* Third Page */}
+        <View key="3">
+        <View style={styles.imgRedRectangleContainer}>
+          <Image source={require('../app/assets/blueRectangle.png')} style={styles.imgRedRectangle} />
+          <Text style={styles.imgtextHeader}>Listening Skills</Text>
+          <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
+          <Image source={require('../app/assets/listenLogo.png')} style={styles.imgReading} />
+          <TouchableOpacity style={styles.continueButton}>
+            <Link href={'/readGame1'}>
+              <Text style={styles.continueText}>Start</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
+        </View>
+        {/* Fourth Page */}
+        <View key="4">
+        <View style={styles.imgRedRectangleContainer}>
+          <Image source={require('../app/assets/greenRectangle.png')} style={styles.imgRedRectangle} />
+          <Text style={styles.imgtextHeader}>Writing Skills</Text>
+          <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
+          <Image source={require('../app/assets/writeLogo.png')} style={styles.imgReading} />
+          <TouchableOpacity style={styles.continueButton}>
+            <Link href={'/readGame1'}>
+              <Text style={styles.continueText}>Start</Text>
+            </Link>
+          </TouchableOpacity>
+        </View>
+        </View>
+        </PagerView>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
     headerContainer: {
         marginLeft: 20,
     },
@@ -52,7 +101,6 @@ const styles = StyleSheet.create({
         width: 344, // Adjust as needed
         height: 506, // Adjust as needed
         resizeMode: 'contain',
-        zIndex: -1,
     },
     imgtextHeader: {
         color: '#f8f8ff',
@@ -69,11 +117,11 @@ const styles = StyleSheet.create({
     },
     imgReading: {
         position: 'absolute',
-        marginTop: 180,
+        marginTop: 150,
     },
     continueButton: {
         marginTop: 420,
-        backgroundColor: '#BF85FA',
+        backgroundColor: '#282B2B',
         borderRadius: 30,
         width: 300,
         height: 50,
