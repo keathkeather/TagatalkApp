@@ -3,74 +3,66 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, Link } from 'expo-router';
 import PagerView from 'react-native-pager-view';
 
+const pages = [
+  {
+    header: "Reading Skills",
+    subheader: "Let's start reading Filipino like a pro!",
+    image: require('../assets/readLogo.png'),
+    imageRectangle: require('../assets/redRectangle.png'),
+    link: '/readingSkillPage',
+  },
+  {
+    header: "Speaking Skills",
+    subheader: "Let's start speaking Filipino like a pro!",
+    image: require('../assets/speakLogo.png'),
+    imageRectangle: require('../assets/purpleRectangle.png'),
+    //link: '/readingSkillPage',
+  },
+  {
+    header: "Listening Skills",
+    subheader: "Let's start listening Filipino like a pro!",
+    image: require('../assets/listenLogo.png'),
+    imageRectangle: require('../assets/blueRectangle.png'),
+    //link: '/readingSkillPage',
+  },
+  {
+    header: "Writing Skills",
+    subheader: "Let's start writing Filipino like a pro!",
+    image: require('../assets/writeLogo.png'),
+    imageRectangle: require('../assets/greenRectangle.png'),
+    //link: '/readingSkillPage',
+  },
+];
+
 const Index = () => {
-    return (
-        <View style={styles.container}>
-          <Stack.Screen options={{headerShown: false }} />
-            <View style={styles.headerContainer}>
-              <Text style={styles.textHeader}>Kumusta, John!</Text>
-              <Text style={styles.subtextHeader}>You can choose any skill you want to improve!</Text>
-              <Text style={styles.subtextHeader2}>Just swipe anywhere!</Text>
-            </View>
-            <PagerView style={styles.container} initialPage={0} overScrollMode="never">
-            <View key="1">
+  return (
+    <View style={styles.container}>
+      <Stack.Screen options={{headerShown: false }} />
+      <View style={styles.headerContainer}>
+        <Text style={styles.textHeader}>Kumusta, John!</Text>
+        <Text style={styles.subtextHeader}>You can choose any skill you want to improve!</Text>
+        <Text style={styles.subtextHeader2}>Just swipe anywhere!</Text>
+      </View>
+      <PagerView style={styles.container} initialPage={0} overScrollMode="never">
+        {pages.map((page, index) => (
+          <View key={index}>
             <View style={styles.imgRedRectangleContainer}>
-              <Image source={require('../assets/redRectangle.png')} style={styles.imgRedRectangle} />
-              <Text style={styles.imgtextHeader}>Reading Skills</Text>
-              <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
-              <Image source={require('../assets/readLogo.png')} style={styles.imgReading} />
+              <Image source={page.imageRectangle} style={styles.imgRedRectangle} />
+              <Text style={styles.imgtextHeader}>{page.header}</Text>
+              <Text style={styles.imgsubtextHeader}>{page.subheader}</Text>
+              <Image source={page.image} style={styles.imgReading} />
               <TouchableOpacity style={styles.continueButton}>
-                <Link href={'/readGame1'}>
-                  <Text style={styles.continueText}>Start</Text>
+                <Link href={'/readingSkillPage'}>
+                  <Text style={styles.continueText}>               Start               </Text>
                 </Link>
               </TouchableOpacity>
             </View>
-            </View>
-            <View key="2">
-            <View style={styles.imgRedRectangleContainer}>
-              <Image source={require('../assets/purpleRectangle.png')} style={styles.imgRedRectangle} />
-              <Text style={styles.imgtextHeader}>Speaking Skills</Text>
-              <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
-              <Image source={require('../assets/speakLogo.png')} style={styles.imgReading} />
-              <TouchableOpacity style={styles.continueButton}>
-                <Link href={'/readGame1'}>
-                  <Text style={styles.continueText}>Start</Text>
-                </Link>
-              </TouchableOpacity>
-            </View>
-            </View>
-            {/* Third Page */}
-            <View key="3">
-            <View style={styles.imgRedRectangleContainer}>
-              <Image source={require('../assets/blueRectangle.png')} style={styles.imgRedRectangle} />
-              <Text style={styles.imgtextHeader}>Listening Skills</Text>
-              <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
-              <Image source={require('../assets/listenLogo.png')} style={styles.imgReading} />
-              <TouchableOpacity style={styles.continueButton}>
-                <Link href={'/readGame1'}>
-                  <Text style={styles.continueText}>Start</Text>
-                </Link>
-              </TouchableOpacity>
-            </View>
-            </View>
-            {/* Fourth Page */}
-            <View key="4">
-            <View style={styles.imgRedRectangleContainer}>
-              <Image source={require('../assets/greenRectangle.png')} style={styles.imgRedRectangle} />
-              <Text style={styles.imgtextHeader}>Writing Skills</Text>
-              <Text style={styles.imgsubtextHeader}>Let's start speaking Filipino like a pro!</Text>
-              <Image source={require('../assets/writeLogo.png')} style={styles.imgReading} />
-              <TouchableOpacity style={styles.continueButton}>
-                <Link href={'/readGame1'}>
-                  <Text style={styles.continueText}>Start</Text>
-                </Link>
-              </TouchableOpacity>
-            </View>
-            </View>
-            </PagerView>
-        </View>
-      )
-}
+          </View>
+        ))}
+      </PagerView>
+    </View>
+  );
+};
 
 export default Index
 
