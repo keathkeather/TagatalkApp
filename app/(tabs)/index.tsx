@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Stack, Link } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import PagerView from 'react-native-pager-view';
 
 const pages = [
@@ -9,28 +9,24 @@ const pages = [
     subheader: "Let's start reading Filipino like a pro!",
     image: require('../assets/readLogo.png'),
     imageRectangle: require('../assets/redRectangle.png'),
-    link: '/readingSkillPage',
   },
   {
     header: "Speaking Skills",
     subheader: "Let's start speaking Filipino like a pro!",
     image: require('../assets/speakLogo.png'),
     imageRectangle: require('../assets/purpleRectangle.png'),
-    //link: '/readingSkillPage',
   },
   {
     header: "Listening Skills",
     subheader: "Let's start listening Filipino like a pro!",
     image: require('../assets/listenLogo.png'),
     imageRectangle: require('../assets/blueRectangle.png'),
-    //link: '/readingSkillPage',
   },
   {
     header: "Writing Skills",
     subheader: "Let's start writing Filipino like a pro!",
     image: require('../assets/writeLogo.png'),
     imageRectangle: require('../assets/greenRectangle.png'),
-    //link: '/readingSkillPage',
   },
 ];
 
@@ -51,10 +47,29 @@ const Index = () => {
               <Text style={styles.imgtextHeader}>{page.header}</Text>
               <Text style={styles.imgsubtextHeader}>{page.subheader}</Text>
               <Image source={page.image} style={styles.imgReading} />
-              <TouchableOpacity style={styles.continueButton}>
-                <Link href={'/readingSkillPage'}>
-                  <Text style={styles.continueText}>               Start               </Text>
-                </Link>
+              <TouchableOpacity 
+                style={styles.continueButton}
+                onPress={() => {
+                  switch (index) {
+                    case 0:
+                      router.push('/(skillPages)/ReadingSkillPage');
+                      break;
+                    case 1:
+                      router.push('/(skillPages)/SpeakingSkillPage');
+                      break;
+                    case 2:
+                      router.push('/(skillPages)/ListeningSkillPage');
+                      break;
+                    case 3:
+                      router.push('/(skillPages)/WritingSkillPage');
+                      break;
+                    default:
+                      // Do something if index is out of range
+                      break;
+                  }
+                }}
+                >
+                  <Text style={styles.continueText}>Start</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -86,7 +101,7 @@ const styles = StyleSheet.create({
       subtextHeader2: {
         fontSize: 14,
         marginTop: 5,
-        marginBottom: 50,
+        marginBottom: 30,
     },
       imgRedRectangleContainer: {
         alignItems: 'center',

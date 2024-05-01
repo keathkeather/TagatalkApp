@@ -15,17 +15,17 @@ const ReadingSkillPage = () => {
       {
         number: 'Lesson 1',
         title: 'Greetings and Introductions',
-        logo: require('../app/assets/lesson1Logo.png'),
+        logo: require('../../app/assets/lesson1Logo.png'),
       },
       {
         number: 'Lesson 2',
         title: 'Basic\nDialogues',
-        logo: require('../app/assets/lesson2Logo.png'),
+        logo: require('../../app/assets/lesson2Logo.png'),
       },
       {
         number: 'Lesson 3',
         title: 'Requests and\nAsking for Help',
-        logo: require('../app/assets/lesson3Logo.png'),
+        logo: require('../../app/assets/lesson3Logo.png'),
       },
       // Add more lessons as needed
     ];
@@ -34,17 +34,17 @@ const ReadingSkillPage = () => {
       {
         number: 'Lesson 1',
         title: 'Vocabulary for Daily\nActivities',
-        logo: require('../app/assets/lesson1Logo.png'),
+        logo: require('../../app/assets/lesson1Logo.png'),
       },
       {
         number: 'Lesson 2',
         title: 'Talk About Daily\nSchedules',
-        logo: require('../app/assets/lesson2Logo.png'),
+        logo: require('../../app/assets/lesson2Logo.png'),
       },
       {
         number: 'Lesson 3',
         title: 'Household Chores\nand Responsibilities',
-        logo: require('../app/assets/lesson3Logo.png'),
+        logo: require('../../app/assets/lesson3Logo.png'),
       },
       // Add more lessons as needed
     ];
@@ -56,13 +56,13 @@ const ReadingSkillPage = () => {
         <View>
             <View style={styles.headerReading}>
                 <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-                    <Image source={require('../app/assets/backButton.png')} style={styles.buttonText} />
+                    <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
                 </TouchableOpacity>
                 <Text style={styles.headerText}> Reading Skills </Text>
             </View>
             <View style={styles.headerContainer}>
                 <View style={styles.unitBgContainer}>
-                    <Image source={require('../app/assets/readUnitBg.png')} style={styles.unitBg} />
+                    <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg} />
                     <Text style={styles.textUnitBg}> Unit 1 </Text>
                     <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
                 </View>
@@ -81,7 +81,7 @@ const ReadingSkillPage = () => {
                 </Link>
                 ))}
                 <View style={styles.unitBgContainer}>
-                    <Image source={require('../app/assets/readUnitBg.png')} style={styles.unitBg} />
+                    <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg} />
                     <Text style={styles.textUnitBg}> Unit 2 </Text>
                     <Text style={styles.subtextUnitBg}> Try talking about your daily act!</Text>
                 </View>
