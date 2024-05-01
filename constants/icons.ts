@@ -9,6 +9,9 @@ const sandbox = require('../app/assets/icons/sandbox.png')
 const settingOutline = require('../app/assets/icons/setting-outline.png')
 const setting = require('../app/assets/icons/setting.png')
 const backArrow = require('../app/assets/icons/backrrow.png')
+const heart = require('../app/assets/icons/Heart.png')
+const flame = require('../app/assets/icons/flame.png')
+const edit = require('../app/assets/icons/edit.png')
 
 const icons = {
     homeOutline,
@@ -21,7 +24,10 @@ const icons = {
     sandbox,
     settingOutline,
     setting,
-    backArrow
+    backArrow,
+    heart,
+    flame,
+    edit,
 }
 
 export default icons
