@@ -52,4 +52,5 @@ export async function login(email: string, password: string): Promise<boolean> {
     console.log(error);
     throw error; // Rethrow the error for handling at the caller level
   }
+
 }
