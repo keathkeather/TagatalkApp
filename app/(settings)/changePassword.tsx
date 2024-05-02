@@ -2,10 +2,36 @@ import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react
 import { Stack, router } from 'expo-router'
 import { Container } from '~/tamagui.config'
 import icons from '../../constants/icons';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { handleChangePassword } from '~/components/auth';
+
 
 const ChangePassword = () => {
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [shouldChangePassword, setShouldChangePassword] = useState(false);  
+
+  useEffect(()=>{
+    const handlePasswordChange = async()=>{
+
+      if(newPassword === confirmPassword){
+        const succesful =await handleChangePassword(newPassword);
+        console.log(succesful)
+        if(succesful == true){
+          router.push('../(tabs)/setting');
+        }
+      }
+    };
+    if (shouldChangePassword) {
+      handlePasswordChange();
+      setShouldChangePassword(false);  // reset the trigger
+    }
+  },[shouldChangePassword])
+  const ChangePasswordHandler = ()=>{
+    setShouldChangePassword(true);
+  }
   return (
+    
     <Container style={{backgroundColor:'#fff'}}>
         <View>
             <Stack.Screen options={{ title: 'Change Password', headerShown: false }} />
@@ -22,14 +48,12 @@ const ChangePassword = () => {
                 <Text style={styles.headerText}>Change Password</Text>
             </View>
             <View style={styles.formContainer}>
-                <Text style={styles.label}>Current Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
                 <Text style={styles.label}>New Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
+                <TextInput style={styles.textInput}onChangeText={text=>setNewPassword(text)} placeholder='Password' secureTextEntry={true}/>
                 <Text style={styles.label}>Confirm Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
+                <TextInput style={styles.textInput}onChangeText={text=>setConfirmPassword(text)} placeholder='Password' secureTextEntry={true}/>
                 <TouchableOpacity
-                    style={styles.saveButton}
+                    style={styles.saveButton} onPress={()=>ChangePasswordHandler()}
                     >
                     <Text style={styles.saveText}>Save Changes</Text>
                 </TouchableOpacity>

@@ -46,6 +46,7 @@ export async function login(email: string, password: string): Promise<boolean> {
     });
     console.log(response.data)
     await AsyncStorage.setItem('token', response.data);
+    console.log(await AsyncStorage.getItem('token'))
     return true;
     
   } catch (error) {
@@ -53,4 +54,27 @@ export async function login(email: string, password: string): Promise<boolean> {
     throw error; // Rethrow the error for handling at the caller level
   }
 
+
 }
+export async function handleChangePassword(newPassword: string):Promise<boolean>{
+  try {
+    const token = await AsyncStorage.getItem('token');
+    const response = await axios.put('http://52.65.15.61:3000/auth/changePassword',{
+      newPassword: newPassword
+    },{
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    if(response){
+      console.log(response)
+      return true;
+    } 
+    return false
+    // Add catch block to handle errors
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+   
