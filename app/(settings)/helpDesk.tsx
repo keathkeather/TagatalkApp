@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Modal, TouchableOpacity, Image } from 'react-na
 import React, { useState } from 'react'
 import icons from '../../constants/icons'
 import ReportModal from './reportModal';
-import { styles } from './sharedStyles';
+import { styles } from './helpDeskModalStyles';
 import FeedbackModal from './feedbackModal';
 
 type HelpDeskProps = {
