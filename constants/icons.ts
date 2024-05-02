@@ -12,7 +12,10 @@ const backArrow = require('../app/assets/icons/backrrow.png')
 const heart = require('../app/assets/icons/Heart.png')
 const flame = require('../app/assets/icons/flame.png')
 const edit = require('../app/assets/icons/edit.png')
-
+const xButton = require('../app/assets/icons/xButton.png')
+const bug = require('../app/assets/icons/bug.png')
+const feedback = require('../app/assets/icons/feedback.png')
+const modbackarrow = require('../app/assets/icons/modbackarrow.png')
 const icons = {
     homeOutline,
     home,
@@ -28,6 +31,10 @@ const icons = {
     heart,
     flame,
     edit,
+    xButton,
+    bug,
+    feedback,
+    modbackarrow,
 }
 
 export default icons
