@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button } from 'react-native';
 import icons from '../../constants/icons'
-import { styles } from './sharedStyles';
+import { styles } from './helpDeskModalStyles';
 
 const FeedbackModal = ({ 
     feedbackModalVisible, 
