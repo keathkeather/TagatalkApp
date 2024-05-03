@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button } from 'react-native';
 import icons from '../../constants/icons'
 import { styles } from './helpDeskModalStyles';
-
+import { report } from '~/components/report';
 const ReportModal = ({ 
     reportModalVisible, 
     setReportModalVisible, 
@@ -20,8 +20,26 @@ const ReportModal = ({
     reportTitle: string,
     setReportTitle: React.Dispatch<React.SetStateAction<string>>
 }) => {
-    
+    const [newReportTitle , setNewReportTitle] = useState('');
+    const [newReportDescription , setNewReportDescription] = useState('');
+    const [shouldReport, setShouldReport] = useState(false);
+    useEffect(()=>{
+        const handleReport = async()=>{
+            const succesful =await report(newReportTitle, newReportDescription);
+            if(succesful == true){
+                setReportModalVisible(false);
+            }
+        };
+        if (shouldReport) {
+            handleReport();
+            setShouldReport(false);  // reset the trigger
+        }
+    },[shouldReport])
+    const ReportHandler = ()=>{
+        setShouldReport(true);
+    }
     return (
+        
         <Modal
             transparent={true}
             visible={reportModalVisible}
@@ -52,20 +70,16 @@ const ReportModal = ({
                 </TouchableOpacity>
                 <TextInput
                 style={styles.bugTitle}
-                onChangeText={setReportTitle}
-                value={reportTitle}
+                onChangeText={text=>setNewReportTitle(text)}
                 placeholder="Ex: Title not working as expected"
                 />
                 <TextInput
                 style={styles.bugDescription}
-                onChangeText={setReportDescription}
-                value={reportDescription}
+                onChangeText={text=>setNewReportDescription(text)}
                 placeholder="Is something not working well? We want to fix it. Tell us in detail what happened..."
                 />
                 <TouchableOpacity
-                    style={styles.saveButton}onPress={() => {
-                        setReportModalVisible(false);
-                    }}
+                    style={styles.saveButton}onPress={() => {ReportHandler()}}
                     >
                     <Text style={styles.saveText}>Send</Text>
                 </TouchableOpacity>

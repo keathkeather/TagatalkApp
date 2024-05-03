@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button } from 'react-native';
 import icons from '../../constants/icons'
 import { styles } from './helpDeskModalStyles';
+import { feedback } from '~/components/feedback';
 
 const FeedbackModal = ({ 
     feedbackModalVisible, 
@@ -11,6 +12,7 @@ const FeedbackModal = ({
     setFeedbackDescription,
     feedbackTitle,
     setFeedbackTitle 
+    
 }: {
     feedbackModalVisible: boolean,
     setFeedbackModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
@@ -19,14 +21,36 @@ const FeedbackModal = ({
     setFeedbackDescription: React.Dispatch<React.SetStateAction<string>>,
     feedbackTitle: string,
     setFeedbackTitle: React.Dispatch<React.SetStateAction<string>>
-}) => (
-  <Modal
-    transparent={true}
-    visible={feedbackModalVisible}
-    onRequestClose={() => {
+    
+}) => {
+  const [newFeedbackTitle , setNewFeedbackTitle] = useState('');
+  const [newFeedbackDescription, setNewFeedbackDescription] = useState(''); 
+  const [shouldFeedback , setShouldFeedback] = useState(false);
+
+  useEffect(()=>{
+    const handleFeedback = async()=>{
+        const succesful =await feedback(newFeedbackTitle, newFeedbackDescription);
+        if(succesful == true){
+            setFeedbackModalVisible(false);
+        }
+    };
+    if (shouldFeedback) {
+        handleFeedback();
+        setShouldFeedback(false);  // reset the trigger
+    }
+},[setShouldFeedback])
+const feedbackHandler = ()=>{
+  setShouldFeedback(true);
+}
+
+  return (
+    <Modal
+  transparent={true}
+  visible={feedbackModalVisible}
+  onRequestClose={() => {
     setFeedbackModalVisible(!feedbackModalVisible);
-    }}
-  >
+  }}
+>
     <View style={styles.centeredView}>
       <View style={styles.repModalView}>
         <Image source={icons.feedback} style={{ height: 40, width: 40 }}/>
@@ -50,25 +74,26 @@ const FeedbackModal = ({
         </TouchableOpacity>
         <TextInput
           style={styles.feedbackTitle}
-          onChangeText={setFeedbackTitle}
-          value={feedbackTitle}
+          onChangeText={text => setNewFeedbackTitle(text)}
           placeholder="Ex: Notification feature"
         />
         <TextInput
           style={styles.feedbackDescription}
-          onChangeText={setFeedbackDescription}
-          value={feedbackDescription}
+          onChangeText={text => setNewFeedbackDescription(text)}
           placeholder="Do you have an idea for an improvement or new functionality? How do you like TagaTalk? Tell us!"
         />
         <TouchableOpacity
             style={styles.saveButton}
             onPress={() => {
-            setFeedbackModalVisible(false);}}>
+            feedbackHandler();
+            setFeedbackModalVisible(false);
+            }}>
                 <Text style={styles.saveText}>Send</Text>
         </TouchableOpacity>
       </View>
     </View>
   </Modal>
-);
+  );
+};
 
 export default FeedbackModal;
