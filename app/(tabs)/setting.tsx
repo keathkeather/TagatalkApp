@@ -3,10 +3,21 @@ import { router } from 'expo-router'
 import React, { useState } from 'react'
 import { Container } from '~/tamagui.config'
 import HelpDesk from '../(settings)/helpDesk'
-
+import { logout } from '~/components/auth'
 const Settings = () => {
   const [modalVisible, setModalVisible] = useState(false);
   
+
+  const handleLogout = async()=>{
+    const succesful = await logout();
+    if(succesful == true){
+      router.push('/auth/login');
+    }
+
+  }
+
+
+
   return (
     <Container>
       <View style={styles.mainContainer}>
@@ -17,12 +28,12 @@ const Settings = () => {
           <Text style={styles.subHeaderText}>Account</Text>
         </View>
         <View style={styles.menu1Container}>
-          <TouchableOpacity
+          <TouchableOpacity 
             onPress={() =>router.push('/(settings)/changePassword')}>
             <Text style={styles.menu1Text}>Change Password</Text>
           </TouchableOpacity>
           <View style={styles.line} />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> handleLogout()}>
             <Text style={styles.menu1Text}>Logout</Text>
           </TouchableOpacity>
         </View>

@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 //   }
 // });
 
-export async function register(email: string, password: string) :Promise<boolean | null>{
+export async function registerFunction(email: string, password: string) :Promise<boolean | null>{
   try {
     console.log(email)
     console.log(password)
@@ -75,6 +75,15 @@ export async function handleChangePassword(newPassword: string):Promise<boolean>
   } catch (error) {
     console.log(error);
     return false;
+  }
+}
+export async function logout(){
+  try {
+    await AsyncStorage.removeItem('token');
+    return true
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
 }
    
