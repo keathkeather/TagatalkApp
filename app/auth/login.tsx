@@ -62,7 +62,7 @@ const Login = () => {
                     <View style={styles.RegisterHereContainer}>
                         <Text >
                             <Text> Don't have an account? </Text>
-                            <Link href={'../'}>
+                            <Link href={'/auth/register'}>
                                 <Text style={{ color: '#1e1e1e', fontWeight: "bold" }}>Register Here!</Text>
                             </Link>
                         </Text>

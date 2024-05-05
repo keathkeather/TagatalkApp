@@ -11,8 +11,7 @@ const FeedbackModal = ({
     feedbackDescription, 
     setFeedbackDescription,
     feedbackTitle,
-    setFeedbackTitle 
-    
+    setFeedbackTitle     
 }: {
     feedbackModalVisible: boolean,
     setFeedbackModalVisible: React.Dispatch<React.SetStateAction<boolean>>,
@@ -36,21 +35,21 @@ const FeedbackModal = ({
     };
     if (shouldFeedback) {
         handleFeedback();
-        setShouldFeedback(false);  // reset the trigger
+        setShouldFeedback(false); //* reset the trigger
     }
-},[setShouldFeedback])
+},[shouldFeedback])
 const feedbackHandler = ()=>{
   setShouldFeedback(true);
 }
 
   return (
     <Modal
-  transparent={true}
-  visible={feedbackModalVisible}
-  onRequestClose={() => {
-    setFeedbackModalVisible(!feedbackModalVisible);
-  }}
->
+      transparent={true}
+      visible={feedbackModalVisible}
+      onRequestClose={() => {
+        setFeedbackModalVisible(!feedbackModalVisible);
+      }}
+    >
     <View style={styles.centeredView}>
       <View style={styles.repModalView}>
         <Image source={icons.feedback} style={{ height: 40, width: 40 }}/>
