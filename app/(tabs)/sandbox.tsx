@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native'
-import { Container } from '~/tamagui.config'
+import { router } from 'expo-router'
 import React from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -25,7 +25,7 @@ const Sandbox = () => {
             <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.createButton}
-              >
+              onPress={() =>router.push('/(sandbox)/createStory')}>
               <Text style={styles.createText}>Create a Story</Text>
             </TouchableOpacity>
             <TouchableOpacity
