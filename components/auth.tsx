@@ -40,7 +40,7 @@ export async function registerFunction(email: string, password: string) :Promise
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const response = await axios.post('http://52.65.15.61:3000/auth/login', {
+    const response = await axios.post('http://13.236.105.57:3000/auth/login', {
       email: email,
       password: password
     });
@@ -59,7 +59,7 @@ export async function login(email: string, password: string): Promise<boolean> {
 export async function handleChangePassword(newPassword: string):Promise<boolean>{
   try {
     const token = await AsyncStorage.getItem('token');
-    const response = await axios.put('http://52.65.15.61:3000/auth/changePassword',{
+    const response = await axios.put('http://13.236.105.57:3000/auth/changePassword',{
       newPassword: newPassword
     },{
       headers: {
