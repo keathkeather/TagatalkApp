@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -67,7 +67,7 @@ const ReadingSkillPage = () => {
                     <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
                 </View>
                 {unit1Lessons.map((lesson, index) => (
-                <Link key={index} href={'/readGame1'} style={styles.mainContainer}>
+                <Link key={index} href={'/readGame3'} style={styles.mainContainer}>
                   <View>
                     <View style={styles.shapeContainer}>
                         <Image source={lesson.logo} style={styles.lessonLogos} />
@@ -86,8 +86,8 @@ const ReadingSkillPage = () => {
                     <Text style={styles.subtextUnitBg}> Try talking about your daily act!</Text>
                 </View>
                 {unit2Lessons.map((lesson, index) => (
-                  <Link href={'/readGame1'} style={styles.mainContainer}>
-                  <View key={index}>
+                  <Link key={index} href={'/listenGame1'} style={styles.mainContainer}>
+                  <View>
                     <View style={styles.shapeContainer}>
                         <Image source={lesson.logo} style={styles.lessonLogos} />
                     <View style={styles.innerContainer} />
