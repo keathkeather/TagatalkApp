@@ -16,6 +16,7 @@ const xButton = require('../app/assets/icons/xButton.png')
 const bug = require('../app/assets/icons/bug.png')
 const feedback = require('../app/assets/icons/feedback.png')
 const modbackarrow = require('../app/assets/icons/modbackarrow.png')
+const speaker = require('../app/assets/icons/speaker.png')
 const icons = {
     homeOutline,
     home,
@@ -35,6 +36,7 @@ const icons = {
     bug,
     feedback,
     modbackarrow,
+    speaker,
 }
 
 export default icons
