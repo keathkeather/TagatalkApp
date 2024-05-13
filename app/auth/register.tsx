@@ -6,32 +6,48 @@ import { Input ,SizableText,} from 'tamagui';
 import { useEffect, useState } from 'react';
 import {router} from 'expo-router';
 import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
-import { registerFunction } from '~/components/auth';
+//import { registerFunction } from '~/components/auth';
+import { useAuth } from '../context/AuthContext';
 
+interface RegisterProps {
+  onRegisterSuccess: () => void;
+}
 
-
-const Register = ()=>{
+const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) =>{
+  const { onRegister } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [shouldRegister, setShouldRegister] = useState(false);
   useEffect(() => {
+    console.log("Inside useEffect for registration");
+    console.log("Email:", email);
+    console.log("Password:", password);
+    console.log("Confirm Password:", confirmPassword);
+  
     const registerUser = async () => {
-      if(password !== confirmPassword){
-        Alert.alert('Password does not match');
+      console.log("Attempting registration...");
+      if (password !== confirmPassword) {
+        console.log("Password does not match.");
+        Alert.alert("Password does not match");
         return;
       }
-      const successful = await registerFunction(email, password);
-      if(successful===true){
-        router.push('/auth/login');
+      const successful = await onRegister(email, password);
+      console.log("Registration successful:", successful);
+      if (successful === true) {
+        console.log("Registration successful, triggering onRegisterSuccess...");
+        onRegisterSuccess();
+      } else {
+        console.log("Registration failed.");
       }
     };
   
     if (shouldRegister) {
+      console.log("Attempting registration...");
       registerUser();
-      setShouldRegister(false);  // reset the trigger
+      setShouldRegister(false); // reset the trigger
     }
-  }, [shouldRegister]);
+  }, [shouldRegister]);  
   
   const handleRegistration = () => {
     setShouldRegister(true);  // trigger the registration effect

@@ -3,30 +3,48 @@ import { Stack, Link, router } from 'expo-router';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput} from 'react-native'
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
 import React, { useEffect, useState } from 'react'
-import { login } from '~/components/auth';
+//import { login } from '~/components/auth'; 
+import { useAuth } from '../context/AuthContext';
 
-const Login = () => {
+interface LoginProps {
+  onLoginSuccess: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLoginSuccess }) =>{
+    const { onLogin } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [shouldLogin, setshouldLogin] = useState(false);
+    const [shouldLogin, setShouldLogin] = useState(false);
 
-    useEffect(()=>{
-        const handleLogin = async() =>{
-          console.log(email)
-          console.log(password)
-          const succesful =await login(email, password);
-          if(succesful == true){
-            router.push('../(tabs)');
+    useEffect(() => {
+      console.log("Inside useEffect for login");
+      console.log("Email:", email);
+      console.log("Password:", password);
+    
+      const handleLogin = async () => {
+        console.log("Attempting login...");
+        try {
+          const successful = await onLogin(email, password);
+          console.log("Login successful:", successful);
+          if (successful) {
+            console.log("Login successful, triggering onLoginSuccess...");
+            onLoginSuccess();
+          } else {
+            console.log("Login failed.");
           }
-        };
-        if (shouldLogin) {
-          handleLogin();
-          setshouldLogin(false);  // reset the trigger
+        } catch (error) {
+          console.error("Login error:", error);
         }
-      },[shouldLogin]
-    )
-  const handleRegistration = ()=>{
-    setshouldLogin(true);
+      };
+    
+      if (shouldLogin) {
+        handleLogin();
+        setShouldLogin(false); // reset the trigger
+      }
+    }, [shouldLogin]);    
+    
+  const handleLogin = ()=>{
+    setShouldLogin(true);
   }
 
   return (
@@ -54,7 +72,7 @@ const Login = () => {
                         </Text>
                     <TouchableOpacity
                         style={styles.registerButton}
-                        onPress={() => handleRegistration()}
+                        onPress={() => handleLogin()}
                         >
                         <Text style={styles.buttonText}>Sign in</Text>
                         </TouchableOpacity>
