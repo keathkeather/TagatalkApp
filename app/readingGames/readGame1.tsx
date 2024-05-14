@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Stack, Link } from 'expo-router';
-import FeedbackModal from './feedbackModal';
+import FeedbackModal from '../feedbackModal';
 
 const words: string[] = ["umaga", "tanghali", "gabi"];
 const questions = [
