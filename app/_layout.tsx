@@ -2,7 +2,7 @@ import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useEffect } from 'react';
 import { TamaguiProvider } from 'tamagui';
-
+import { AuthProvider } from './context/AuthContext';
 import config from '../tamagui.config';
 
 export default function Layout() {
@@ -21,9 +21,13 @@ export default function Layout() {
 
   return (
     <TamaguiProvider config={config}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <AuthProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/login" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+        </Stack>
+      </AuthProvider>
     </TamaguiProvider>
   );
 }

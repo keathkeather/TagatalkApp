@@ -1,50 +1,44 @@
-import { Stack, Link } from 'expo-router';
-import { YStack } from 'tamagui';
-import axios from 'axios';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../tamagui.config';
-import { Input ,SizableText} from 'tamagui';
-import { useEffect, useState } from 'react';
-import {router} from 'expo-router';
-import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
-import { registerFunction } from '~/components/auth';
-import {GoogleSignin, GoogleSigninButton,statusCodes} from '@react-native-google-signin/google-signin';
-import Register from './auth/register';
-import Login from './auth/login';
-import Index from './(tabs)';
-import { AuthProvider } from './context/AuthContext';
-
+import React, { useEffect, useState } from 'react';
+import { Stack, useRouter } from 'expo-router';
+import { Container, Main } from '../tamagui.config';
+import { useAuth } from './context/AuthContext';  // Ensure correct path
+import { Text } from 'tamagui';
 export default function Page() {
-  const [registered, setRegistered] = useState(false);
-  const [signed, setSigned] = useState(false);
-
-  const handleRegisterSuccess = () => {
-    setRegistered(true);
-  };
-
-  const handleLoginSuccess = () => {
-    setSigned(true);
-  };
+  const { authState } = useAuth();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   useEffect(() => {
-    if (registered) {
-      router.push('/auth/login'); // Push to the login route if registered
-    }
-  }, [registered]);
+    // Simulate loading delay (you can replace it with your actual loading mechanism)
+    const loadingTimeout = setTimeout(() => {
+      setIsLoading(false); // Set loading state to false after some delay
+    }, 1000); // Adjust the delay as needed
+
+    return () => clearTimeout(loadingTimeout); // Cleanup timeout
+  }, []);
 
   useEffect(() => {
-    if (signed) {
-      router.push('../(tabs)'); // Push to the home route when signed in
+    // Perform navigation only after the Root Layout has finished rendering
+    if (!isLoading) {
+      if (authState?.authenticated === true) {
+        router.replace('/(tabs)');
+      } else if (authState?.authenticated === false) {
+        router.replace('/auth/login');
+      }
     }
-  }, [signed]);
+  }, [isLoading, authState?.authenticated, router]);
 
   return (
-    <AuthProvider>
-      <Container style={{ backgroundColor: '#fff' }}>
+    <Container style={{ backgroundColor: '#fff' }}>
+      {isLoading ? (
+        // Display loading indicator or placeholder while loading
+        <Main><Text></Text></Main>
+      ) : (
+        // Render your main content here instead of RootLayout
         <Main>
-          {!registered ? <Register onRegisterSuccess={handleRegisterSuccess} /> : <Login onLoginSuccess={handleLoginSuccess} />}
+          {/* Your main content */}
         </Main>
-      </Container>
-    </AuthProvider>
+      )}
+    </Container>
   );
 }
-
