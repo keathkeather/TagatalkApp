@@ -13,7 +13,7 @@ interface RegisterProps {
   onRegisterSuccess: () => void;
 }
 
-const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) =>{
+const Register: React.FC<RegisterProps> = ( ) =>{
   const { onRegister } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,7 +36,7 @@ const Register: React.FC<RegisterProps> = ({ onRegisterSuccess }) =>{
       console.log("Registration successful:", successful);
       if (successful === true) {
         console.log("Registration successful, triggering onRegisterSuccess...");
-        onRegisterSuccess();
+        router.push('/auth/login')
       } else {
         console.log("Registration failed.");
       }

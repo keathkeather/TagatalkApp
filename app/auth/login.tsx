@@ -10,7 +10,7 @@ interface LoginProps {
   onLoginSuccess: () => void;
 }
 
-const Login: React.FC<LoginProps> = ({ onLoginSuccess }) =>{
+const Login: React.FC<LoginProps> = ( ) =>{
     const { onLogin } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -28,7 +28,7 @@ const Login: React.FC<LoginProps> = ({ onLoginSuccess }) =>{
           console.log("Login successful:", successful);
           if (successful) {
             console.log("Login successful, triggering onLoginSuccess...");
-            onLoginSuccess();
+            router.push('/(tabs)')
           } else {
             console.log("Login failed.");
           }

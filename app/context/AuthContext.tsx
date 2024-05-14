@@ -27,13 +27,12 @@ export const AuthProvider = ({ children }: any) => {
         authenticated: boolean | null;
     }>({
         token: null,
-        authenticated: null
+        authenticated: false
     });
 
     useEffect(() => {
         const loadToken = async () => {
             const token = await AsyncStorage.getItem('token');
-            console.log(authState)
             console.log(token)
             if (token) {
                 setAuthState({
@@ -44,6 +43,9 @@ export const AuthProvider = ({ children }: any) => {
         };
         loadToken();
     }, []);
+    useEffect(() => {
+        console.log("Auth state changed:", authState);
+    }, [authState]);
 
     const handleRegister = async (email: string, password: string) => {
       console.log("inside auth register")
@@ -79,7 +81,7 @@ export const AuthProvider = ({ children }: any) => {
 
     const handleLogout = async () => {
         const success = await logout();
-        if (success) {
+        if (success==true) {
             setAuthState({
                 token: null,
                 authenticated: false
