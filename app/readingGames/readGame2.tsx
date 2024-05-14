@@ -1,11 +1,11 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Stack } from 'expo-router'
-import FeedbackModal from './feedbackModal';
+import FeedbackModal from '../feedbackModal';
 import { useNavigation } from '@react-navigation/native';
-import icons from '../constants/icons';
+import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../components/ProgressBar'; 
+import ProgressBar from '../../components/ProgressBar'; 
 
 const ReadGame2 = () => {
   const navigation = useNavigation();

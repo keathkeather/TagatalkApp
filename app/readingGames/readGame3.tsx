@@ -2,10 +2,10 @@ import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { Stack } from 'expo-router'
 import { useNavigation } from '@react-navigation/native';
-import icons from '../constants/icons';
+import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../components/ProgressBar';
-import FeedbackModal from './feedbackModal';
+import ProgressBar from '../../components/ProgressBar';
+import FeedbackModal from '../feedbackModal';
 
 interface WordMapping {
   [key: string]: string;
