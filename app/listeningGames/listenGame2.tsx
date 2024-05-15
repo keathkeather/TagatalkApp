@@ -22,10 +22,10 @@ const ListenGame2 = () => {
 
   // Array of audio files and their correct answers
   const items = [
-    { audio: require('../app/assets/umaga.mp3'), correctText: 'Umaga' },
-    { audio: require('../app/assets/gabi.mp3'), correctText: 'Gabi' },
-    { audio: require('../app/assets/hapon.mp3'), correctText: 'Hapon' },
-    { audio: require('../app/assets/tanghali.mp3'), correctText: 'Tanghali' },
+    { audio: require('../assets/logo1.png'), correctText: 'Umaga' },
+    { audio: require('../assets/gabi.mp3'), correctText: 'Gabi' },
+    { audio: require('../assets/hapon.mp3'), correctText: 'Hapon' },
+    { audio: require('../assets/tanghali.mp3'), correctText: 'Tanghali' },
     // Add more items here...
   ];
 

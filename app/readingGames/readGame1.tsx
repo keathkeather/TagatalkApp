@@ -61,12 +61,12 @@ const GameScreen = () => {
       <Stack.Screen options={{headerShown: false }} />
       <Text style={styles.header}>Read and respond</Text>
       <View style={styles.imgHeader}> 
-        <Image source={require('../app/assets/TeeTee.png')} />
+        <Image source={require('../assets/TeeTee.png')} />
         <View style={styles.questionContainer}>
           <Text style={styles.questionText}>{randomQuestion}</Text>
         </View>
           <View style={styles.imgBubble}> 
-            <Image source={require('../app/assets/textbubble.png')} />
+            <Image source={require('../assets/textbubble.png')} />
           </View>
       </View>
       <Text style={styles.subQuestionText}>Anong oras na ngayon base sa sinabi TeeTee?</Text>
