@@ -20,7 +20,7 @@ const WriteGame1 = () => {
   
     // Array of images and their correct answers
     const items = [
-      { image: require('../assets/palabok.jpg'), correctText: 'Palabok' },
+      { image: require('../assets/palabok.png'), correctText: 'Palabok' },
       { image: require('../assets/bibingka.png'), correctText: 'Bibingka' },
       { image: require('../assets/lechon.jpg'), correctText: 'Lechon Baboy' },
       { image: require('../assets/halohalo.jpg'), correctText: 'Halohalo' },
@@ -96,7 +96,7 @@ export default WriteGame1
 
 const styles = StyleSheet.create({
     backContainer: {
-      height: 43,
+      height: '5%',
       marginTop: 40,
       marginLeft: 10,
       flexDirection: 'row',
@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
       marginTop: 40,
     },
     textBox: {
-      width: 388,
-      height: 300,
+      width: '90%',
+      height: '40%',
       borderColor: '#D4D4D8',
       borderWidth: 1,
       borderRadius: 20,
@@ -145,8 +145,8 @@ const styles = StyleSheet.create({
      continueButton: {
        backgroundColor: '#FD9F10',
        borderRadius: 30,
-       width: 390,
-       height: 48,
+       width: '90%',
+       height: '7%',
        alignItems: 'center',
        justifyContent: 'center',
       elevation: 4,    
