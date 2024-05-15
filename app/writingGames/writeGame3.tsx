@@ -18,7 +18,7 @@ const WriteGame3 = () => {
       navigation.goBack();
     };
   
-    // Array of images and their correct answers
+    // Array of words and their correct answers
     const items = [
       { word: 'Good morning', correctText: 'Magandang umaga' },
       { word: 'Good noon', correctText: 'Magandang tanghali' },
@@ -96,7 +96,7 @@ export default WriteGame3
 
 const styles = StyleSheet.create({
     backContainer: {
-      height: 43,
+      height: '5%',
       marginTop: 40,
       marginLeft: 10,
       flexDirection: 'row',
@@ -129,16 +129,16 @@ const styles = StyleSheet.create({
     contentContainer: {
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 40,
+      marginTop: 5,
     },
     textBox: {
-      width: 388,
-      height: 300,
+      width: '90%',
+      height: '45%',
       borderColor: '#D4D4D8',
       borderWidth: 1,
       borderRadius: 20,
       marginTop: 50,
-      marginBottom: 200,
+      marginBottom: 180,
       textAlign: 'left',
       textAlignVertical: 'top',
       fontSize: 20,
@@ -148,8 +148,8 @@ const styles = StyleSheet.create({
      continueButton: {
        backgroundColor: '#FD9F10',
        borderRadius: 30,
-       width: 390,
-       height: 48,
+       width: '90%',
+       height: '7%',
        alignItems: 'center',
        justifyContent: 'center',
        elevation: 4,  
