@@ -3,6 +3,7 @@ import { Stack, useRouter } from 'expo-router';
 import { Container, Main } from '../tamagui.config';
 import { useAuth } from './context/AuthContext';  // Ensure correct path
 import { Text } from 'tamagui';
+import { View, Image } from 'react-native';
 export default function Page() {
   const { authState } = useAuth();
   const router = useRouter();
@@ -29,10 +30,14 @@ export default function Page() {
   }, [isLoading, authState?.authenticated, router]);
 
   return (
-    <Container style={{ backgroundColor: '#fff' }}>
+    <Container style={{ backgroundColor: '#FD9F10' }}>
       {isLoading ? (
         // Display loading indicator or placeholder while loading
-        <Main><Text></Text></Main>
+        
+        <Main>
+          <Stack.Screen options={{ headerShown: false }} />
+          <View style={{backgroundColor: '#FD9F10'}}/>
+        </Main>
       ) : (
         // Render your main content here instead of RootLayout
         <Main>
