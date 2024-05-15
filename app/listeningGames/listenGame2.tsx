@@ -116,7 +116,7 @@ export default ListenGame2;
 
 const styles = StyleSheet.create({
   backContainer: {
-    height: 43,
+    height: '5%',
     marginTop: 40,
     marginLeft: 10,
     flexDirection: 'row',
@@ -145,16 +145,16 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 55,
+    marginTop: 20,
   },
   speakerButton: {
     fontSize: 25,
     fontWeight: "bold",
-    marginTop: 25,
+    marginTop: 20,
     marginLeft: 20,
     borderRadius: 35,
-    width: 110,
-    height: 110,
+    width: '26%',
+    height: '17%',
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
@@ -166,8 +166,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
   textBox: {
-    width: 388,
-    height: 300,
+    width: '90%',
+    height: '45%',
     borderColor: '#D4D4D8',
     borderWidth: 1,
     borderRadius: 20,
@@ -182,8 +182,8 @@ const styles = StyleSheet.create({
    continueButton: {
      backgroundColor: '#FD9F10',
      borderRadius: 30,
-     width: 390,
-     height: 48,
+     width: '90%',
+     height: '7%',
      alignItems: 'center',
      justifyContent: 'center',
     elevation: 4,    
