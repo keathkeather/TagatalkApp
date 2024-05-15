@@ -11,10 +11,10 @@ import { Audio } from 'expo-av';
 const ListenGame3= () => {    
 
   const initialWords = [
-    { audio: require('../app/assets/umaga.mp3'), match: 'morning', isMatched: false },
-    { audio: require('../app/assets/gabi.mp3'), match: 'night', isMatched: false },
-    { audio: require('../app/assets/tanghali.mp3'), match: 'noon', isMatched: false },
-    { audio: require('../app/assets/hapon.mp3'), match: 'afternoon', isMatched: false },
+    { audio: require('../assets/umaga.mp3'), match: 'morning', isMatched: false },
+    { audio: require('../assets/gabi.mp3'), match: 'night', isMatched: false },
+    { audio: require('../assets/tanghali.mp3'), match: 'noon', isMatched: false },
+    { audio: require('../assets/hapon.mp3'), match: 'afternoon', isMatched: false },
     // Add more audio files here
   ]
     

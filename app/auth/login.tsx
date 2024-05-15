@@ -68,7 +68,9 @@ const Login: React.FC<LoginProps> = ( ) =>{
 
                         <Text style={styles.forgotPasswordText}>
                             <Text> Forgot password? </Text>
-                            <Text style={{ color: '#e8852c' }}>Click here!</Text>
+                            <Link href={'/auth/forgotPassword/forgotPassword'}>
+                              <Text style={{ color: '#e8852c' }}>Click here!</Text>
+                            </Link>
                         </Text>
                     <TouchableOpacity
                         style={styles.registerButton}
