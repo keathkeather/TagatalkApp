@@ -5,21 +5,15 @@ import icons from '../../constants/icons';
 import React, { useEffect, useState } from 'react'
 import ProgressBar from '../../components/ProfileProgressBar'; 
 import { User , getUser } from '~/components/user';
-
+import { useUser } from '../context/UserContext';
 const Profile = () => {
   const [user ,setUser]= useState<User | null>(null);
+  const {userState} = useUser();
   useEffect(() => {
-    const fetchUser = async () => {
-      const usererre = await getUser();
-      setUser(usererre);
-      
-    };
-    
-    fetchUser();
-    
-  }, []); 
-
-  console.log(user?.userId)
+    console.log("Inside useEffect for profile");
+    setUser(userState.user);
+    console.log("User:", userState.user);
+  }, [userState.user]); 
 
   //*Change the progress based of the logged in user
   const readingProgress = 90;
