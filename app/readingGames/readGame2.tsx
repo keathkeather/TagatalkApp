@@ -117,7 +117,7 @@ export default ReadGame2
 
 const styles = StyleSheet.create({
   backContainer: {
-    height: 43,
+    height: '5%',
     marginTop: 40,
     marginLeft: 10,
     flexDirection: 'row',
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontWeight: "900",
     marginLeft: 20,
     marginTop: 40,
   },
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 20,
     borderRadius: 35,
-    width: 180,
+    width: '43%',
     height: 90,
     alignItems: "center",
     justifyContent: "center",
@@ -165,7 +165,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 20,
     borderRadius: 35,
-    width: 180,
+    width: '43%',
     height: 90,
     alignItems: "center",
     justifyContent: "center",
@@ -182,11 +182,11 @@ const styles = StyleSheet.create({
      marginLeft: 20,
      backgroundColor: '#FD9F10',
      borderRadius: 30,
-     width: 390,
-     height: 48,
+     width: '90%',
+     height: '6%',
      alignItems: 'center',
      justifyContent: 'center',
-    elevation: 4,    
+     elevation: 4,    
   },
   continueText: {
     fontSize: 18,
