@@ -45,7 +45,8 @@
     "react-native-shape": "^1.1.2",
     "react-native-sound-player": "^0.13.2",
     "react-native-web": "~0.19.10",
-    "tamagui": "1.74.8"
+    "tamagui": "1.74.8",
+    "expo-image-picker": "~14.7.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
