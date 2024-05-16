@@ -1,11 +1,26 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, ScrollView} from 'react-native'
-import { router } from 'expo-router'
+import { router, useFocusEffect } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import icons from '../../constants/icons';
-import React from 'react'
-import ProgressBar from '../../components/ProgressBar'; 
+import React, { useEffect, useState } from 'react'
+import ProgressBar from '../../components/ProfileProgressBar'; 
+import { User , getUser } from '~/components/user';
 
 const Profile = () => {
+  const [user ,setUser]= useState<User | null>(null);
+  useEffect(() => {
+    const fetchUser = async () => {
+      const usererre = await getUser();
+      setUser(usererre);
+      
+    };
+    
+    fetchUser();
+    
+  }, []); 
+
+  console.log(user?.userId)
+
   //*Change the progress based of the logged in user
   const readingProgress = 90;
   const speakingProgress = 20;
@@ -13,9 +28,10 @@ const Profile = () => {
   const listeningProgress = 65;
   const streak = 12;
   const life = 5;
-  const bio = 'Hello! I am a student and I love Filipino. I love to kill time. Help me. I am not keribels for the coding huhuhuhuhuhuh 😀';
-  const username = 'cheese.maddy13';
-
+  const bio = user?.profileDescription;
+  const username = user?.name;
+  const profileImage = user?.profileImage;
+  
   return (
     <SafeAreaView style={{backgroundColor:'white', flex:1,}}>
       <ScrollView >
@@ -38,7 +54,7 @@ const Profile = () => {
       </View>
       <View style={{flex: 1, alignItems: 'center', zIndex:10 }}>
           <Image
-            source={require('../assets/rynze.jpg')} 
+            source={{ uri: profileImage }}
             resizeMode='cover'
             style={{
               height: 130,
@@ -61,7 +77,6 @@ const Profile = () => {
           fontSize: 14,
           textAlign: 'center', 
           marginHorizontal:18,
-          height: 70,
           width: 300,
         }}>
           {bio}
@@ -88,8 +103,8 @@ const Profile = () => {
                 }}
             />
           <View>
-            <Text style={{fontSize: 16, color: '#545F71', fontWeight:'bold', width:80}}>{streak}</Text>
-            <Text style={{fontSize: 16, color: '#D0D5DD', fontWeight:'500', width:80}}>day streak!</Text>
+            <Text style={{fontSize: 16, color: '#545F71', fontWeight:'bold', width:'100%'}}>{streak}</Text>
+            <Text style={{fontSize: 16, color: '#D0D5DD', fontWeight:'500', width:'100%'}}>day streak!</Text>
           </View>
         </View>
         <View style={{margin:5}}/>
@@ -165,13 +180,14 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     height: 72,
-    width: 160,
+    width: '50%',
     alignItems: 'center',
   },
   progressContainer: {
     flex: 3.5,
     marginHorizontal:30,
     marginVertical:10,
+    width: '85%',
   },
   skillText: {
     fontSize: 16,
