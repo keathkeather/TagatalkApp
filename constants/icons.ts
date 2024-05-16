@@ -17,6 +17,8 @@ const bug = require('../app/assets/icons/bug.png')
 const feedback = require('../app/assets/icons/feedback.png')
 const modbackarrow = require('../app/assets/icons/modbackarrow.png')
 const speaker = require('../app/assets/icons/speaker.png')
+const camera = require('../app/assets/icons/camera.png')
+const defaultProfile = require('../app/assets/default_profile.png')
 const icons = {
     homeOutline,
     home,
@@ -37,6 +39,8 @@ const icons = {
     feedback,
     modbackarrow,
     speaker,
+    camera,
+    defaultProfile
 }
 
 export default icons
