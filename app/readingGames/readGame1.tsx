@@ -1,21 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Stack, Link } from 'expo-router';
+import icons from '../../constants/icons';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import FeedbackModal from '../feedbackModal';
-
-const words: string[] = ["umaga", "tanghali", "gabi"];
-const questions = [
-  "Magandang gabi, Anna! Matutulog ka na ba?",
-  "Magandang umaga, Anna! Kumain ka na ba?",
-  "Magandang tanghali, Anna! Kumain ka na ba?",
-  // Add more questions as needed
-];
+import ProgressBar from '../../components/ProgressBar';
 
 const GameScreen = () => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
   const [randomQuestion, setRandomQuestion] = useState<string>("");
+  const navigation = useNavigation();
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  const words: string[] = ["umaga", "tanghali", "gabi"];
+  const questions = [
+    "Magandang gabi, Anna! Matutulog ka na ba?",
+    "Magandang umaga, Anna! Kumain ka na ba?",
+    "Magandang tanghali, Anna! Kumain ka na ba?",
+    // Add more questions as needed
+  ];
 
   useEffect(() => {
     // Select a random question when the component mounts
@@ -57,8 +66,16 @@ const GameScreen = () => {
   };
 
   return (
-    <View>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen options={{headerShown: false }} />
+      <View style={styles.backContainer}>
+        <TouchableOpacity onPress={handleGoBack}>
+          <Image source={icons.modbackarrow} style={styles.backArrow} />
+        </TouchableOpacity>
+        <View style={styles.progressBarContainer}>
+          <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
+        </View>
+      </View>
       <Text style={styles.header}>Read and respond</Text>
       <View style={styles.imgHeader}> 
         <Image source={require('../assets/TeeTee.png')} />
@@ -102,16 +119,30 @@ const GameScreen = () => {
         feedback={feedback}
         onClose={() => setFeedback(null)}
       />
-    </View>  
+    </SafeAreaView>  
   );
 };
 
 const styles = StyleSheet.create({
+  backContainer: {
+    height: 43,
+    marginTop: 40,
+    marginLeft: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressBarContainer: {
+    marginLeft: 20,
+  },
+  backArrow: {
+    width: 38,
+    height: 38,
+  },
   header: {
     fontSize: 25,
-    fontWeight: "bold",
+    fontWeight: "900",
     marginLeft: 20,
-    marginTop: 90,
+    marginTop: 40,
   },
   imgHeader: {
     marginLeft: 25,
@@ -124,13 +155,13 @@ const styles = StyleSheet.create({
     zIndex: -1,
   },
   questionContainer: {
-    width: 200,
+    width: '50%',
     marginLeft: 30,
     marginTop: 40,
     flexWrap: 'wrap',
   },
   questionText: {
-    width: 180,
+    width: '90%',
     lineHeight: 25,
     fontSize: 15,
     fontWeight: "bold",
@@ -162,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#02B7E8',
     borderRadius: 35,
     marginTop: 20,
-    width: 370,
+    width: '85%',
     height: 100,
     alignItems: 'center',
     justifyContent: 'center',
@@ -173,15 +204,16 @@ const styles = StyleSheet.create({
   wordText: {
     fontSize: 25,
     color: 'white',
+    fontWeight: "600",
   },
   continueButton: {
-    marginTop: 60,
+    marginTop: 50,
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
-    width: 390,
-    height: 48,
+    width: '85%',
+    height: '10%',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -191,6 +223,7 @@ const styles = StyleSheet.create({
   continueText: {
     fontSize: 18,
     color: 'white',
+    fontWeight: 'bold',
   },
 });
 
