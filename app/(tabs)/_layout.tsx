@@ -1,11 +1,12 @@
 import { Tabs } from 'expo-router';
 import { View, Text, Platform, Image} from 'react-native';
 import icons from '../../constants/icons';
-
+import { UserProvider } from '../context/UserContext';
 
 export default function TabLayout() {
 
     return (
+    <UserProvider>
         <Tabs screenOptions={{
             headerShown: false,
             tabBarStyle: {
@@ -155,5 +156,6 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
+        </UserProvider>
     )
 }

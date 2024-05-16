@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, router } from 'expo-router';
 import PagerView from 'react-native-pager-view';
-
+import {useUser} from '../context/UserContext'
 const pages = [
   {
     header: "Reading Skills",
@@ -30,7 +30,21 @@ const pages = [
   },
 ];
 
+
 const Index = () => {
+    const {getUserData} = useUser();
+    useEffect(() => {
+      const fetchUser = async () => {
+        const user = await getUserData();
+        console.log(`this is user form ${user}`)
+      };
+      
+      fetchUser();
+      
+    }, []); 
+
+
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{headerShown: false }} />
