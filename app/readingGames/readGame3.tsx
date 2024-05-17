@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
   choicesContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 55,
+    marginTop: 40,
   },
   row: {
     flexDirection: 'row',
@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     marginTop: 90,
+     marginTop: 80,
      marginLeft: 20,
      backgroundColor: '#FD9F10',
      borderRadius: 30,

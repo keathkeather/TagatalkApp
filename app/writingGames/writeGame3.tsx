@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
       borderColor: '#D4D4D8',
       borderWidth: 1,
       borderRadius: 20,
-      marginTop: 50,
+      marginTop: 30,
       marginBottom: 180,
       textAlign: 'left',
       textAlignVertical: 'top',

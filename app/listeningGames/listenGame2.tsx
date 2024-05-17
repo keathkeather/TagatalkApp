@@ -145,13 +145,11 @@ const styles = StyleSheet.create({
   contentContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 20,
   },
   speakerButton: {
     fontSize: 25,
     fontWeight: "bold",
     marginTop: 20,
-    marginLeft: 20,
     borderRadius: 35,
     width: '26%',
     height: '17%',

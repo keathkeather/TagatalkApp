@@ -126,7 +126,6 @@ const styles = StyleSheet.create({
     contentContainer: {
       alignItems: "center",
       justifyContent: "center",
-      marginTop: 40,
     },
     textBox: {
       width: '90%',
