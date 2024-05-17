@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { registerFunction, login, handleChangePassword, logout } from '~/components/auth';
+import { registerFunction, login, handleChangePassword, logout, checkTokenHealth } from '~/components/auth';
 
 interface AuthProps {
     authState?: { token: string | null; authenticated: boolean | null };
@@ -33,13 +33,21 @@ export const AuthProvider = ({ children }: any) => {
     useEffect(() => {
         const loadToken = async () => {
             const token = await AsyncStorage.getItem('token');
-            console.log(token)
-            if (token) {
+            // console.log(await checkTokenHealth())
+            if(await checkTokenHealth() === false){
                 setAuthState({
                     token: token,
-                    authenticated: true
+                    authenticated: false
                 });
+            }else{
+                if (token) {
+                    setAuthState({
+                        token: token,
+                        authenticated: true
+                    });
+                }
             }
+
         };
         loadToken();
     }, []);
