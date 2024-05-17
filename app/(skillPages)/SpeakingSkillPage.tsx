@@ -81,6 +81,7 @@ const SpeakingSkillPage = () => {
                         <TouchableOpacity 
                             key={index} 
                             onPress={() => {router.push(generateRandomLink())}}
+                            //href={'/speakingGames/speakGame3'}
                             style={styles.mainContainer}>
                         <View>
                             <View style={styles.shapeContainer}>
@@ -103,6 +104,7 @@ const SpeakingSkillPage = () => {
                             <TouchableOpacity 
                             key={index} 
                             onPress={() => {router.push(generateRandomLink())}}
+                            //href={'/speakingGames/speakGame3'}
                             style={styles.mainContainer}
                           >
                         <View >
@@ -128,107 +130,110 @@ const SpeakingSkillPage = () => {
 export default SpeakingSkillPage
 
 const styles = StyleSheet.create({
-    headerContainer: {
-        marginTop: 30,
-    },
-    headerText: {
-      fontSize: 18,
-      fontWeight: "bold",
+  headerContainer: {
+      marginTop: 30,
+  },
+  headerText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    position: 'absolute',
+    marginTop: 13,
+    marginLeft: 60,
+    color: 'white',
+  },
+  headerReading: {
+      backgroundColor: '#FD9F10',
+      width: 430,
+      height: 50,
+  },
+  backButton: {
+      marginLeft: 15,
       position: 'absolute',
-      marginTop: 13,
-      marginLeft: 60,
+      marginTop: 12,
+  },
+  buttonText: {
+      width: 28,
+      height: 28,
+  },
+  unitBgContainer: {
+      alignItems: 'center',
+      marginBottom: 25,
+  },
+  unitBg: { 
+      width: '90%',
+      height: 130,
+      resizeMode: 'contain',
+  },
+  textUnitBg: {
+      position: 'absolute',
+      marginTop: 15,
+      fontSize: 30,
+      fontWeight: 'bold',
       color: 'white',
+  },
+  subtextUnitBg: {
+      position: 'absolute',
+      marginTop: 60,
+      fontSize: 14,
+      fontWeight: 'normal',
+      color: 'white',
+  },
+  subtextLesson: {
+      position: 'absolute',
+      fontSize: 14,
+      fontWeight: 'normal',
+      color: '#A5A5A5',
+      marginLeft: 105,
+      marginTop: 15,
+      width: 150,
+  },
+  textLesson: {
+      position: 'absolute',
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#545F71',
+      marginLeft: 105,
+      marginTop: 35,
+  },
+  lessonLogos: {
+      width: 48,
+      height: 48,
+      position: 'absolute',
+      zIndex: 1,
+  },
+  shapeContainer: {
+      width: 126,
+      height: 126,
+      borderRadius: 63, // half of w & h
+      borderWidth: 8,
+      borderColor: '#EDF0F5', // color of border
+      backgroundColor: '#FFFFFF', // color between border & circle
+      alignItems: 'center',
+      justifyContent: 'center',
     },
-    headerReading: {
-        backgroundColor: '#FD9F10',
-        width: 430,
-        height: 50,
+    innerContainer: {
+      width: 100,
+      height: 100, 
+      borderRadius: 50, // half of w & h
+      backgroundColor: '#9C40F9', // color inside the circle
     },
-    backButton: {
-        marginLeft: 15,
-        position: 'absolute',
-        marginTop: 12,
+    mainContainer: {
+      marginBottom: 25,
+      width: '90%',
+      alignSelf: 'center',
+      marginLeft: 28,
     },
-    buttonText: {
-        width: 28,
-        height: 28,
+    rectangleContainer: {
+      width: 295,
+      height: 97,
+      marginLeft: 36,
+      marginTop: 15,
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: 20,
+      backgroundColor: 'white',
+      position: 'absolute',
+      zIndex: -1,
+      borderColor: '#EDF0F5',
+      borderWidth: 2,
     },
-    unitBgContainer: {
-        alignItems: 'center',
-        marginBottom: 25,
-    },
-    unitBg: { 
-        width: 371,
-        height: 130,
-    },
-    textUnitBg: {
-        position: 'absolute',
-        marginTop: 20,
-        fontSize: 30,
-        fontWeight: 'bold',
-        color: 'white',
-    },
-    subtextUnitBg: {
-        position: 'absolute',
-        marginTop: 60,
-        fontSize: 16,
-        fontWeight: 'normal',
-        color: 'white',
-    },
-    subtextLesson: {
-        position: 'absolute',
-        fontSize: 16,
-        fontWeight: 'normal',
-        color: '#A5A5A5',
-        marginLeft: 105,
-        marginTop: 15,
-    },
-    textLesson: {
-        position: 'absolute',
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#545F71',
-        marginLeft: 105,
-        marginTop: 35,
-    },
-    lessonLogos: {
-        width: 55,
-        height: 55,
-        position: 'absolute',
-        zIndex: 1,
-        resizeMode: 'cover',
-    },
-    shapeContainer: {
-        width: 126,
-        height: 126,
-        borderRadius: 63, // half of w & h
-        borderWidth: 8,
-        borderColor: '#EDF0F5', //* color of border
-        backgroundColor: '#FFFFFF', //* color between border & circle
-        alignItems: 'center',
-        justifyContent: 'center',
-      },
-      innerContainer: {
-        width: 100,
-        height: 100, 
-        borderRadius: 50, //* half of w & h
-        backgroundColor: '#9C40F9', //* color inside the circle
-      },
-      mainContainer: {
-        marginLeft: 36,
-        marginBottom: 25,
-      },
-      rectangleContainer: {
-        width: 325,
-        height: 97,
-        marginLeft: 36,
-        marginTop: 15,
-        borderTopRightRadius: 20,
-        borderBottomRightRadius: 20,
-        backgroundColor: 'white',
-        zIndex: -1,
-        position: 'absolute',
-        borderColor: '#EDF0F5',
-        borderWidth: 2,
-      },
-})
+});
