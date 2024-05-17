@@ -4,6 +4,7 @@ import { Container, Main } from '../tamagui.config';
 import { useAuth } from './context/AuthContext';  // Ensure correct path
 import { Text } from 'tamagui';
 import { View, Image } from 'react-native';
+
 export default function Page() {
   const { authState } = useAuth();
   const router = useRouter();
@@ -20,10 +21,11 @@ export default function Page() {
 
   useEffect(() => {
     // Perform navigation only after the Root Layout has finished rendering
+  
     if (!isLoading) {
       if (authState?.authenticated === true) {
         router.replace('/(tabs)');
-      } else if (authState?.authenticated === false) {
+      } else if (authState?.authenticated === false) { // TODO authenticated ==false / token == expired 
         router.replace('/auth/login');
       }
     }
