@@ -14,7 +14,7 @@ const ReadingSkillPage = () => {
     const unit1Lessons = [
       {
         number: 'Lesson 1',
-        title: 'Greetings and Introductions',
+        title: 'Greetings and\nIntroductions',
         logo: require('../../app/assets/lesson1Logo.png'),
       },
       {
@@ -62,7 +62,7 @@ const ReadingSkillPage = () => {
             </View>
             <View style={styles.headerContainer}>
                 <View style={styles.unitBgContainer}>
-                    <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg} />
+                    <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg}/>
                     <Text style={styles.textUnitBg}> Unit 1 </Text>
                     <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
                 </View>
@@ -86,11 +86,11 @@ const ReadingSkillPage = () => {
                     <Text style={styles.subtextUnitBg}> Try talking about your daily act!</Text>
                 </View>
                 {unit2Lessons.map((lesson, index) => (
-                  <Link key={index} href={'/listeningGames/listenGame3'} style={styles.mainContainer}>
-                  <View>
+                  <Link key={index} href={'/readingGames/readGame2'} style={styles.mainContainer}>
+                    <View>
                     <View style={styles.shapeContainer}>
-                        <Image source={lesson.logo} style={styles.lessonLogos} />
-                    <View style={styles.innerContainer} />
+                      <Image source={lesson.logo} style={styles.lessonLogos} />
+                      <View style={styles.innerContainer} />
                     </View>
                     <View style={styles.rectangleContainer}>
                         <Text style={styles.subtextLesson}>{lesson.number}</Text> 
@@ -137,8 +137,9 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     unitBg: { 
-        width: 371,
+        width: '90%',
         height: 130,
+        resizeMode: 'contain',
     },
     textUnitBg: {
         position: 'absolute',
@@ -161,6 +162,7 @@ const styles = StyleSheet.create({
         color: '#A5A5A5',
         marginLeft: 105,
         marginTop: 15,
+        width: 150,
     },
     textLesson: {
         position: 'absolute',
@@ -193,19 +195,21 @@ const styles = StyleSheet.create({
         backgroundColor: '#FA643F', // color inside the circle
       },
       mainContainer: {
-        marginLeft: 36,
         marginBottom: 25,
+        width: '90%',
+        alignSelf: 'center',
+        marginLeft: 28,
       },
       rectangleContainer: {
-        width: 325,
+        width: 295,
         height: 97,
         marginLeft: 36,
         marginTop: 15,
         borderTopRightRadius: 20,
         borderBottomRightRadius: 20,
         backgroundColor: 'white',
-        zIndex: -1,
         position: 'absolute',
+        zIndex: -1,
         borderColor: '#EDF0F5',
         borderWidth: 2,
       },
