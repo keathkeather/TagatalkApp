@@ -6,7 +6,7 @@ const ProgressBar = ({ value, indicatorColor }: { value: number, indicatorColor:
     return (
         <View style={{marginBottom:5}}>
             <Progress value={value} style={{
-              width: 300,
+              width: '100%',
               height: 25,
             }}>
                 <View style={{ backgroundColor: '#EEF1F4', flex: 1 }}>
