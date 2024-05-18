@@ -2,7 +2,7 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 
 const PasswordChanged = () => {
@@ -29,13 +29,13 @@ const PasswordChanged = () => {
 
   return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFA51B' }}>
-            <ImageBackground source={require('../assets/forgotPassBg.png')} style={styles.background}>
+            <ImageBackground source={require('../../assets/forgotPassBg.png')} style={styles.background}>
                 <Main style={{ flex: 1 }}> 
                     <Stack.Screen options={{ title: 'Password Changed', headerShown: false }} />
                         <View style={styles.container}>
                             <View style={styles.formContainer}>
                                 <View style={styles.iconContainer}>
-                                    <Image source={require('../assets/icons/changed.png')} />
+                                    <Image source={require('../../assets/icons/changed.png')} />
                                 </View> 
                                 <View style={styles.subheaderContainer}>
                                     <Text style={styles.subheaderText}>Password Changed!</Text>

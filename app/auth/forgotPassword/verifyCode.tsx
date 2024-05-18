@@ -2,67 +2,77 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '~/tamagui.config';
 import React, { useEffect, useState } from 'react'
 
-const ForgotPassword = () => {
+const VerifyCode = () => {
     const [email, setEmail] = useState('');
-    const [shouldSendCode, setSendCode] = useState(false);
+    const [shouldVerifyCode, setVerifyCode] = useState(false);
+    const [shouldGoBack, setGoBack] = useState(false);
 
     useEffect(() => {
-        console.log("Inside useEffect for forgot password");
-        console.log("Email:", email);
-      
-        const handleSendCode = async () => {
-          router.push('/auth/forgotPassword/verifyCode')
-        };
-      
-        if (shouldSendCode) {
-          handleSendCode();
-          setSendCode(false); // reset the trigger
-        }
-      }, [shouldSendCode]);       
+      console.log("Inside useEffect for verify code");
+
+      const handleVerifyCode = async () => {
+        router.push('/auth/forgotPassword/resetPassword')
+      };
+
+      const handleGoBack = async () => {
+        router.push('/auth/forgotPassword/forgotPassword')
+      };
+
+      if (shouldVerifyCode) {
+        handleVerifyCode();
+        setVerifyCode(false); // reset the trigger
+      }
+
+      if (shouldGoBack) {
+        handleGoBack();
+        setGoBack(false); // reset the trigger
+      }
+    }, [shouldVerifyCode, shouldGoBack]);    
     
-  const handleSendCode = ()=>{
-    setSendCode(true);
+  const handleVerifyCode = ()=>{
+    setVerifyCode(true);
+  }
+
+  const handleGoBack = ()=>{
+    setGoBack(true);
   }
 
   return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFA51B' }}>
-            <ImageBackground source={require('../assets/forgotPassBg.png')} style={styles.background}>
+            <ImageBackground source={require('../../assets/forgotPassBg.png')} style={styles.background}>
                 <Main style={{ flex: 1 }}> 
-                    <Stack.Screen options={{ title: 'Forgot Password', headerShown: false }} />
+                    <Stack.Screen options={{ title: 'Verify Code', headerShown: false }} />
                         <View style={styles.container}>
                             <View style={styles.formContainer}>
                                 <View style={styles.headerContainer}>
-                                    <Text style={styles.headerText}>Forgot Password</Text>
+                                  <TouchableOpacity 
+                                    style={styles.backButtonContainer} 
+                                    onPress={() => handleGoBack()}>
+                                      <Image source={require('../../assets/icons/fpback.png')} style={styles.backButton} />
+                                  </TouchableOpacity>
+                                    <Text style={styles.headerText}>Verification</Text>
                                 </View>
-                                <View style={styles.iconContainer}>
-                                    <Image source={require('../assets/icons/lock.png')} />
-                                </View> 
                                 <View style={styles.subheaderContainer}>
-                                    <Text style={styles.subheaderText}>Enter the email associated with</Text>
-                                    <Text style={styles.subheaderText}>your account.</Text>
+                                    <Text style={styles.subheaderText}>Enter Verification Code</Text>
                                 </View>
-                                <View style={styles.subSubheaderContainer}>
-                                    <Text style={styles.subSubheaderText}>We will send you a code to reset your</Text>
-                                    <Text style={styles.subSubheaderText}>password</Text>
-                                </View>
-                                <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Enter email' />
-                                <TouchableOpacity
-                                    style={styles.sendCodeButton}
-                                    onPress={() => handleSendCode()}
-                                >
-                                    <Text style={styles.buttonText}>Send Code</Text>
-                                </TouchableOpacity>
-                                <View style={styles.BackToLoginContainer}>
+                                <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Enter code' />
+                                <View style={styles.ResendContainer}>
                                     <Text >
-                                        <Text style={{ color: '#ffffff' }}> Back to </Text>
+                                        <Text style={{ color: '#ffffff' }}> If you didn't receive a code. </Text>
                                         <Link href={'/auth/login'}>
-                                            <Text style={{ color: '#FFA51B', fontWeight: "bold" }}>Login</Text>
+                                            <Text style={{ color: '#FFA51B', fontWeight: "bold" }}>Resend</Text>
                                         </Link>
                                     </Text>
                                 </View>
+                                <TouchableOpacity
+                                    style={styles.sendCodeButton}
+                                    onPress={() => handleVerifyCode()}
+                                >
+                                    <Text style={styles.buttonText}>Verify</Text>
+                                </TouchableOpacity>
                             </View>
                         </View>
                 </Main>
@@ -71,7 +81,7 @@ const ForgotPassword = () => {
     );
 };
 
-export default ForgotPassword
+export default VerifyCode
 
 const styles = StyleSheet.create({
     background: {
@@ -87,6 +97,15 @@ const styles = StyleSheet.create({
     headerContainer: {
       marginBottom: 40,
       alignItems: "center",
+      position: 'relative',
+    },
+    backButtonContainer: {
+        position: 'absolute',
+        left: 0,
+    },
+    backButton: {
+        width: 30,
+        height: 30,
     },
     headerText: {
       fontSize: 24,
@@ -102,36 +121,22 @@ const styles = StyleSheet.create({
       flexDirection: 'column',
       borderRadius: 40,
     },
-    iconContainer: {
-      marginBottom: 20,
-      alignItems: "center",
-    },
     textInput: {
       backgroundColor: '#fff',
       borderRadius: 30,
       height: 60,
       paddingLeft: 20,
-      marginBottom: 24,
     },
     subheaderContainer: {
-      marginBottom: 10,
+      marginBottom: 30,
       marginTop: 10,
       alignItems: "center",
-    },
-    subSubheaderContainer: {
-        marginBottom: 40,
-        alignItems: "center",
     },
     subheaderText: {
       fontSize: 16,
       fontWeight: 'bold',
       color: "#ffffff",
     },
-    subSubheaderText: {
-        fontSize: 12,
-        fontWeight: '300',
-        color: "#ffffff",
-      },
     forgotPasswordText: {
       fontSize: 12,
       color: "white",
@@ -168,9 +173,9 @@ const styles = StyleSheet.create({
       borderBottomWidth: 1,
       borderBottomColor: '#8e8e8e',
     },
-    BackToLoginContainer: {
+    ResendContainer: {
         marginTop: 30,
-        marginBottom: 30,
+        marginBottom: 50,
         alignItems: 'center'
     }
   });

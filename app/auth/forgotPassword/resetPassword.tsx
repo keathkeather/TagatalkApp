@@ -2,7 +2,7 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 
 const ResetPassword = () => {
@@ -43,7 +43,7 @@ const ResetPassword = () => {
 
   return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFA51B' }}>
-            <ImageBackground source={require('../assets/forgotPassBg.png')} style={styles.background}>
+            <ImageBackground source={require('../../assets/forgotPassBg.png')} style={styles.background}>
                 <Main style={{ flex: 1 }}> 
                     <Stack.Screen options={{ title: 'Reset Password', headerShown: false }} />
                         <View style={styles.container}>
@@ -52,7 +52,7 @@ const ResetPassword = () => {
                                   <TouchableOpacity 
                                     style={styles.backButtonContainer} 
                                     onPress={() => handleGoBack()}>
-                                      <Image source={require('../assets/icons/fpback.png')} style={styles.backButton} />
+                                      <Image source={require('../../assets/icons/fpback.png')} style={styles.backButton} />
                                   </TouchableOpacity>
                                     <Text style={styles.headerText}>Reset Password</Text>
                                 </View>
