@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Stack, router } from 'expo-router';
 import PagerView from 'react-native-pager-view';
 import {useUser} from '../context/UserContext'
+import { User } from '~/components/user';
+
 const pages = [
   {
     header: "Reading Skills",
@@ -33,6 +35,9 @@ const pages = [
 
 const Index = () => {
     const {getUserData} = useUser();
+    const [user ,setUser]= useState<User | null>(null);
+    const {userState} = useUser();
+    
     useEffect(() => {
       const fetchUser = async () => {
         const user = await getUserData();
@@ -43,13 +48,18 @@ const Index = () => {
       
     }, []); 
 
+    
+    useEffect(() => {
+      console.log("Inside useEffect for Homescreen");
+      setUser(userState.user);
+    }, [userState.user]); 
 
 
   return (
     <View style={styles.container}>
       <Stack.Screen options={{headerShown: false }} />
       <View style={styles.headerContainer}>
-        <Text style={styles.textHeader}>Kumusta, John!</Text>
+        <Text style={styles.textHeader}>Kumusta, {user?.name}!</Text>
         <Text style={styles.subtextHeader}>You can choose any skill you want to improve!</Text>
         <Text style={styles.subtextHeader2}>Just swipe anywhere!</Text>
       </View>
