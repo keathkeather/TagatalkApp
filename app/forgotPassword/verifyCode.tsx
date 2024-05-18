@@ -2,7 +2,7 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 
 const VerifyCode = () => {
@@ -42,7 +42,7 @@ const VerifyCode = () => {
 
   return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFA51B' }}>
-            <ImageBackground source={require('../../assets/forgotPassBg.png')} style={styles.background}>
+            <ImageBackground source={require('../assets/forgotPassBg.png')} style={styles.background}>
                 <Main style={{ flex: 1 }}> 
                     <Stack.Screen options={{ title: 'Verify Code', headerShown: false }} />
                         <View style={styles.container}>
@@ -51,7 +51,7 @@ const VerifyCode = () => {
                                   <TouchableOpacity 
                                     style={styles.backButtonContainer} 
                                     onPress={() => handleGoBack()}>
-                                      <Image source={require('../../assets/icons/fpback.png')} style={styles.backButton} />
+                                      <Image source={require('../assets/icons/fpback.png')} style={styles.backButton} />
                                   </TouchableOpacity>
                                     <Text style={styles.headerText}>Verification</Text>
                                 </View>

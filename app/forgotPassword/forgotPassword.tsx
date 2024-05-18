@@ -2,7 +2,7 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 
 const ForgotPassword = () => {
@@ -29,7 +29,7 @@ const ForgotPassword = () => {
 
   return (
         <SafeAreaView style={{ flex: 1, backgroundColor: '#FFA51B' }}>
-            <ImageBackground source={require('../../assets/forgotPassBg.png')} style={styles.background}>
+            <ImageBackground source={require('../assets/forgotPassBg.png')} style={styles.background}>
                 <Main style={{ flex: 1 }}> 
                     <Stack.Screen options={{ title: 'Forgot Password', headerShown: false }} />
                         <View style={styles.container}>
@@ -38,7 +38,7 @@ const ForgotPassword = () => {
                                     <Text style={styles.headerText}>Forgot Password</Text>
                                 </View>
                                 <View style={styles.iconContainer}>
-                                    <Image source={require('../../assets/icons/lock.png')} />
+                                    <Image source={require('../assets/icons/lock.png')} />
                                 </View> 
                                 <View style={styles.subheaderContainer}>
                                     <Text style={styles.subheaderText}>Enter the email associated with</Text>
