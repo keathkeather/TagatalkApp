@@ -66,7 +66,7 @@ return (
                   <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
               </View>
               {unit1Lessons.map((lesson, index) => (
-              <Link key={index} href={'/writingGames/writeGame3'} style={styles.mainContainer}>
+              <Link key={index} href={'/(gameScreens)/writing'} style={styles.mainContainer}>
                 <View>
                   <View style={styles.shapeContainer}>
                       <Image source={lesson.logo} style={styles.lessonLogos} />
@@ -85,7 +85,7 @@ return (
                   <Text style={styles.subtextUnitBg}> Try talking about your daily act!</Text>
               </View>
               {unit2Lessons.map((lesson, index) => (
-                <Link key={index} href={'/writingGames/writeGame1'} style={styles.mainContainer}>
+                <Link key={index} href={'/(gameScreens)/writing'} style={styles.mainContainer}>
                 <View>
                   <View style={styles.shapeContainer}>
                       <Image source={lesson.logo} style={styles.lessonLogos} />
