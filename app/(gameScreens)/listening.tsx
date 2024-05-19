@@ -6,7 +6,9 @@ import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/ProgressBar'; 
 import { Container } from '../../tamagui.config';
+//import ListenGame1 from '../listeningGames/listenGame1';
 import ListenGame2 from '../listeningGames/listenGame2';
+import ListenGame3 from '../listeningGames/listenGame3';
 
 const Listening = () => {
     const navigation = useNavigation();
@@ -27,13 +29,11 @@ const Listening = () => {
                 </View>              
             </View>
             <Container style={{
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
             }}>
                    {/* //TODO: Map the 3 gametypes of Listening skill here */}
-                   <Text>
-                        Sample Content
-                     </Text>
+                   <ListenGame2 />
             </Container>
         </SafeAreaView>
     )
@@ -53,16 +53,15 @@ const styles = StyleSheet.create({
         height: '5%',
         marginTop: 25,
         flexDirection: 'row',
-        justifyContent: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
         width: '90%',
-        alignSelf: 'center',
+        marginLeft: 15,
       },
       progressBarContainer: {
+        marginTop: 10,
         marginLeft: 20,
         alignSelf: 'center',
         width: '80%',
+        height: '100%',
       },
       buttonContainer: {
         width: '90%',

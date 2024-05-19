@@ -1,11 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { Stack } from 'expo-router'
 import FeedbackModal from '../feedbackModal';
-import { useNavigation } from '@react-navigation/native';
 import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar'; 
 import { Audio } from 'expo-av';
 
 const ListenGame3= () => {    
@@ -25,12 +21,6 @@ const ListenGame3= () => {
   const [audios, setAudios] = useState(initialAudios);
   const [matches, setMatches] = useState(initialMatches);
   const isMatched = (match: string) => matchedWords.includes(match);
-  
-  const navigation = useNavigation();
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
   
   useEffect(() => {
     setMatches(shuffleArray([...initialMatches]));
@@ -83,16 +73,7 @@ const [isModalVisible, setIsModalVisible] = useState(false)
     }, [matchedWords]);
   
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-    <Stack.Screen options={{headerShown: false }} />
-    <View style={styles.backContainer}>
-      <TouchableOpacity onPress={handleGoBack}>
-        <Image source={icons.modbackarrow} style={styles.backArrow} />
-      </TouchableOpacity>
-      <View style={styles.progressBarContainer}>
-        <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-      </View>
-    </View>
+    <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Match the correct word.</Text>
       <View style={styles.choicesContainer}>
       {audios.map((audio, index) => (
@@ -118,46 +99,27 @@ const [isModalVisible, setIsModalVisible] = useState(false)
         style={[styles.continueButton, matchedWords.length !== initialWords.length ? styles.disabledButton : {}]}
         disabled={matchedWords.length !== initialWords.length}
     >
-        <Text style={styles.continueText}>CONTINUE</Text>
+        <Text style={styles.continueText}>CHECK</Text>
     </TouchableOpacity>
           {/* Feedback Modals are subject to change */}
         <FeedbackModal visible={isModalVisible}
           feedback={"All words matched!"}
           onClose={() => setIsModalVisible(false)}
         />
-    </SafeAreaView>
+    </View>
 )
 }
 
 export default ListenGame3
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: '5%',
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarContainer: {
-    marginLeft: 20,
-  },
-  backArrow: {
-    width: 38,
-    height: 38,
-  },
-  container: {
-    color: "white",
-  },
   header: {
+    marginTop: 20,
     fontSize: 25,
     fontWeight: "900",
-    marginLeft: 20,
-    marginTop: 40,
   },
   choicesContainer: {
     flexDirection: 'column',
-    marginTop: 40,
   },
   row: {
     flexDirection: 'row',
@@ -166,7 +128,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginTop: 20,
-    marginLeft: 20,
+    marginLeft: 15,
     borderRadius: 35,
     width: '43%',
     height: 90,
@@ -181,12 +143,10 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     marginTop: 80,
-     marginLeft: 20,
      backgroundColor: '#FD9F10',
      borderRadius: 30,
-     width: '90%',
-     height: '6%',
+     width: '100%',
+     height: '7%',
      alignItems: 'center',
      justifyContent: 'center',
     elevation: 4,    
@@ -195,6 +155,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
+    letterSpacing: 1,
+    height: '55%',
   },
   success: {
     fontSize: 18,

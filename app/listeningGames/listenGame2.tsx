@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
-import { Stack } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 
 const ListenGame2 = () => {
@@ -14,11 +10,6 @@ const ListenGame2 = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>('');
-
-  const navigation = useNavigation();
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
 
   // Array of audio files and their correct answers
   const items = [
@@ -67,16 +58,7 @@ const ListenGame2 = () => {
   };
 
   return (
-  <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-  <Stack.Screen options={{headerShown: false }} />
-  <View style={styles.backContainer}>
-    <TouchableOpacity onPress={handleGoBack}>
-      <Image source={icons.modbackarrow} style={styles.backArrow} />
-    </TouchableOpacity>
-    <View style={styles.progressBarContainer}>
-      <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-    </View>
-  </View>
+    <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
     <Text style={styles.header}>Write what you hear.</Text>
         <View style={styles.contentContainer}>
           <TouchableOpacity 
@@ -101,58 +83,37 @@ const ListenGame2 = () => {
         onPress={checkAnswer}
         disabled={typedText.trim() === ''}
       >
-        <Text style={styles.continueText}>CONTINUE</Text>
+        <Text style={styles.continueText}>CHECK</Text>
       </TouchableOpacity>
         </View>
       <FeedbackModal visible={isModalVisible}
         feedback={feedback}
         onClose={() => setIsModalVisible(false)}
       />
-      </SafeAreaView>
+      </View>
   );
 };
 
 export default ListenGame2;
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: '5%',
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarContainer: {
-    marginLeft: 20,
-  },
-  backArrow: {
-    width: 43,
-    height: 43,
-  },
   speakerIcon: {
     width: 43,
     height: 43,
   },
-  container: {
-    color: "white",
-  },
   header: {
+    marginTop: 20,
     fontSize: 25,
-    fontWeight: "bold",
-    marginLeft: 20,
-    marginTop: 40,
+    fontWeight: "900",
   },
   contentContainer: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
   },
   speakerButton: {
-    fontSize: 25,
-    fontWeight: "bold",
-    marginTop: 20,
+    marginTop: 50,
     borderRadius: 35,
-    width: '26%',
-    height: '17%',
+    width: '30%',
+    height: '18%',
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
@@ -164,7 +125,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   textBox: {
-    width: '90%',
+    width: '100%',
     height: '45%',
     borderColor: '#D4D4D8',
     borderWidth: 1,
@@ -180,11 +141,11 @@ const styles = StyleSheet.create({
    continueButton: {
      backgroundColor: '#FD9F10',
      borderRadius: 30,
-     width: '90%',
+     width: '100%',
      height: '7%',
      alignItems: 'center',
      justifyContent: 'center',
-    elevation: 4,    
+     elevation: 4,    
   },
   continueText: {
     fontSize: 18,
