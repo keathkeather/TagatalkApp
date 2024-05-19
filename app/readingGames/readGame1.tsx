@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FeedbackModal from '../feedbackModal';
 import ProgressBar from '../../components/ProgressBar';
 
-const GameScreen = () => {
+const GameScreen = ({onContinue} : {onContinue : any}) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
@@ -62,20 +62,14 @@ const GameScreen = () => {
       setFeedback(null);
       setSelectedWord(null);
       setContinueClicked(false);
+      if (onContinue) {
+        onContinue();
+      }
     }, 1500);
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <Stack.Screen options={{headerShown: false }} />
-      <View style={styles.backContainer}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Image source={icons.modbackarrow} style={styles.backArrow} />
-        </TouchableOpacity>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-        </View>
-      </View>
+    <View>
       <Text style={styles.header}>Read and respond</Text>
       <View style={styles.imgHeader}> 
         <Image source={require('../assets/TeeTee.png')} />
@@ -110,7 +104,7 @@ const GameScreen = () => {
               onPress={selectedWord !== null ? handleContinue : undefined}
               disabled={continueClicked || selectedWord === null}
             >
-              <Text style={styles.continueText}>CONTINUE</Text>
+              <Text style={styles.continueText}>CHECK</Text>
             </TouchableOpacity>
         </View>
         {/* Render the modal */}
@@ -119,7 +113,7 @@ const GameScreen = () => {
         feedback={feedback}
         onClose={() => setFeedback(null)}
       />
-    </SafeAreaView>  
+    </View>  
   );
 };
 
@@ -142,7 +136,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "900",
     marginLeft: 20,
-    marginTop: 40,
+    marginTop: 20,
   },
   imgHeader: {
     marginLeft: 25,
@@ -212,7 +206,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
-    width: '85%',
+    width: '100%',
     height: '10%',
     alignItems: 'center',
     justifyContent: 'center',

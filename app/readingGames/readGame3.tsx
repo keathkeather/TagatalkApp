@@ -11,7 +11,7 @@ interface WordMapping {
   [key: string]: string;
 }
 
-const ReadGame3 = () => {
+const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
   const navigation = useNavigation();
 
   const handleGoBack = () => {
@@ -47,20 +47,18 @@ const ReadGame3 = () => {
       setIsModalVisible(true);
     }
   };
+
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    if (feedback === 'Correct!' && onContinue) {
+      onContinue();
+    }
+  };
   
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <Stack.Screen options={{headerShown: false }} />
-      <View style={styles.backContainer}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Image source={icons.modbackarrow} style={styles.backArrow} />
-        </TouchableOpacity>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-        </View>
-      </View>
+    <View style={{width: '100%'}}>
       <Text style={styles.header}>How do you say "{askedWord}"?</Text>
-        <View style={styles.choicesContainer}>
+      <View style={styles.choicesContainer}>
         {choices.map((choice, index) => (
           <TouchableOpacity 
             key={index} 
@@ -70,19 +68,21 @@ const ReadGame3 = () => {
             <Text style={styles.choicesText}>{choice}</Text>
           </TouchableOpacity>
         ))}
-      </View>
-      <TouchableOpacity 
-        style={[styles.continueButton, !selectedChoice && styles.disabledButton]}
+        <TouchableOpacity 
+        style={[styles.checkButton, !selectedChoice && styles.disabledButton]}
         onPress={handleContinuePress}
         disabled={!selectedChoice}
       >
-        <Text style={styles.continueText}>CONTINUE</Text>
+        <Text style={styles.checkText}>CHECK</Text>
       </TouchableOpacity>
-      <FeedbackModal visible={isModalVisible}
+      </View>
+      
+      <FeedbackModal 
+        visible={isModalVisible}
         feedback={feedback}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleModalClose}
       />
-    </SafeAreaView>
+    </View>
   )
 }
 
@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 25,
     fontWeight: "900",
-    marginLeft: 20,
-    marginTop: 40,
+    alignSelf: 'center',
+    marginTop: 20,
   },
   choicesContainer: {
     alignItems: "center",
@@ -132,24 +132,24 @@ const styles = StyleSheet.create({
     backgroundColor: "#02B7E8",
     elevation: 5,
   },
-   choicesText: {
+  choicesText: {
     fontSize: 23,
     fontWeight: "600",
     color: "white",
   },
-   continueButton: {
-     marginTop: 80,
-     marginLeft: 20,
-     backgroundColor: '#FD9F10',
-     borderRadius: 30,
-     width: '90%',
-     height: '6%',
-     alignItems: 'center',
-     justifyContent: 'center',
-     elevation: 4,    
+  checkButton: {
+    marginTop: 70,
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '100%',
+    height: '8%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,    
   },
-  continueText: {
+  checkText: {
     fontSize: 18,
+    letterSpacing: 1,
     color: 'white',
     fontWeight: 'bold',
   },

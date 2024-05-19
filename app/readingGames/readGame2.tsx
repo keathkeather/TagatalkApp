@@ -7,7 +7,7 @@ import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressBar from '../../components/ProgressBar'; 
 
-const ReadGame2 = () => {
+const ReadGame2 = ({onContinue} : {onContinue : any}) => {
   const navigation = useNavigation();
 
   const handleGoBack = () => {
@@ -61,17 +61,14 @@ const ReadGame2 = () => {
       }
     }, [items, matches])
 
+    const handleContinue = () => {
+      setIsModalVisible(false);
+      if (onContinue) {
+        onContinue();
+      }
+    };
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-        <Stack.Screen options={{headerShown: false }} />
-        <View style={styles.backContainer}>
-          <TouchableOpacity onPress={handleGoBack}>
-            <Image source={icons.modbackarrow} style={styles.backArrow} />
-          </TouchableOpacity>
-          <View style={styles.progressBarContainer}>
-            <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-          </View>
-        </View>
+        <View>
           <Text style={styles.header}>Match the correct word.</Text>
           <View style={styles.choicesContainer}>
           {items.map((item, index) => (
@@ -94,6 +91,7 @@ const ReadGame2 = () => {
                 </TouchableOpacity>
             </View>
             ))}
+            
           </View>
           <TouchableOpacity 
             style={[
@@ -102,14 +100,14 @@ const ReadGame2 = () => {
             ]}
             disabled={!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)}
             >
-            <Text style={styles.continueText}>CONTINUE</Text>
+            <Text style={styles.continueText}>CHECK</Text>
           </TouchableOpacity>
           {/* Feedback Modals are subject to change */}
           <FeedbackModal visible={isModalVisible}
           feedback={"All words matched!"}
-          onClose={() => setIsModalVisible(false)}
+          onClose={handleContinue}
           />
-        </SafeAreaView>
+        </View>
     )
 }
 
@@ -136,8 +134,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 25,
     fontWeight: "900",
-    marginLeft: 20,
-    marginTop: 40,
+    marginTop: 20,
   },
   choicesContainer: {
     flexDirection: 'column',

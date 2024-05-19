@@ -67,7 +67,7 @@ const ReadingSkillPage = () => {
                     <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
                 </View>
                 {unit1Lessons.map((lesson, index) => (
-                <Link key={index} href={'/readingGames/readGame3'} style={styles.mainContainer}>
+                <Link key={index} href={'/(gameScreens)/reading'} style={styles.mainContainer}>
                   <View>
                     <View style={styles.shapeContainer}>
                         <Image source={lesson.logo} style={styles.lessonLogos} />
