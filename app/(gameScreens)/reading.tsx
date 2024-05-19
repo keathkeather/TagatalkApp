@@ -6,14 +6,41 @@ import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/ProgressBar'; 
 import { Container } from '../../tamagui.config';
-import ListenGame2 from '../listeningGames/listenGame2';
+import ReadGame2 from '../readingGames/readGame2';
+import ReadGame3 from '../readingGames/readGame3';
+import ReadGame1 from '../readingGames/readGame1';
 
 const Reading = () => {
     const navigation = useNavigation();
+    const [currentStep, setCurrentStep] = useState(1);
+    const [progress, setProgress] = useState(0);
+    const totalSteps = 3; // total number of items
+    const progressIncrement = 100 / totalSteps; // calculate progress increment
     
     const handleGoBack = () => {
         navigation.goBack();
     };
+
+    const handleContinue = () => {
+        setCurrentStep(prevStep => prevStep + 1);
+        setProgress(prevProgress => prevProgress + progressIncrement);
+      };
+    
+      const renderCurrentGame = () => {
+        switch (currentStep) {
+          case 1:
+            console.log(currentStep);
+            return <ReadGame3 onContinue={handleContinue} />;
+          case 2:
+            console.log(currentStep);
+            return <ReadGame1 onContinue={handleContinue} />;
+          case 3:
+            console.log(currentStep);
+            return <ReadGame2 onContinue={handleContinue} />;
+          default:
+            return <Text>All games completed!</Text>;
+        }
+      };
     
     return (
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -23,7 +50,7 @@ const Reading = () => {
                     <Image source={icons.modbackarrow} style={styles.backArrow} />
                 </TouchableOpacity>
                 <View style={styles.progressBarContainer}>
-                    <ProgressBar value={0} indicatorColor={'#FD9F10'}/>
+                    <ProgressBar value={progress} indicatorColor={'#FD9F10'}/>
                 </View>              
             </View>
             <Container style={{
@@ -31,9 +58,7 @@ const Reading = () => {
                 justifyContent: 'center',
             }}>
                    {/* //TODO: Map the 3 gametypes of reading skill here */}
-                   <Text>
-                        Sample Content
-                    </Text>
+                   {renderCurrentGame()}
             </Container>
         </SafeAreaView>
     )

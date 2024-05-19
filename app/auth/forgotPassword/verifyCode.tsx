@@ -2,7 +2,7 @@ import { Stack, Link, router } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Main, Title, Subtitle, Button, ButtonText } from '~/tamagui.config';
+import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 
 const VerifyCode = () => {
