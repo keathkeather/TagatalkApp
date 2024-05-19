@@ -13,11 +13,6 @@ const WriteGame1 = () => {
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
     const [feedback, setFeedback] = useState<string>('');
   
-    const navigation = useNavigation();
-    const handleGoBack = () => {
-      navigation.goBack();
-    };
-  
     // Array of images and their correct answers
     const items = [
       { image: require('../assets/palabok.png'), correctText: 'Palabok' },
@@ -51,16 +46,7 @@ const WriteGame1 = () => {
     };
   
     return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-    <Stack.Screen options={{headerShown: false }} />
-    <View style={styles.backContainer}>
-      <TouchableOpacity onPress={handleGoBack}>
-        <Image source={icons.modbackarrow} style={styles.backArrow} />
-      </TouchableOpacity>
-      <View style={styles.progressBarContainer}>
-        <ProgressBar value={20} indicatorColor={'#FD9F10'}/>
-      </View>
-    </View>
+    <View style={{backgroundColor: 'white'}}>
       <Text style={styles.header}>Write what you see.</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -82,58 +68,41 @@ const WriteGame1 = () => {
           onPress={checkAnswer}
           disabled={typedText.trim() === ''}
         >
-          <Text style={styles.continueText}>CONTINUE</Text>
+          <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
           </View>
         <FeedbackModal visible={isModalVisible}
           feedback={feedback}
           onClose={() => setIsModalVisible(false)}
         />
-        </SafeAreaView>
+        </View>
     );
   };
 export default WriteGame1
 
 const styles = StyleSheet.create({
-    backContainer: {
-      height: '5%',
-      marginTop: 40,
-      marginLeft: 10,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    progressBarContainer: {
-      marginLeft: 20,
-    },
-    backArrow: {
-      width: 43,
-      height: 43,
-    },
     image: {
-      width: 200,
+      marginTop: 25,
+      width: '100%',
       height: 200,
       resizeMode: 'contain',
-    },
-    container: {
-      color: "white",
+      alignSelf: 'center',
     },
     header: {
+      marginTop: 20,
       fontSize: 25,
-      fontWeight: "bold",
-      marginLeft: 20,
-      marginTop: 40,
+      fontWeight: "900",
     },
     contentContainer: {
-      alignItems: "center",
-      justifyContent: "center",
+      marginTop: 10,
     },
     textBox: {
-      width: '90%',
-      height: '40%',
+      width: '100%',
+      height: '45%',
       borderColor: '#D4D4D8',
       borderWidth: 1,
       borderRadius: 20,
-      marginTop: 50,
+      marginTop: 40,
       marginBottom: 30,
       textAlign: 'left',
       textAlignVertical: 'top',
@@ -141,19 +110,21 @@ const styles = StyleSheet.create({
       fontWeight: '700',
       padding: 20,
     },
-     continueButton: {
+    continueButton: {
        backgroundColor: '#FD9F10',
        borderRadius: 30,
-       width: '90%',
+       width: '100%',
        height: '7%',
        alignItems: 'center',
        justifyContent: 'center',
-      elevation: 4,    
+       elevation: 4,
     },
     continueText: {
       fontSize: 18,
       color: 'white',
       fontWeight: 'bold',
+      height: '50%',
+      letterSpacing: 1,
     },
     success: {
       fontSize: 18,
