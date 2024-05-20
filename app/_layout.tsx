@@ -26,6 +26,7 @@ export default function Layout() {
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="auth/login" options={{ headerShown: false }} />
           <Stack.Screen name="auth/register" options={{ headerShown: false }} />
+          <Stack.Screen name="auth/emailVerification" options={{ headerShown: false }} />
           <Stack.Screen name="auth/forgotPassword/passwordChanged" options={{ headerShown: false }} />
           <Stack.Screen name="auth/forgotPassword/resetPassword" options={{ headerShown: false }} />
           <Stack.Screen name="auth/forgotPassword/verifyCode" options={{ headerShown: false }} />
