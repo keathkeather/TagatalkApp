@@ -5,6 +5,12 @@ import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tama
 import React, { useEffect, useState } from 'react'
 //import { login } from '~/components/auth'; 
 import { useAuth } from '../context/AuthContext';
+import { useSelector,useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { setAuthenticated, setToken } from '../redux/auth/authSlice';
+import { login } from '~/components/auth';
+import { handleLogin } from '../redux/auth/authSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -15,38 +21,43 @@ const Login: React.FC<LoginProps> = ( ) =>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [shouldLogin, setShouldLogin] = useState(false);
+    
+    const dispatch = useDispatch<AppDispatch>();
+
 
     useEffect(() => {
       console.log("Inside useEffect for login");
       console.log("Email:", email);
       console.log("Password:", password);
     
-      const handleLogin = async () => {
+      const loginFunction = async () => {
         console.log("Attempting login...");
         try {
-          const successful = await onLogin(email, password);
-          console.log("Login successful:", successful);
-          if (successful) {
+          const resultAction = await dispatch(handleLogin({ email, password }));
+          console.log("Login successful:", resultAction);
+          if (handleLogin.fulfilled.match(resultAction)) {
             console.log("Login successful, triggering onLoginSuccess...");
+            
             router.push('/(tabs)')
-          } else {
+          } else if(handleLogin.rejected.match(resultAction)) {
+            alert("Invalid email or password. Please try again.");
             console.log("Login failed.");
           }
         } catch (error) {
           console.error("Login error:", error);
         }
       };
-    
+      
       if (shouldLogin) {
-        handleLogin();
+        loginFunction();
         setShouldLogin(false); // reset the trigger
       }
     }, [shouldLogin]);    
     
-  const handleLogin = ()=>{
+  const loginFunction = ()=>{
     setShouldLogin(true);
   }
-
+ 
   return (
         <Container style={{backgroundColor:"#fff"}}>
             <Main> 
@@ -74,7 +85,7 @@ const Login: React.FC<LoginProps> = ( ) =>{
                         </Text>
                     <TouchableOpacity
                         style={styles.registerButton}
-                        onPress={() => handleLogin()}
+                        onPress={() => loginFunction()}
                         >
                         <Text style={styles.buttonText}>Sign in</Text>
                         </TouchableOpacity>

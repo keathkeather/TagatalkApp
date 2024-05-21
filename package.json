@@ -16,6 +16,7 @@
     "@react-native-voice/voice": "^3.2.4",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.29",
+    "@reduxjs/toolkit": "^2.2.5",
     "@tamagui/font-inter": "1.74.8",
     "@tamagui/react-native-media-driver": "1.74.8",
     "@tamagui/shorthands": "1.74.8",
@@ -48,6 +49,8 @@
     "react-native-shape": "^1.1.2",
     "react-native-sound-player": "^0.13.2",
     "react-native-web": "~0.19.10",
+    "react-redux": "^9.1.2",
+    "redux": "^5.0.1",
     "tamagui": "1.74.8"
   },
   "devDependencies": {

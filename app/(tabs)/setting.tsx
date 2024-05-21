@@ -4,13 +4,17 @@ import React, { useState } from 'react'
 import { Container } from '~/tamagui.config'
 import HelpDesk from '../(settings)/helpDesk'
 import { logout } from '~/components/auth'
+import { handleLogout } from '../redux/auth/authSlice'
+import { Dispatch } from 'redux'
+import { AppDispatch } from '../redux/store'
+import { useDispatch } from 'react-redux'
 const Settings = () => {
   const [modalVisible, setModalVisible] = useState(false);
   
-
-  const handleLogout = async()=>{
-    const succesful = await logout();
-    if(succesful == true){
+  const dispatch = useDispatch<AppDispatch>();
+  const logoutFunction = async()=>{
+    const resultAction = await dispatch(handleLogout());
+    if(handleLogout.fulfilled.match(resultAction)){
       router.push('/auth/login');
     }
 
@@ -33,7 +37,7 @@ const Settings = () => {
             <Text style={styles.menu1Text}>Change Password</Text>
           </TouchableOpacity>
           <View style={styles.line} />
-          <TouchableOpacity onPress={()=> handleLogout()}>
+          <TouchableOpacity onPress={()=> logoutFunction()}>
             <Text style={styles.menu1Text}>Logout</Text>
           </TouchableOpacity>
         </View>

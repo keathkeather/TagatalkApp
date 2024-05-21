@@ -4,11 +4,15 @@ import { Container, Main } from '../tamagui.config';
 import { useAuth } from './context/AuthContext';  // Ensure correct path
 import { Text } from 'tamagui';
 import { View, Image } from 'react-native';
+import {Provider, useSelector} from 'react-redux';
+import { RootState, store } from './redux/store';
+import { initMiddlewareAction } from './redux/initMiddlewareAction';
 
 export default function Page() {
   const { authState } = useAuth();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true); // Loading state
+  const isAuthenticated =useSelector((state:RootState)=>state.auth.authenticated);
 
   useEffect(() => {
     // Simulate loading delay (you can replace it with your actual loading mechanism)
@@ -21,17 +25,20 @@ export default function Page() {
 
   useEffect(() => {
     // Perform navigation only after the Root Layout has finished rendering
-  
+   
     if (!isLoading) {
-      if (authState?.authenticated === true) {
+      if (isAuthenticated === true) {
+        console.log("Authenticated")
         router.replace('/(tabs)');
-      } else if (authState?.authenticated === false) { // TODO authenticated ==false / token == expired 
+      } else if (isAuthenticated === false) { // TODO authenticated ==false / token == expired 
+        console.log("NOT AUTHENTICATED")
         router.replace('/auth/login');
       }
     }
   }, [isLoading, authState?.authenticated, router]);
 
   return (
+    <Provider store={store}>
     <Container style={{ backgroundColor: '#FD9F10' }}>
       {isLoading ? (
         // Display loading indicator or placeholder while loading
@@ -47,5 +54,6 @@ export default function Page() {
         </Main>
       )}
     </Container>
+   </Provider>
   );
 }
