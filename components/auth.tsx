@@ -40,7 +40,7 @@ export async function registerFunction(email: string, password: string) :Promise
   }
 }
 
-export async function login(email: string, password: string): Promise<boolean> {
+export async function login(email: string, password: string): Promise<string> {
   try {
     const response = await axios.post('http://13.236.105.57:3000/auth/login', {
       email: email,
@@ -49,7 +49,7 @@ export async function login(email: string, password: string): Promise<boolean> {
     console.log(response.data)
     await AsyncStorage.setItem('token', response.data);
     console.log(await AsyncStorage.getItem('token'))
-    return true;
+    return response.data;
     
   } catch (error) {
     console.log(error);

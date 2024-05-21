@@ -2,11 +2,28 @@ import { Tabs } from 'expo-router';
 import { View, Text, Platform, Image} from 'react-native';
 import icons from '../../constants/icons';
 import { UserProvider } from '../context/UserContext';
-
+import { AppDispatch, store } from '../redux/store';
+import { useDispatch } from 'react-redux';
+import { handleUser } from '../redux/user/userSlice';
+import { useEffect } from 'react';
 export default function TabLayout() {
-
+    const dispatch = useDispatch<AppDispatch>();
+    useEffect(() => {
+        const fetchUser = async () => {
+          const resultAction = await dispatch(handleUser());
+          if(handleUser.fulfilled.match(resultAction)){
+              console.log("User fetched successfully");
+          }
+          else if(handleUser.rejected.match(resultAction)){
+              console.log("User fetch failed");
+          }
+        };
+    
+        fetchUser();
+      }, [])
+    
     return (
-    <UserProvider>
+    // <UserProvider>
         <Tabs screenOptions={{
             headerShown: false,
             tabBarStyle: {
@@ -156,6 +173,6 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
-        </UserProvider>
+        // </UserProvider>
     )
 }

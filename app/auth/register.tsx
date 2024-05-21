@@ -8,7 +8,9 @@ import {router} from 'expo-router';
 import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
 //import { registerFunction } from '~/components/auth';
 import { useAuth } from '../context/AuthContext';
-
+import { handleRegister } from '../redux/auth/authSlice';
+import { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
 interface RegisterProps {
   onRegisterSuccess: () => void;
 }
@@ -19,6 +21,7 @@ const Register: React.FC<RegisterProps> = ( ) =>{
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [shouldRegister, setShouldRegister] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
   useEffect(() => {
     console.log("Inside useEffect for registration");
     console.log("Email:", email);
@@ -32,12 +35,12 @@ const Register: React.FC<RegisterProps> = ( ) =>{
         Alert.alert("Password does not match");
         return;
       }
-      const successful = await onRegister(email, password);
-      console.log("Registration successful:", successful);
-      if (successful === true) {
+      const resultAction = await dispatch(handleRegister({email,password}));
+      console.log("Registration successful:", resultAction);
+      if (handleRegister.fulfilled.match(resultAction)) {
         console.log("Registration successful, triggering onRegisterSuccess...");
-        router.push('/auth/emailVerification')
-      } else {
+        router.push('/auth/login')
+      } else if(handleRegister.rejected.match(resultAction)){
         console.log("Registration failed.");
       }
     };

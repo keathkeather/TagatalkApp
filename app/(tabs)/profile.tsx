@@ -6,15 +6,17 @@ import React, { useEffect, useState } from 'react'
 import ProgressBar from '../../components/ProfileProgressBar'; 
 import { User , getUser } from '~/components/user';
 import { useUser } from '../context/UserContext';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
 const Profile = () => {
-  const [user ,setUser]= useState<User | null>(null);
-  const {userState} = useUser();
-  useEffect(() => {
-    console.log("Inside useEffect for profile");
-    setUser(userState.user);
-    console.log("User:", userState.user);
-  }, [userState.user]); 
-
+  // const [user ,setUser]= useState<User | null>(null);
+  // const {userState} = useUser();
+  // // useEffect(() => {
+  // //   console.log("Inside useEffect for profile");
+  // //   setUser(userState.user);
+  // //   console.log("User:", userState.user);
+  // // }, [userState.user]); 
+  // const user = useSelector((state: RootState) => state.user.userState);
   //*Change the progress based of the logged in user
   const readingProgress = 90;
   const speakingProgress = 20;
@@ -22,9 +24,14 @@ const Profile = () => {
   const listeningProgress = 65;
   const streak = 12;
   const life = 5;
-  const bio = user?.profileDescription;
-  const username = user?.name;
-  const profileImage = user?.profileImage;
+  const bio = useSelector((state: RootState) => state.user.profileDescription);
+  const username = useSelector((state: RootState) => state.user.name);
+  let profileImage =useSelector((state: RootState) => state.user.profileImage);
+  
+  if(profileImage === ""){
+    profileImage ='../assets/default_Profile.png'
+  }
+  
   
   return (
     <SafeAreaView style={{backgroundColor:'white', flex:1,}}>
