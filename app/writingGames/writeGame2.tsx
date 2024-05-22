@@ -56,7 +56,7 @@ const WriteGame2 = () => {
     };
   
     return (
-      <View style={{backgroundColor: 'white'}}>
+      <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
         <Text style={styles.header}>Answer TeeTee's question!</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -101,12 +101,12 @@ export default WriteGame2
 
 const styles = StyleSheet.create({
     questionContainer: {
-      marginTop: 70,
+      marginTop: 50,
       flexDirection: 'row',
       alignItems: 'center',
     },
     teetee: {
-      width: 130,
+      width: '35%',
       height: 130,
     },
     chatBubble: {

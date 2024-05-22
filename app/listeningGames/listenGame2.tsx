@@ -113,13 +113,13 @@ const styles = StyleSheet.create({
     marginTop: 50,
     borderRadius: 35,
     width: '30%',
-    height: '18%',
+    height: 120,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
     elevation: 5,
   },
-   choicesText: {
+  choicesText: {
     fontSize: 23,
     fontWeight: "600",
     color: "white",
@@ -138,14 +138,14 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     padding: 20,
   },
-   continueButton: {
-     backgroundColor: '#FD9F10',
-     borderRadius: 30,
-     width: '100%',
-     height: '7%',
-     alignItems: 'center',
-     justifyContent: 'center',
-     elevation: 4,    
+  continueButton: {
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '100%',
+    height: '7%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,    
   },
   continueText: {
     fontSize: 18,

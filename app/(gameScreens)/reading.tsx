@@ -54,8 +54,8 @@ const Reading = () => {
                 </View>              
             </View>
             <Container style={{
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
             }}>
                    {/* //TODO: Map the 3 gametypes of reading skill here */}
                    {renderCurrentGame()}
@@ -67,31 +67,30 @@ const Reading = () => {
 export default Reading
 
 const styles = StyleSheet.create({
-    backArrow: {
-        resizeMode: 'cover',
-        width: 34,
-        height: 34,
-        borderColor: 'white',
-        borderWidth: 1,
-      },
-      headerContainer: {
-        height: '5%',
-        marginTop: 25,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
-        width: '90%',
-        alignSelf: 'center',
-      },
-      progressBarContainer: {
-        marginLeft: 20,
-        alignSelf: 'center',
-        width: '80%',
-      },
-      buttonContainer: {
-        width: '90%',
-        alignSelf: 'center',
-        margin: 20,
-      },
+  backArrow: {
+      resizeMode: 'cover',
+      width: 34,
+      height: 34,
+      borderColor: 'white',
+      borderWidth: 1,
+    },
+    headerContainer: {
+      height: '5%',
+      marginTop: 25,
+      flexDirection: 'row',
+      width: '90%',
+      marginLeft: 15,
+    },
+    progressBarContainer: {
+      marginTop: 10,
+      marginLeft: 20,
+      alignSelf: 'center',
+      width: '80%',
+      height: '100%',
+    },
+    buttonContainer: {
+      width: '90%',
+      alignSelf: 'center',
+      margin: 20,
+    },
 })

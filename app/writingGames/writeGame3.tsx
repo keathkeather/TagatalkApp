@@ -51,7 +51,7 @@ const WriteGame3 = () => {
     };
   
     return (
-      <View style={{backgroundColor: 'white'}}>
+      <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Read and Translate.</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -103,11 +103,11 @@ const styles = StyleSheet.create({
     },
     textBox: {
       width: '100%',
-      height: '60%',
+      height: '65%',
       borderColor: '#D4D4D8',
       borderWidth: 1,
       borderRadius: 20,
-      marginTop: 110,
+      marginTop: 40,
       marginBottom: 30,
       textAlign: 'left',
       textAlignVertical: 'top',

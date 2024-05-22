@@ -46,7 +46,7 @@ const WriteGame1 = () => {
     };
   
     return (
-    <View style={{backgroundColor: 'white'}}>
+    <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Write what you see.</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
       fontWeight: "900",
     },
     contentContainer: {
-      marginTop: 10,
+      alignItems: 'center',
     },
     textBox: {
       width: '100%',
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
       padding: 20,
     },
     continueButton: {
-       backgroundColor: '#FD9F10',
-       borderRadius: 30,
-       width: '100%',
-       height: '7%',
-       alignItems: 'center',
-       justifyContent: 'center',
-       elevation: 4,
+      backgroundColor: '#FD9F10',
+      borderRadius: 30,
+      width: '100%',
+      height: '7%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 4,
     },
     continueText: {
       fontSize: 18,
