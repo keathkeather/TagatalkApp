@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import  { registerFunction, login, logout, checkTokenHealth, handleChangePassword }  from "~/components/auth";
+import { AnimatableStringValue } from "react-native";
+import  { registerFunction, login, logout, checkTokenHealth, sendCode, verifyCode, resetPassword }  from "~/components/auth";
 interface AuthState {
     token:string
     authenticated:boolean
@@ -19,6 +20,21 @@ export const handleLogin = createAsyncThunk('auth/login', async ({ email, passwo
   
   export const handleRegister = createAsyncThunk('auth/register', async ({ email, password }: { email: string, password: string }) => {
     const success = await registerFunction(email, password);
+    return success;
+  });
+
+  export const handleSendCode = createAsyncThunk('auth/requestOTP', async ({ email }: { email: string }) => {
+    const success = await sendCode(email);
+    return success;
+  });
+
+  export const handleVerifyCode = createAsyncThunk('auth/verifyOTP', async ({ OTP }: { OTP: string }) => {
+    const success = await verifyCode(OTP);
+    return success;
+  });
+
+  export const handleResetPassword = createAsyncThunk('auth/verifyOTP', async ({ OTP, newPassword }: { OTP: string, newPassword: string }) => {
+    const success = await resetPassword(OTP, newPassword);
     return success;
   });
   
@@ -54,6 +70,15 @@ const authSlice = createSlice({
             })
             .addCase(handleRegister.fulfilled, (state, action) => {
                 // handle registration success if needed
+            })
+            .addCase(handleSendCode.fulfilled, (state, action) => {
+                // handle send code success if needed
+            })
+            .addCase(handleVerifyCode.fulfilled, (state, action) => {
+                // handle verify code success if needed
+            })
+            .addCase(handleResetPassword.fulfilled, (state, action) => {
+                // handle reset password success if needed
             })
             .addCase(handleLogout.fulfilled, (state) => {
             state.token = "";

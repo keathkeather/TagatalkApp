@@ -1,40 +1,65 @@
-import { Stack, Link, router } from 'expo-router';
-
+import { Stack, Link, router, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { handleResetPassword } from '../../redux/auth/authSlice';
+import { AppDispatch } from '../../redux/store';
+import { useDispatch } from 'react-redux';
 
 const ResetPassword = () => {
-    const [password, setPassword] = useState('');
+    const { onResetPassword } = useAuth();
+    const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [shouldSubmit, setSubmit] = useState(false);
+    const [shouldResetPassword, setResetPassword] = useState(false);
     const [shouldGoBack, setGoBack] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const { OTP } = useLocalSearchParams<{ OTP: string }>();
+    const { email } = useLocalSearchParams<{ email: string }>();
 
     useEffect(() => {
       console.log("Inside useEffect for reset password");
+      console.log("OTP:", OTP);
+      console.log("email:", email);
 
-      const handleSubmit = async () => {
-        router.push('/auth/forgotPassword/passwordChanged')
+      const resetPassword = async () => {
+        console.log("Attempting reset password...");
+        if (newPassword !== confirmPassword) {
+          console.log("New password does not match.");
+          Alert.alert("New password does not match");
+          return;
+        }
+        const resultAction = await dispatch(handleResetPassword({OTP, newPassword}));
+        console.log("Password successfully reset:", resultAction);
+        if (handleResetPassword.fulfilled.match(resultAction)) {
+          console.log("Password successfully reset, triggering onResetPasswordSuccess...");
+          router.push('/auth/forgotPassword/passwordChanged');
+        } else if(handleResetPassword.rejected.match(resultAction)){
+          console.log("Resetting password failed.");
+        }
       };
 
       const handleGoBack = async () => {
-        router.push('/auth/forgotPassword/verifyCode')
+        router.push({
+          pathname: '/auth/forgotPassword/verifyCode',
+          params: { email },
+        });
       };
 
-      if (shouldSubmit) {
-        handleSubmit();
-        setSubmit(false); // reset the trigger
+      if (shouldResetPassword) {
+        resetPassword();
+        setResetPassword(false); // reset the trigger
       }
 
       if (shouldGoBack) {
         handleGoBack();
         setGoBack(false); // reset the trigger
       }
-    }, [shouldSubmit, shouldGoBack]);    
+    }, [shouldResetPassword, shouldGoBack]);    
     
-  const handleSubmit = ()=>{
-    setSubmit(true);
+  const handleResetting = ()=>{
+    setResetPassword(true);
   }
 
   const handleGoBack = ()=>{
@@ -59,14 +84,14 @@ const ResetPassword = () => {
                                 <View style={styles.subheaderContainer}>
                                     <Text style={styles.subheaderText}>Enter New Password</Text>
                                 </View>
-                                <TextInput style={styles.textInput} onChangeText ={text=>setPassword(text)}value={password}placeholder='' secureTextEntry={true} />
+                                <TextInput style={styles.textInput} onChangeText ={text=>setNewPassword(text)}value={newPassword}placeholder='' secureTextEntry={true} />
                                 <View style={styles.subheaderContainer}>
                                     <Text style={styles.subheaderText}>Confirm New Password</Text>
                                 </View>
                                 <TextInput style={styles.textInput} onChangeText ={text=>setConfirmPassword(text)}value={confirmPassword}placeholder='' secureTextEntry={true} />
                                 <TouchableOpacity
                                     style={styles.submitButton}
-                                    onPress={() => handleSubmit()}
+                                    onPress={() => handleResetting()}
                                 >
                                     <Text style={styles.buttonText}>Submit</Text>
                                 </TouchableOpacity>
