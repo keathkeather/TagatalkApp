@@ -3,27 +3,44 @@ import { Stack, Link, router } from 'expo-router';
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { handleSendCode } from '../../redux/auth/authSlice';
+import { AppDispatch } from '../../redux/store';
+import { useDispatch } from 'react-redux';
 
 const ForgotPassword = () => {
+    const { onSendCode } = useAuth();
     const [email, setEmail] = useState('');
     const [shouldSendCode, setSendCode] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
         console.log("Inside useEffect for forgot password");
         console.log("Email:", email);
       
-        const handleSendCode = async () => {
-          router.push('/auth/forgotPassword/verifyCode')
+        const sendCode = async () => {
+          console.log("Attempting to send code...");
+          const resultAction = await dispatch(handleSendCode({email}));
+          console.log("Code successfully sent:", resultAction);
+          if (handleSendCode.fulfilled.match(resultAction)) {
+            console.log("Code successfully sent, triggering onSendCodeSuccess...");
+            router.push({
+              pathname: '/auth/forgotPassword/verifyCode',
+              params: { email },
+            });
+          } else if(handleSendCode.rejected.match(resultAction)){
+            console.log("Sending code failed.");
+          }
         };
       
         if (shouldSendCode) {
-          handleSendCode();
+          sendCode();
           setSendCode(false); // reset the trigger
         }
       }, [shouldSendCode]);       
     
-  const handleSendCode = ()=>{
+  const handleSending = ()=>{
     setSendCode(true);
   }
 
@@ -51,7 +68,7 @@ const ForgotPassword = () => {
                                 <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Enter email' />
                                 <TouchableOpacity
                                     style={styles.sendCodeButton}
-                                    onPress={() => handleSendCode()}
+                                    onPress={() => handleSending()}
                                 >
                                     <Text style={styles.buttonText}>Send Code</Text>
                                 </TouchableOpacity>

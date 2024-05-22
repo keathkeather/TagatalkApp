@@ -58,27 +58,84 @@ export async function login(email: string, password: string): Promise<string> {
 
 
 }
-export async function handleChangePassword(newPassword: string):Promise<boolean>{
+
+export async function sendCode(email: string) :Promise<boolean | null>{
   try {
-    const token = await AsyncStorage.getItem('token');
-    const response = await axios.put('http://13.236.105.57:3000/auth/changePassword',{
-      newPassword: newPassword
-    },{
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
+    console.log(email)
+    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
+    const res = await axios.post('http://13.236.105.57:3000/auth/requestOTP', {
+      email: email
     });
-    if(response){
-      console.log(response)
+    if(res.status===201){
       return true;
-    } 
-    return false
-    // Add catch block to handle errors
+    }else{
+      return false;
+    }
+    
   } catch (error) {
     console.log(error);
-    return false;
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return null;
   }
 }
+
+export async function verifyCode(OTP: string) :Promise<boolean | null>{
+  try {
+    console.log(OTP)
+    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
+    const res = await axios.post('http://13.236.105.57:3000/auth/verifyOTP', {
+      OTP: OTP
+    });
+    if(res.status===201){
+      return true;
+    }else{
+      return false;
+    }
+    
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return null;
+  }
+}
+
+export async function resetPassword(OTP: string, newPassword: string) :Promise<boolean | null>{
+  try {
+    console.log(OTP)
+    console.log(newPassword)
+    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
+    const res = await axios.post('http://13.236.105.57:3000/auth/forgotPassword', {
+      OTP: OTP,
+      newPassword: newPassword
+    });
+    if(res.status===201){
+      return true;
+    }else{
+      return false;
+    }
+    
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return null;
+  }
+}
+
 export async function logout(){
   try {
     await AsyncStorage.removeItem('token');

@@ -1,20 +1,53 @@
-import { Stack, Link, router } from 'expo-router';
+import { Stack, Link, router, useLocalSearchParams } from 'expo-router';
 
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, ImageBackground } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../../tamagui.config';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { handleVerifyCode, handleSendCode } from '../../redux/auth/authSlice';
+import { AppDispatch } from '../../redux/store';
+import { useDispatch } from 'react-redux';
 
 const VerifyCode = () => {
-    const [email, setEmail] = useState('');
+    const { onVerifyCode } = useAuth();
+    const [OTP, setOTP] = useState('');
     const [shouldVerifyCode, setVerifyCode] = useState(false);
+    const [shouldResendCode, setResendCode] = useState(false);
     const [shouldGoBack, setGoBack] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const { email } = useLocalSearchParams<{ email: string }>();
 
     useEffect(() => {
       console.log("Inside useEffect for verify code");
+      console.log("OTP:", OTP);
+      console.log("email:", email);
 
-      const handleVerifyCode = async () => {
-        router.push('/auth/forgotPassword/resetPassword')
+      const verifyCode = async () => {
+        console.log("Attempting to verify code...");
+        const resultAction = await dispatch(handleVerifyCode({OTP}));
+        console.log("Code successfully verified:", resultAction);
+        if (handleVerifyCode.fulfilled.match(resultAction)) {
+          console.log("Code successfully verify, triggering onVerifyCodeSuccess...");
+          router.push({
+            pathname: '/auth/forgotPassword/resetPassword',
+            params: { OTP, email },
+          });
+        } else if(handleVerifyCode.rejected.match(resultAction)){
+          console.log("Sending code failed.");
+        }
+      };
+
+      const resendCode = async () => {
+        console.log("Attempting to resend code...");
+        const resultAction = await dispatch(handleSendCode({email}));
+        console.log("Code successfully resent:", resultAction);
+        if (handleSendCode.fulfilled.match(resultAction)) {
+          console.log("Code successfully resent, triggering onSendCodeSuccess...");
+          Alert.alert("Verification code resent");
+        } else if(handleSendCode.rejected.match(resultAction)){
+          console.log("Resending code failed.");
+        }
       };
 
       const handleGoBack = async () => {
@@ -22,21 +55,31 @@ const VerifyCode = () => {
       };
 
       if (shouldVerifyCode) {
-        handleVerifyCode();
+        verifyCode();
         setVerifyCode(false); // reset the trigger
+      }
+
+      if (shouldResendCode) {
+        console.log("Resend button clicked!");
+        resendCode();
+        setResendCode(false);
       }
 
       if (shouldGoBack) {
         handleGoBack();
         setGoBack(false); // reset the trigger
       }
-    }, [shouldVerifyCode, shouldGoBack]);    
+    }, [shouldVerifyCode, shouldResendCode, shouldGoBack]);    
     
-  const handleVerifyCode = ()=>{
+  const handleVerifying = ()=> {
     setVerifyCode(true);
   }
 
-  const handleGoBack = ()=>{
+  const handleResending = () => {
+    setResendCode(true);
+  }
+
+  const handleGoBack = ()=> {
     setGoBack(true);
   }
 
@@ -58,18 +101,19 @@ const VerifyCode = () => {
                                 <View style={styles.subheaderContainer}>
                                     <Text style={styles.subheaderText}>Enter Verification Code</Text>
                                 </View>
-                                <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Enter code' />
+                                <TextInput style={styles.textInput} onChangeText ={text=>setOTP(text)}value={OTP}placeholder='Enter code' />
                                 <View style={styles.ResendContainer}>
-                                    <Text >
-                                        <Text style={{ color: '#ffffff' }}> If you didn't receive a code. </Text>
-                                        <Link href={'/auth/login'}>
-                                            <Text style={{ color: '#FFA51B', fontWeight: "bold" }}>Resend</Text>
-                                        </Link>
-                                    </Text>
+                                    <Text style={{ color: '#ffffff' }}> If you didn't receive a code. </Text>
+                                    <TouchableOpacity
+                                        style={styles.resendCodeButton}
+                                        onPress={() => handleResending()}
+                                    >
+                                        <Text style={{ color: '#FFA51B', fontWeight: "bold" }}>Resend</Text>
+                                    </TouchableOpacity>
                                 </View>
                                 <TouchableOpacity
                                     style={styles.sendCodeButton}
-                                    onPress={() => handleVerifyCode()}
+                                    onPress={() => handleVerifying()}
                                 >
                                     <Text style={styles.buttonText}>Verify</Text>
                                 </TouchableOpacity>
@@ -150,6 +194,9 @@ const styles = StyleSheet.create({
       justifyContent: 'center',
       alignItems: 'center',
     },
+    resendCodeButton: {
+      marginLeft: 3
+    },
     buttonText: {
       color: '#fff', 
       fontSize: 20,
@@ -176,6 +223,8 @@ const styles = StyleSheet.create({
     ResendContainer: {
         marginTop: 30,
         marginBottom: 50,
-        alignItems: 'center'
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
   });
