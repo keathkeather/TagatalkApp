@@ -114,7 +114,7 @@ export async function resetPassword(OTP: string, newPassword: string) :Promise<b
     console.log(OTP)
     console.log(newPassword)
     //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://13.236.105.57:3000/auth/forgotPassword', {
+    const res = await axios.put('http://13.236.105.57:3000/auth/forgotPassword', {
       OTP: OTP,
       newPassword: newPassword
     });

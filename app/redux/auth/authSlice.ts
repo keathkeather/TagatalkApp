@@ -33,7 +33,7 @@ export const handleLogin = createAsyncThunk('auth/login', async ({ email, passwo
     return success;
   });
 
-  export const handleResetPassword = createAsyncThunk('auth/verifyOTP', async ({ OTP, newPassword }: { OTP: string, newPassword: string }) => {
+  export const handleResetPassword = createAsyncThunk('auth/forgotPassword', async ({ OTP, newPassword }: { OTP: string, newPassword: string }) => {
     const success = await resetPassword(OTP, newPassword);
     return success;
   });
