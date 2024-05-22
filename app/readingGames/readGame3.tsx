@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import FeedbackModal from '../feedbackModal';
 
 interface WordMapping {

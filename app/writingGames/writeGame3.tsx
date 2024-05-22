@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame3 = () => {
+const WriteGame3 = ({onContinue} : {onContinue : any}) => {
     const [typedText, setTypedText] = useState('');
     const [currentItem, setCurrentItem] = useState<{ word: string, correctText: string } | null>(null);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -49,6 +49,13 @@ const WriteGame3 = () => {
         setIsModalVisible(true);
       }
     };
+
+    const handleContinue = () => {
+      setIsModalVisible(false);
+      if (onContinue) {
+        onContinue();
+      }
+    };
   
     return (
       <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
@@ -78,7 +85,7 @@ const WriteGame3 = () => {
           </View>
         <FeedbackModal visible={isModalVisible}
           feedback={feedback}
-          onClose={() => setIsModalVisible(false)}
+          onClose={handleContinue}
         />
         </View>
     );

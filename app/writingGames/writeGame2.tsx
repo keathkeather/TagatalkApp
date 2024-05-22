@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame2 = () => {
+const WriteGame2 = ({onContinue} : {onContinue : any}) => {
     const [typedText, setTypedText] = useState('');
     const [currentItem, setCurrentItem] = useState<{ scenario: string, question: string, correctText: string } | null>(null);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -54,6 +54,13 @@ const WriteGame2 = () => {
         setIsModalVisible(true);
       }
     };
+
+    const handleContinue = () => {
+      setIsModalVisible(false);
+      if (onContinue) {
+        onContinue();
+      }
+    };
   
     return (
       <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
@@ -92,7 +99,7 @@ const WriteGame2 = () => {
           </View>
               <FeedbackModal visible={isModalVisible}
                 feedback={feedback}
-                onClose={() => setIsModalVisible(false)}
+                onClose={handleContinue}
               />
       </View>
     );

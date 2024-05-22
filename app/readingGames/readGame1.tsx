@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { Stack, Link } from 'expo-router';
-import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import FeedbackModal from '../feedbackModal';
-import ProgressBar from '../../components/ProgressBar';
 
 const GameScreen = ({onContinue} : {onContinue : any}) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
