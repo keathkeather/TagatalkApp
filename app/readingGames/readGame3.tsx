@@ -1,10 +1,5 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { Stack } from 'expo-router'
-import { useNavigation } from '@react-navigation/native';
-import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 
 interface WordMapping {
@@ -12,11 +7,6 @@ interface WordMapping {
 }
 
 const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
-  const navigation = useNavigation();
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
 
   const wordMapping: WordMapping = {
     evening: 'gabi',
@@ -56,8 +46,10 @@ const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
   };
   
   return (
-    <View style={{width: '100%'}}>
-      <Text style={styles.header}>How do you say "{askedWord}"?</Text>
+    <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
+      <Text style={styles.header}>Question and Answer.</Text>
+      <Text style={styles.word}>How do you say "{askedWord}"?</Text>
+        <View style={styles.contentContainer}>
       <View style={styles.choicesContainer}>
         {choices.map((choice, index) => (
           <TouchableOpacity 
@@ -76,6 +68,7 @@ const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
         <Text style={styles.checkText}>CHECK</Text>
       </TouchableOpacity>
       </View>
+      </View>
       
       <FeedbackModal 
         visible={isModalVisible}
@@ -89,33 +82,23 @@ const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
 export default ReadGame3
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: '5%',
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
+  word: {
+    fontSize: 20,
+    fontWeight: "600",
+    textDecorationLine: 'underline',
+    color: '#344054',
   },
-  progressBarContainer: {
-    marginLeft: 20,
-  },
-  backArrow: {
-    width: 38,
-    height: 38,
-  },
-  container: {
-    color: "white",
+  contentContainer: {
+    marginTop: 10,
   },
   header: {
     fontSize: 25,
     fontWeight: "900",
-    alignSelf: 'center',
     marginTop: 20,
   },
   choicesContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
   },
   row: {
     flexDirection: 'row',
@@ -138,7 +121,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   checkButton: {
-    marginTop: 70,
+    marginTop: 45,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',

@@ -68,9 +68,9 @@ const ReadGame2 = ({onContinue} : {onContinue : any}) => {
       }
     };
     return (
-        <View>
+      <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
           <Text style={styles.header}>Match the correct word.</Text>
-          <View style={styles.choicesContainer}>
+        <View style={styles.contentContainer}>
           {items.map((item, index) => (
             <View style={styles.row} key={index}>
                 <TouchableOpacity 
@@ -91,17 +91,16 @@ const ReadGame2 = ({onContinue} : {onContinue : any}) => {
                 </TouchableOpacity>
             </View>
             ))}
-            
+            <TouchableOpacity 
+              style={[
+                  styles.continueButton, 
+                  (!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)) ? styles.disabledButton : null
+              ]}
+              disabled={!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)}
+              >
+              <Text style={styles.continueText}>CHECK</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity 
-            style={[
-                styles.continueButton, 
-                (!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)) ? styles.disabledButton : null
-            ]}
-            disabled={!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)}
-            >
-            <Text style={styles.continueText}>CHECK</Text>
-          </TouchableOpacity>
           {/* Feedback Modals are subject to change */}
           <FeedbackModal visible={isModalVisible}
           feedback={"All words matched!"}
@@ -114,31 +113,15 @@ const ReadGame2 = ({onContinue} : {onContinue : any}) => {
 export default ReadGame2
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: '5%',
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarContainer: {
-    marginLeft: 20,
-  },
-  backArrow: {
-    width: 38,
-    height: 38,
-  },
-  container: {
-    color: "white",
+  contentContainer: {
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     fontSize: 25,
     fontWeight: "900",
     marginTop: 20,
-  },
-  choicesContainer: {
-    flexDirection: 'column',
-    marginTop: 40,
   },
   row: {
     flexDirection: 'row',
@@ -146,8 +129,7 @@ const styles = StyleSheet.create({
   choices1: {
     fontSize: 25,
     fontWeight: "bold",
-    marginTop: 20,
-    marginLeft: 20,
+    marginTop: 25,
     borderRadius: 35,
     width: '43%',
     height: 90,
@@ -159,7 +141,7 @@ const styles = StyleSheet.create({
   choices2: {
     fontSize: 25,
     fontWeight: "bold",
-    marginTop: 20,
+    marginTop: 25,
     marginLeft: 20,
     borderRadius: 35,
     width: '43%',
@@ -175,18 +157,18 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     marginTop: 80,
-     marginLeft: 20,
+     marginTop: 100,
      backgroundColor: '#FD9F10',
      borderRadius: 30,
-     width: '90%',
-     height: '6%',
+     width: '100%',
+     height: '8%',
      alignItems: 'center',
      justifyContent: 'center',
      elevation: 4,    
   },
   continueText: {
     fontSize: 18,
+    letterSpacing: 1,
     color: 'white',
     fontWeight: 'bold',
   },

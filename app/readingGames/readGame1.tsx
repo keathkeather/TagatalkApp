@@ -69,113 +69,95 @@ const GameScreen = ({onContinue} : {onContinue : any}) => {
   };
 
   return (
-    <View>
+    <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Read and respond</Text>
-      <View style={styles.imgHeader}> 
-        <Image source={require('../assets/TeeTee.png')} />
-        <View style={styles.questionContainer}>
-          <Text style={styles.questionText}>{randomQuestion}</Text>
-        </View>
-          <View style={styles.imgBubble}> 
-            <Image source={require('../assets/textbubble.png')} />
+        <View style={styles.contentContainer}>
+          <View style={styles.questionContainer}>
+            <Image source={require('../assets/TeeTee.png')} style={styles.teetee} />
+              <View style={styles.imgBubble}> 
+                <Text style={styles.questionText}>{randomQuestion}</Text>
+                <Image source={require('../assets/textbubble.png')} />
+            </View>
           </View>
-      </View>
-      <Text style={styles.subQuestionText}>Anong oras na ngayon base sa sinabi TeeTee?</Text>
-        <View style={styles.wordContainer}>
-          {words.map((word, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.wordButton,
-                selectedWord === word && styles.selectedWordButton
-              ]}
-              onPress={() => handleWordPress(word)}
-              disabled={continueClicked}
-            > 
-              <Text style={styles.wordText}>{word}</Text>
-            </TouchableOpacity>
-          ))}
-            <TouchableOpacity 
-              style={[
-                styles.continueButton,
-                continueClicked && styles.continueButtonDisabled,
-                selectedWord === null && styles.continueButtonDisabled,
-              ]}
-              onPress={selectedWord !== null ? handleContinue : undefined}
-              disabled={continueClicked || selectedWord === null}
-            >
-              <Text style={styles.continueText}>CHECK</Text>
-            </TouchableOpacity>
+            <Text style={styles.subQuestionText}>Anong oras na ngayon base sa sinabi TeeTee?</Text>
+              <View style={styles.wordContainer}>
+                {words.map((word, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.wordButton,
+                      selectedWord === word && styles.selectedWordButton
+                    ]}
+                    onPress={() => handleWordPress(word)}
+                    disabled={continueClicked}
+                    > 
+                      <Text style={styles.wordText}>{word}</Text>
+                  </TouchableOpacity>
+                ))}
+                  <TouchableOpacity 
+                    style={[
+                      styles.continueButton,
+                      continueClicked && styles.continueButtonDisabled,
+                      selectedWord === null && styles.continueButtonDisabled,
+                    ]}
+                    onPress={selectedWord !== null ? handleContinue : undefined}
+                    disabled={continueClicked || selectedWord === null}
+                    >
+                      <Text style={styles.continueText}>CHECK</Text>
+                    </TouchableOpacity>
+              </View>
         </View>
-        {/* Render the modal */}
-      <FeedbackModal
-        visible={feedback !== null}
-        feedback={feedback}
-        onClose={() => setFeedback(null)}
-      />
+            {/* Render the modal */}
+          <FeedbackModal
+            visible={feedback !== null}
+            feedback={feedback}
+            onClose={() => setFeedback(null)}
+          />
     </View>  
   );
 };
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: 43,
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  progressBarContainer: {
-    marginLeft: 20,
-  },
-  backArrow: {
-    width: 38,
-    height: 38,
+  contentContainer: {
+    marginTop: 10,
   },
   header: {
     fontSize: 25,
-    fontWeight: "900",
-    marginLeft: 20,
+    fontWeight: "900", 
     marginTop: 20,
   },
+  teetee: {
+    width: '55%',
+    height: 130,
+  },
   imgHeader: {
-    marginLeft: 25,
     flexDirection: 'row',
   },
   imgBubble: {
-    position: 'absolute',
-    marginLeft: 125,
-    marginTop: 25,
-    zIndex: -1,
+    position: 'relative',
   },
   questionContainer: {
     width: '50%',
-    marginLeft: 30,
-    marginTop: 40,
-    flexWrap: 'wrap',
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   questionText: {
-    width: '90%',
+    position: 'absolute',
     lineHeight: 25,
+    width: '70%',
     fontSize: 15,
     fontWeight: "bold",
     color: "#F4F4F4", //change to #F4F4F4 if there is text bubble
+    zIndex: 1,
+    top: '10%',
+    left: '13%',
   },
   subQuestionText: {
-    marginTop: 20,
     fontSize: 15,
     fontWeight: "bold",
     color: "black", //change to #F4F4F4 if there is text bubble
     textAlign: "center",
     marginBottom: 15,
-  },
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  feedback: {
-    fontSize: 20,
   },
   wordContainer: {
     alignItems: 'center',
@@ -201,7 +183,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   continueButton: {
-    marginTop: 50,
+    marginTop: 30,
     paddingVertical: 10,
     paddingHorizontal: 20,
     backgroundColor: '#FD9F10',
