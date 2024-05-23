@@ -39,7 +39,10 @@ const Register: React.FC<RegisterProps> = ( ) =>{
       console.log("Registration successful:", resultAction);
       if (handleRegister.fulfilled.match(resultAction)) {
         console.log("Registration successful, triggering onRegisterSuccess...");
-        router.push('/auth/login')
+        router.push({
+          pathname: '/auth/emailVerification',
+          params: { email },
+        });
       } else if(handleRegister.rejected.match(resultAction)){
         console.log("Registration failed.");
       }

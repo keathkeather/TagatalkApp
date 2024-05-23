@@ -1,12 +1,48 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Main } from '../../tamagui.config';
-import React from 'react'
-import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react'
+import { router, useLocalSearchParams } from 'expo-router';
 import icons from '../../constants/icons';
 import { StatusBar } from 'react-native';
+import { useAuth } from '../context/AuthContext';
+import { handleResendEmail } from '../redux/auth/authSlice';
+import { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
 
 const EmailVerification = () => {
+  const { onResendEmail } = useAuth();
+  const dispatch = useDispatch<AppDispatch>();
+  const { email } = useLocalSearchParams<{ email: string }>();
+  const [shouldResendEmail, setResendEmail] = useState(false);
+
+  useEffect(() => {
+    console.log("Inside useEffect for verify email");
+    console.log("email:", email);
+
+    const resendEmail = async () => {
+      console.log("Attempting to resend email...");
+      const resultAction = await dispatch(handleResendEmail({email}));
+      console.log("Email successfully resent:", resultAction);
+      if (handleResendEmail.fulfilled.match(resultAction)) {
+        console.log("Email successfully resent, triggering onResendEmailSuccess...");
+        Alert.alert("Email resent");
+      } else if(handleResendEmail.rejected.match(resultAction)){
+        console.log("Resending email failed.");
+      }
+    };
+
+    if (shouldResendEmail) {
+      console.log("Resend email clicked!");
+      resendEmail();
+      setResendEmail(false);
+    }
+
+  }, [shouldResendEmail]); 
+
+  const handleResending = () => {
+    setResendEmail(true);
+  }
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: '#f4f4f4'}}>
         <StatusBar backgroundColor={'#FD9F10'}/>
@@ -32,10 +68,12 @@ const EmailVerification = () => {
                             <Image source={require('../assets/verify.png')} style={styles.image}/>
                         </View>
                         <View>
-                            <TouchableOpacity style={styles.saveButton} >
+                            <TouchableOpacity style={styles.saveButton} 
+                                onPress={() =>router.push('/auth/login')}>
                                 <Text style={styles.saveText}>Continue</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.resendContainer} >
+                            <TouchableOpacity style={styles.resendContainer} 
+                                onPress={() => handleResending()}>
                                 <Text style={styles.resendText}>Resend Email</Text>
                             </TouchableOpacity>
                         </View>
