@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { registerFunction, login, sendCode, verifyCode, resetPassword, logout, checkTokenHealth } from '~/components/auth';
+import { registerFunction, login, sendCode, verifyCode, resetPassword, resendEmail, logout, checkTokenHealth } from '~/components/auth';
 
 interface AuthProps {
     authState?: { token: string | null; authenticated: boolean | null };
@@ -9,6 +9,7 @@ interface AuthProps {
     onSendCode: (email: string) => Promise<boolean | null>;
     onVerifyCode: (OTP: string) => Promise<boolean | null>;
     onResetPassword: (OTP: string, newPassword: string) => Promise<boolean | null>;
+    onResendEmail: (email: string) => Promise<boolean | null>;
     onLogout: () => Promise<boolean>;
 }
 
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthProps>({
     onSendCode: async (email: string) => Promise.resolve(null),
     onVerifyCode: async (OTP: string) => Promise.resolve(null),
     onResetPassword: async (OTP: string, newPassword: string) => Promise.resolve(null),
+    onResendEmail: async (email: string) => Promise.resolve(null),
     onLogout: async () => Promise.resolve(false),
 });
 
@@ -85,11 +87,11 @@ export const AuthProvider = ({ children }: any) => {
           });
   
           return true; // Return true to indicate successful login
-      } catch (error) {
-          console.log(error);
-          return false; // Return false if login fails
-      }
-  };  
+        } catch (error) {
+            console.log(error);
+            return false; // Return false if login fails
+        }
+    };  
 
     const handleSendCode = async (email: string) => {
         console.log("inside auth sendCode")
@@ -113,6 +115,13 @@ export const AuthProvider = ({ children }: any) => {
         return success !== null ? success : false;
     };
 
+    const handleResendEmail = async (email: string) => {
+        console.log("inside auth resendEmail")
+        console.log(email)
+        const success = await resendEmail(email);
+        return success !== null ? success : false;
+    };
+
     const handleLogout = async () => {
         const success = await logout();
         if (success==true) {
@@ -131,6 +140,7 @@ export const AuthProvider = ({ children }: any) => {
         onVerifyCode: handleVerifyCode,
         onResetPassword: handleResetPassword,
         onLogout: handleLogout,
+        onResendEmail: handleResendEmail,
         authState
     };
 

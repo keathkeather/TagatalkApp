@@ -136,6 +136,31 @@ export async function resetPassword(OTP: string, newPassword: string) :Promise<b
   }
 }
 
+export async function resendEmail(email: string) :Promise<boolean | null>{
+  try {
+    console.log(email)
+    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
+    const res = await axios.post('http://13.236.105.57:3000/auth/resendVerification', {
+      email: email
+    });
+    if(res.status===201){
+      return true;
+    }else{
+      return false;
+    }
+    
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return null;
+  }
+}
+
 export async function logout(){
   try {
     await AsyncStorage.removeItem('token');
