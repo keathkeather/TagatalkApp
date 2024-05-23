@@ -6,7 +6,7 @@ export async function feedback(feedbackTitle:string , feedbackDescription:string
     try{
         const token = await AsyncStorage.getItem('token');
         console.log(feedbackTitle, feedbackDescription)
-        const res = await axios.post('http://52.65.15.61:3000/feedback/createFeedback',{
+        const res = await axios.post('http://13.236.105.57:3000/feedback/createFeedback',{
             feedbackTitle: feedbackTitle,
             feedbackDescription: feedbackDescription
         },{
