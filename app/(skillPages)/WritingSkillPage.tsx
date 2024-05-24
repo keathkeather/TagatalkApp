@@ -87,7 +87,7 @@ const WritingSkillPage = () => {
                 <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
                     <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
                 </TouchableOpacity>
-                <Text style={styles.headerText}> Listening Skills </Text>
+                <Text style={styles.headerText}> Writing Skills </Text>
             </View>
             <View style={styles.headerContainer}>
             {/* Map through the unique courses and display the units and lessons */}
@@ -102,7 +102,7 @@ const WritingSkillPage = () => {
                             {course.lessons.map((lesson, index) => (
                               <Link 
                               key={index} 
-                              href={'/(gameScreens)/reading'}
+                              href={'/(gameScreens)/writing'}
                               style={styles.mainContainer}>
                                 <View>
                          

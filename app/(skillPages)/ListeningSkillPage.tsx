@@ -102,7 +102,7 @@ const ListeningSkillPage = () => {
                             {course.lessons.map((lesson, index) => (
                               <Link 
                               key={index} 
-                              href={'/(gameScreens)/reading'}
+                              href={'/(gameScreens)/listening'}
                               style={styles.mainContainer}>
                                 <View>
                          
