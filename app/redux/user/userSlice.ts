@@ -18,7 +18,7 @@ const initialState:userState={
     profileDescription:""
 }
 
-export const handleUser = createAsyncThunk('auth/login',async()=>{
+export const handleUser = createAsyncThunk('user/getUser',async()=>{
     const user = await getUser();
     return user;
 });
