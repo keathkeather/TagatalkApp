@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { AnimatableStringValue } from "react-native";
-import  { registerFunction, login, logout, checkTokenHealth, sendCode, verifyCode, resetPassword, resendEmail }  from "~/components/auth";
+import  { registerFunction, login, logout, checkTokenHealth, sendCode, verifyCode, resetPassword, resendEmail, editUserName }  from "~/components/auth";
 interface AuthState {
     token:string
     authenticated:boolean
@@ -40,6 +40,11 @@ export const handleLogin = createAsyncThunk('auth/login', async ({ email, passwo
 
   export const handleResendEmail = createAsyncThunk('auth/resendVerification', async ({ email }: { email: string }) => {
     const success = await resendEmail(email);
+    return success;
+  });
+
+  export const handleEditUserName = createAsyncThunk('user/addUserName', async ({ username }: { username: string }) => {
+    const success = await editUserName(username);
     return success;
   });
   
@@ -87,7 +92,10 @@ const authSlice = createSlice({
             })
             .addCase(handleResendEmail.fulfilled, (state, action) => {
               // handle resend email success if needed
-          })
+            })
+            .addCase(handleEditUserName.fulfilled, (state, action) => {
+              // handle edit username success if needed
+            })
             .addCase(handleLogout.fulfilled, (state) => {
             state.token = "";
             state.authenticated = false;
