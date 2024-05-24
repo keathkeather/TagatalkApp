@@ -4,7 +4,7 @@ import FeedbackModal from '../feedbackModal';
 import icons from '../../constants/icons';
 import { Audio } from 'expo-av';
 
-const ListenGame3= () => {    
+const ListenGame3= ({onContinue} : {onContinue : any}) => {    
 
   const initialWords = [
     { audio: require('../assets/umaga.mp3'), match: 'morning', isMatched: false },
@@ -71,6 +71,13 @@ const [isModalVisible, setIsModalVisible] = useState(false)
         setIsModalVisible(true);
         }
     }, [matchedWords]);
+
+    const handleContinue = () => {
+      setIsModalVisible(false);
+      if (onContinue) {
+        onContinue();
+      }
+    };
   
   return (
     <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
@@ -104,7 +111,7 @@ const [isModalVisible, setIsModalVisible] = useState(false)
           {/* Feedback Modals are subject to change */}
         <FeedbackModal visible={isModalVisible}
           feedback={"All words matched!"}
-          onClose={() => setIsModalVisible(false)}
+          onClose={handleContinue}
         />
     </View>
 )
