@@ -161,6 +161,47 @@ export async function resendEmail(email: string) :Promise<boolean | null>{
   }
 }
 
+export async function editUserName(username: string): Promise<boolean> {
+  try {
+    // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+
+    // If no token is found, throw an error
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    // Create the Axios request configuration with Bearer token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Make the API call to update the username
+    const response = await axios.put('http://13.236.105.57:3000/user/addUserName', {
+      name: username,
+    }, config);
+
+    // Check if the response status is 200 (OK)
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return false;
+  }
+}
+
 export async function logout(){
   try {
     await AsyncStorage.removeItem('token');

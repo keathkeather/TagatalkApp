@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, KeyboardAvoidingView, Platform, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Container } from '~/tamagui.config';
 import { Stack, router } from 'expo-router';
@@ -7,12 +7,44 @@ import icons from '../../constants/icons';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'tamagui';
 import { handleEditProfile } from '~/components/user';
+import { handleEditUserName } from '../redux/auth/authSlice';
+import { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
 
 const EditProfile = () => {
   const [image, setImage] = useState<string | null>(null);
   const [bio, setBio] = useState<string>('');
+  const dispatch = useDispatch<AppDispatch>();
+  const [shouldEditUserName, setEditUserName] = useState(false);
   const [username, setUsername] = useState<string>(''); // Add state for username
   const maxLength = 100; // Max length of the bio
+
+  useEffect(() => {
+    console.log("Inside useEffect for edit profile");
+    console.log("username:", username);
+
+    const editUserName = async () => {
+      console.log("Attempting edit username...");
+      const resultAction = await dispatch(handleEditUserName({username}));
+      console.log("Username successfully reset:", resultAction);
+      if (handleEditUserName.fulfilled.match(resultAction)) {
+        console.log("Username successfully edited, triggering onEditUserNameSuccess...");
+        Alert.alert("Username updated");
+      } else if(handleEditUserName.rejected.match(resultAction)){
+        console.log("Editting username failed.");
+      }
+    };
+
+    if (shouldEditUserName) {
+      editUserName();
+      setEditUserName(false); // reset the trigger
+    }
+
+  }, [shouldEditUserName]); 
+
+  const handleEditing = () => {
+    setEditUserName(true);
+  }
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -45,6 +77,9 @@ const EditProfile = () => {
       } else {
         alert('Failed to update profile');
       }
+    }
+    if (username) {
+      handleEditing();
     }
   };
 
