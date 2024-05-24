@@ -4,7 +4,7 @@ import { Audio } from 'expo-av';
 import icons from '../../constants/icons';
 import FeedbackModal from '../feedbackModal';
 
-const ListenGame2 = () => {
+const ListenGame2 = ({onContinue} : {onContinue : any}) => {
   const [typedText, setTypedText] = useState('');
   const [currentItem, setCurrentItem] = useState<{ audio: any, correctText: string } | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -13,7 +13,7 @@ const ListenGame2 = () => {
 
   // Array of audio files and their correct answers
   const items = [
-    { audio: require('../assets/logo1.png'), correctText: 'Umaga' },
+    { audio: require('../assets/umaga.mp3'), correctText: 'Umaga' },
     { audio: require('../assets/gabi.mp3'), correctText: 'Gabi' },
     { audio: require('../assets/hapon.mp3'), correctText: 'Hapon' },
     { audio: require('../assets/tanghali.mp3'), correctText: 'Tanghali' },
@@ -57,6 +57,13 @@ const ListenGame2 = () => {
     }
   };
 
+  const handleContinue = () => {
+    setIsModalVisible(false);
+    if (onContinue) {
+      onContinue();
+    }
+  };
+
   return (
     <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
     <Text style={styles.header}>Write what you hear.</Text>
@@ -88,7 +95,7 @@ const ListenGame2 = () => {
         </View>
       <FeedbackModal visible={isModalVisible}
         feedback={feedback}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleContinue}
       />
       </View>
   );
