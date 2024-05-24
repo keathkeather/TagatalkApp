@@ -28,9 +28,9 @@ const Profile = () => {
   const username = useSelector((state: RootState) => state.user.name);
   let profileImage =useSelector((state: RootState) => state.user.profileImage);
   
-  if(profileImage === ""){
-    profileImage ='../assets/default_Profile.png'
-  }
+  // if(profileImage === ""){
+  //   profileImage = '../app/assets/default_profile.png'
+  // }
   
   
   return (
@@ -55,7 +55,7 @@ const Profile = () => {
       </View>
       <View style={{flex: 1, alignItems: 'center', zIndex:10 }}>
           <Image
-            source={{ uri: profileImage }}
+            source={profileImage ? { uri: profileImage } : icons.defaultProfile}
             resizeMode='cover'
             style={{
               height: 130,
