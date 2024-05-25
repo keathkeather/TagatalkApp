@@ -7,44 +7,48 @@ import icons from '../../constants/icons';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'tamagui';
 import { handleEditProfile } from '~/components/user';
-import { handleEditUserName } from '../redux/auth/authSlice';
+import { handleEditUserName, handleEditUser } from '../redux/auth/authSlice';
 import { AppDispatch } from '../redux/store';
 import { useDispatch } from 'react-redux';
 
 const EditProfile = () => {
-  const [image, setImage] = useState<string | null>(null);
-  const [bio, setBio] = useState<string>('');
   const dispatch = useDispatch<AppDispatch>();
-  const [shouldEditUserName, setEditUserName] = useState(false);
-  const [username, setUsername] = useState<string>(''); // Add state for username
-  const maxLength = 100; // Max length of the bio
+  const [image, setImage] = useState<any>(null);
+  const [bio, setBio] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+  const [shouldEditUser, setShouldEditUser] = useState(false);
+  const maxLength = 100;
 
   useEffect(() => {
     console.log("Inside useEffect for edit profile");
     console.log("username:", username);
+    console.log("bio:", bio);
 
-    const editUserName = async () => {
-      console.log("Attempting edit username...");
-      const resultAction = await dispatch(handleEditUserName({username}));
-      console.log("Username successfully reset:", resultAction);
-      if (handleEditUserName.fulfilled.match(resultAction)) {
-        console.log("Username successfully edited, triggering onEditUserNameSuccess...");
-        Alert.alert("Username updated");
-      } else if(handleEditUserName.rejected.match(resultAction)){
-        console.log("Editting username failed.");
+    const editUser = async () => {
+      console.log("Attempting edit user...");
+      const imageBlob = image ? await (await fetch(image)).blob() : null;
+      console.log("file:", imageBlob)
+      const resultAction = await dispatch(handleEditUser({ file: imageBlob, username, bio}));
+
+      if (handleEditUser.fulfilled.match(resultAction)) {
+        console.log("Profile successfully edited, triggering onEditUserSuccess...");
+        Alert.alert("Profile updated successfully");
+        router.push('../(tabs)/profile');
+      } else if (handleEditUser.rejected.match(resultAction)) {
+        console.log("Editing profile failed.");
+        Alert.alert("Failed to update profile");
       }
     };
 
-    if (shouldEditUserName) {
-      editUserName();
-      setEditUserName(false); // reset the trigger
+    if (shouldEditUser) {
+      editUser();
+      setShouldEditUser(false);
     }
+  }, [shouldEditUser]);
 
-  }, [shouldEditUserName]); 
-
-  const handleEditing = () => {
-    setEditUserName(true);
-  }
+  const handleSaveChanges = () => {
+    setShouldEditUser(true);
+  };
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -62,24 +66,6 @@ const EditProfile = () => {
 
     if (!result.canceled && result.assets.length > 0) {
       setImage(result.assets[0].uri);
-    }
-  };
-
-  const handleSaveChanges = async () => {
-    if (image) {
-      const response = await fetch(image);
-      const uriPfp = await response.blob();
-      console.log(image)
-      const success = await handleEditProfile(image, username, bio);
-      if (success) {
-        alert('Profile updated successfully');
-        router.push('../(tabs)/profile');
-      } else {
-        alert('Failed to update profile');
-      }
-    }
-    if (username) {
-      handleEditing();
     }
   };
 
