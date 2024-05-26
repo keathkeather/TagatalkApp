@@ -18,6 +18,8 @@ const feedback = require('../app/assets/icons/feedback.png')
 const modbackarrow = require('../app/assets/icons/modbackarrow.png')
 const speaker = require('../app/assets/icons/speaker.png')
 const camera = require('../app/assets/icons/camera.png')
+const mic = require('../app/assets/icons/mic.png')
+const mic2 = require('../app/assets/icons/mic2.png')
 const defaultProfile = require('../app/assets/default_profile.png')
 const icons = {
     homeOutline,
@@ -40,6 +42,8 @@ const icons = {
     modbackarrow,
     speaker,
     camera,
+    mic,
+    mic2,
     defaultProfile
 }
 
