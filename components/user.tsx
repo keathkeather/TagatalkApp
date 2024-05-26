@@ -11,6 +11,7 @@ export interface User {
 }
 
 //*Function to get user data
+const formdata = global.FormData
 
 export async function getUser(): Promise<User | null> {
     try {
@@ -60,30 +61,54 @@ export async function getUser(): Promise<User | null> {
 //   }
 // }
 
-export async function handleEditProfile(newProfileImageuri: string,  newName : string, newProfileDescription: string):Promise<boolean>{
+export async function editUser(file: string | null, username: string, profileDescription: string): Promise<boolean> {
   try {
+    // Retrieve the token from AsyncStorage
     const token = await AsyncStorage.getItem('token');
-    const formData = new FormData();
-    if (newProfileImageuri) {
-      formData.append('Profile', newProfileImageuri);
-    }
-    formData.append('name', newName);
-    formData.append('profileDescription', newProfileDescription);
 
-    const response = await axios.put('http://13.236.105.57:3000/user/editUser', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data'
+    // If no token is found, throw an error
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    // Create FormData object to handle the file upload
+    const formData = new formdata();
+    if (file) {
+      console.log("file:", file);
+      const photo={
+        uri:file,
+        type:'image/jpeg',
+        name:'profile.jpg'
       }
-    });
-
-    if (response) {
-      console.log(response.data);
-      return true;
+      formData.append('Profile',photo as unknown as File)
     }
-    return false;
+    formData.append('name', username);
+    formData.append('profileDescription', profileDescription);
+
+    console.log("data:", formData);
+
+    // Create the Axios request configuration with Bearer token
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Make the API call to edit the user profile
+    const response = await axios.put('http://13.236.105.57:3000/user/editUser', formData, config);
+
+    // Check if the response status is 200 (OK)
+    return response.status === 200;
+
   } catch (error) {
-    console.log(error);
+    console.log("Error?", error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
     return false;
   }
 }

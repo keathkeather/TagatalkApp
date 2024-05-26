@@ -12,7 +12,7 @@ import "core-js/stable/atob";
 //     rejectUnauthorized: false // Ignore self-signed certificates
 //   }
 // });
-
+const formdata = global.FormData
 export async function registerFunction(email: string, password: string) :Promise<boolean | null>{
   try {
     console.log(email)
@@ -202,52 +202,7 @@ export async function editUserName(username: string): Promise<boolean> {
   }
 }
 
-export async function editUser(file: Blob | null, username: string, profileDescription: string): Promise<boolean> {
-  try {
-    // Retrieve the token from AsyncStorage
-    const token = await AsyncStorage.getItem('token');
 
-    // If no token is found, throw an error
-    if (!token) {
-      throw new Error('No token found');
-    }
-
-    // Create FormData object to handle the file upload
-    const formData = new FormData();
-    if (file) {
-      console.log("file:", file);
-      formData.append('profileImage', file); // Use 'Profile' as the key
-    }
-    formData.append('name', username);
-    formData.append('profileDescription', profileDescription);
-
-    console.log("data:", formData);
-
-    // Create the Axios request configuration with Bearer token
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${token}`,
-      },
-    };
-
-    // Make the API call to edit the user profile
-    const response = await axios.put('http://13.236.105.57:3000/user/editUser', formData, config);
-
-    // Check if the response status is 200 (OK)
-    return response.status === 200;
-
-  } catch (error) {
-    console.log("Error?", error);
-    if (axios.isAxiosError(error)) {
-      const serverError = error as AxiosError;
-      if (serverError && serverError.response) {
-        console.log(serverError.response.data);
-      }
-    }
-    return false;
-  }
-}
 
 export async function logout(){
   try {

@@ -6,14 +6,14 @@ import { Stack, router } from 'expo-router';
 import icons from '../../constants/icons';
 import * as ImagePicker from 'expo-image-picker';
 import { ScrollView } from 'tamagui';
-import { handleEditProfile } from '~/components/user';
-import { handleEditUserName, handleEditUser } from '../redux/auth/authSlice';
+import { handleEditUser } from '../redux/user/userSlice';
 import { AppDispatch } from '../redux/store';
 import { useDispatch } from 'react-redux';
 
 const EditProfile = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [image, setImage] = useState<any>(null);
+  const [imageUri, setImageUri] = useState<string>('');
+  const [image, setImage] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [shouldEditUser, setShouldEditUser] = useState(false);
@@ -26,10 +26,7 @@ const EditProfile = () => {
 
     const editUser = async () => {
       console.log("Attempting edit user...");
-      const imageBlob = image ? await (await fetch(image)).blob() : null;
-      console.log("file:", imageBlob)
-      const resultAction = await dispatch(handleEditUser({ file: imageBlob, username, bio}));
-
+      const resultAction = await dispatch(handleEditUser({ file: imageUri, username, bio}));
       if (handleEditUser.fulfilled.match(resultAction)) {
         console.log("Profile successfully edited, triggering onEditUserSuccess...");
         Alert.alert("Profile updated successfully");
@@ -63,9 +60,9 @@ const EditProfile = () => {
       aspect: [1, 1],
       quality: 1,
     });
-
     if (!result.canceled && result.assets.length > 0) {
-      setImage(result.assets[0].uri);
+      const response = await fetch(result.assets[0].uri);
+      setImageUri(result.assets[0].uri);
     }
   };
 
@@ -81,7 +78,7 @@ const EditProfile = () => {
             <Text style={styles.headerText}>Edit Profile</Text>
           </View>
           <View style={{alignSelf: 'center'}}>
-            <Image source={image ? { uri: image } : icons.defaultProfile} style={styles.profileImage} />
+            <Image source={imageUri ? { uri: imageUri } : icons.defaultProfile} style={styles.profileImage} />
           </View>
           <TouchableOpacity onPress={pickImage} style={{ position: 'absolute', right: 100, top: 170, zIndex: 9999 }}>
             <Image source={icons.camera} style={{ height: 40, width: 40, resizeMode: 'contain' }} />
