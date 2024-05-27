@@ -64,7 +64,7 @@ export default function TabLayout() {
 
                 }}
             />
-            {/* <Tabs.Screen
+            <Tabs.Screen
                 name="sandbox"
                 options={{
                     title:"",
@@ -91,8 +91,8 @@ export default function TabLayout() {
                     }
 
                 }}
-            /> */}
-            {/* <Tabs.Screen
+            />
+             <Tabs.Screen
                 name="leaderboard"
                 options={{
                     title:"",
@@ -119,7 +119,7 @@ export default function TabLayout() {
                     }
 
                 }}
-            /> */}
+            />
             <Tabs.Screen
                 name="profile"
                 options={{

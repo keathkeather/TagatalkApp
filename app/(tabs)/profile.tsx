@@ -19,7 +19,7 @@ const Profile = () => {
   // const user = useSelector((state: RootState) => state.user.userState);
   //*Change the progress based of the logged in user
   const readingProgress = 90;
-  // const speakingProgress = 20;
+  const speakingProgress = 20;
   const writingProgress = 40;
   const listeningProgress = 65;
   const streak = 12;
@@ -93,7 +93,7 @@ const Profile = () => {
       }}>
         Statistics
       </Text>
-      {/* <View style={{flex:1, flexDirection: 'row', marginHorizontal: 30, }}>
+      <View style={{flex:1, flexDirection: 'row', marginHorizontal: 30, }}>
         <View style={styles.statsContainer} >
           <Image 
                 source={icons.flame}
@@ -123,16 +123,16 @@ const Profile = () => {
             <Text style={{fontSize: 16, color: '#D0D5DD', fontWeight:'500', width:80}}>full life!</Text>
           </View>
         </View>
-      </View> */}
+      </View>
       <View style={styles.progressContainer}>
         <Text style={styles.skillText}>
           Reading
         </Text>
         <ProgressBar value={readingProgress} indicatorColor='#E33230'/>
-        {/* <Text style={styles.skillText}>
+        <Text style={styles.skillText}>
           Speaking
         </Text>
-        <ProgressBar value={speakingProgress} indicatorColor='#BF85FA'/> */}
+        <ProgressBar value={speakingProgress} indicatorColor='#BF85FA'/>
         <Text style={styles.skillText}>
           Writing
         </Text>
