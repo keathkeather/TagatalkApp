@@ -14,12 +14,12 @@ const pages = [
     image: require('../assets/readLogo.png'),
     imageRectangle: require('../assets/redRectangle.png'),
   },
-  // {
-  //   header: "Speaking Skills",
-  //   subheader: "Let's start speaking Filipino like a pro!",
-  //   image: require('../assets/speakLogo.png'),
-  //   imageRectangle: require('../assets/purpleRectangle.png'),
-  // },
+  {
+    header: "Speaking Skills",
+    subheader: "Let's start speaking Filipino like a pro!",
+    image: require('../assets/speakLogo.png'),
+    imageRectangle: require('../assets/purpleRectangle.png'),
+  },
   {
     header: "Listening Skills",
     subheader: "Let's start listening Filipino like a pro!",
@@ -62,13 +62,13 @@ const Index = () => {
                     case 0:
                       router.push('/(skillPages)/ReadingSkillPage');
                       break;
-                    // case 1:
-                    //   router.push('/(skillPages)/SpeakingSkillPage');
-                    //   break;
                     case 1:
-                      router.push('/(skillPages)/ListeningSkillPage');
+                      router.push('/(skillPages)/SpeakingSkillPage');
                       break;
                     case 2:
+                      router.push('/(skillPages)/ListeningSkillPage');
+                      break;
+                    case 3:
                       router.push('/(skillPages)/WritingSkillPage');
                       break;
                     default:
