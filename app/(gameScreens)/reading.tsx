@@ -9,6 +9,7 @@ import { Container } from '../../tamagui.config';
 import ReadGame2 from '../readingGames/readGame2';
 import ReadGame3 from '../readingGames/readGame3';
 import ReadGame1 from '../readingGames/readGame1';
+import ReadTest1 from '../readingGames/readTest1';
 
 const Reading = () => {
     const navigation = useNavigation();
@@ -30,7 +31,7 @@ const Reading = () => {
         switch (currentStep) {
           case 1:
             console.log(currentStep);
-            return <ReadGame3 onContinue={handleContinue} />;
+            return <ReadTest1 lessonNumber={1} />;
           case 2:
             console.log(currentStep);
             return <ReadGame1 onContinue={handleContinue} />;
