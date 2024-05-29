@@ -12,12 +12,12 @@ export interface Game {
     gameLesson: string, // Lesson Title
 }
 
-export interface Game {
+export interface Games {
     game: Game[];
 }
 
 // Function to get game base on lesson
-export async function getGame(gameLessonNumber: number): Promise<Game | null> {
+export async function getGame(gameLessonNumber: number): Promise<Games | null> {
     try {
         const token = await AsyncStorage.getItem('token');
         const response = await axios.get(`http://13.236.105.57:3000/game/getGameByLesson/${gameLessonNumber}`, {
@@ -31,7 +31,7 @@ export async function getGame(gameLessonNumber: number): Promise<Game | null> {
         }
         console.log('response')
         console.log(response.data);
-        return { game: response.data } as Game; // Fix: Typecast response.data as Game
+        return { game: response.data } ; // Fix: Typecast response.data as Game
     } catch (error) {
         console.log(error);
         throw new Error('Failed to get game data');

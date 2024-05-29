@@ -6,8 +6,8 @@ import { AppDispatch, RootState } from '../redux/store';
 
 const ReadTest1 = ({ lessonNumber }: { lessonNumber: number }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const { games, loading, error } = useSelector((state: RootState) => state.game);
-
+    const  games = useSelector((state: RootState) => state.game.games);
+    // console.log(games);
     useEffect(() => {
         const fetchGame = async () => {
             const resultAction = await dispatch(handleGame(lessonNumber));
@@ -28,15 +28,15 @@ const ReadTest1 = ({ lessonNumber }: { lessonNumber: number }) => {
 
     return (
         <View style={styles.container}>
-            {loading ? (
+            {/* {loading ? (
                 <Text>Loading...</Text>
             ) : error ? (
-                <Text>Error: {error}</Text>
-            ) : filteredGame ? (
-                <Text>{filteredGame.gameType}</Text>
-            ) : (
+                <Text>Error: {error}</Text> */}
+            {/* ) : filteredGame ? ( */}
+                <Text>{filteredGame?.gameType}</Text>
+            {/* ) : (
                 <Text>No matching game found</Text>
-            )}
+            )} */}
         </View>
     );
 }

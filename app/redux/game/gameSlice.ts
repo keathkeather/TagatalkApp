@@ -34,7 +34,7 @@ export const handleGame = createAsyncThunk('game/getGame', async (gameLessonNumb
 });
 
 const gameSlice = createSlice({
-    name: "game",
+    name: "gameState",
     initialState,
     reducers: {},
     extraReducers: (builder) => {
