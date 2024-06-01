@@ -1,6 +1,6 @@
 import { Stack, Link, router } from 'expo-router';
 
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput} from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, StatusBar} from 'react-native'
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
 import React, { useEffect, useState } from 'react'
 //import { login } from '~/components/auth'; 
@@ -59,15 +59,23 @@ const Login: React.FC<LoginProps> = ( ) =>{
   }
  
   return (
-        <Container style={{backgroundColor:"#fff"}}>
-            <Main> 
+    <View style={{ flex: 1, width:'100%', justifyContent: 'center'}}>
+      <StatusBar backgroundColor="#FD9F10" barStyle="light-content" />
+      <Image source={require('../assets/loginRegisPassBg.png')} style={{position: 'absolute', width: '100%', height: '100%', }} />
+      <Main style={{width:'100%', padding:'5%'}}>
                 <Stack.Screen options={{ title: 'Login', headerShown: false }} />
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>Sign in</Text>
                     </View>
                     <View>
-                        <Image source={require('../assets/logo1.png')} />
+                        <Image source={require('../assets/logo1.png')} 
+                        style={{
+                          width: 250,
+                          height:90,
+                          marginTop:20,
+                          resizeMode: 'contain',
+                        }}/>
                     </View> 
                     <View style={styles.subheaderContainer}>
                         <Text style={styles.subheaderText}>Welcome back, we</Text>
@@ -100,7 +108,7 @@ const Login: React.FC<LoginProps> = ( ) =>{
                     </View>
                 </View>
             </Main>
-        </Container>
+        </View>
     );
 };
 
@@ -108,7 +116,6 @@ export default Login
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
     },
