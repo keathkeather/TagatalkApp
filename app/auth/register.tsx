@@ -3,9 +3,9 @@ import { YStack } from 'tamagui';
 import axios from 'axios';
 import { Container,Main ,Title, Subtitle, Button, ButtonText } from '~/tamagui.config';
 import { Input ,SizableText,} from 'tamagui';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {router} from 'expo-router';
-import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert} from 'react-native';
+import { View, Image, Text, StyleSheet, TextInput, TouchableOpacity, Alert, StatusBar, ImageBackground} from 'react-native';
 //import { registerFunction } from '~/components/auth';
 import { useAuth } from '../context/AuthContext';
 import { handleRegister } from '../redux/auth/authSlice';
@@ -63,8 +63,10 @@ const Register: React.FC<RegisterProps> = ( ) =>{
 
 
   return (
-    <Container style={{backgroundColor:"#fff"}}>
-      <Main>
+    <View style={{ flex: 1, width:'100%', justifyContent: 'center'}}>
+      <StatusBar backgroundColor="#FD9F10" barStyle="light-content" />
+      <Image source={require('../assets/loginRegisPassBg.png')} style={{position: 'absolute', width: '100%', height: '100%', }} />
+      <Main style={{width:'100%', padding:'8%'}}>
         <Stack.Screen options={{ title: 'Login', headerShown: false }} />
         <YStack>
         <View style={styles.container}>
@@ -72,7 +74,13 @@ const Register: React.FC<RegisterProps> = ( ) =>{
           <Text style={styles.headerText}> Create Account</Text>
         </View> 
         <View>
-          <Image source={require('../assets/logo1.png')} />
+          <Image source={require('../assets/logo1.png')} 
+                          style={{
+                            width: 250,
+                            height:90,
+                            marginTop:20,
+                            resizeMode: 'contain',
+                          }}/>
         </View>
         <View style={styles.formContainer}>
           <TextInput style={styles.textInput} onChangeText ={text=>setEmail(text)}value={email}placeholder='Email' />
@@ -93,6 +101,7 @@ const Register: React.FC<RegisterProps> = ( ) =>{
             </Text>
             </View>
         </View>
+        {/* 
         <View style={styles.afterContainer}>
           <View style={styles.line} />
             <Text style={styles.bottomText}> or continue with </Text>
@@ -111,14 +120,18 @@ const Register: React.FC<RegisterProps> = ( ) =>{
             </TouchableOpacity>
           </View>
         </View>
+        */}
         <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>By continuing, you agree to TagaTalk’s 
         Terms of Service and acknowledge our Privacy and Policy.</Text>
+        
         </View>
         </View>
+        
         </YStack>
+        
       </Main>
-    </Container>
+    </View>
   )
 }
 
