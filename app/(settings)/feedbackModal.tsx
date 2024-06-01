@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button } from 'react-native';
+import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button, Alert } from 'react-native';
 import icons from '../../constants/icons'
 import { styles } from './helpDeskModalStyles';
 import { feedback } from '~/components/feedback';
@@ -79,14 +79,20 @@ const feedbackHandler = ()=>{
         <TextInput
           style={styles.feedbackDescription}
           onChangeText={text => setNewFeedbackDescription(text)}
+          multiline
           placeholder="Do you have an idea for an improvement or new functionality? How do you like TagaTalk? Tell us!"
         />
         <TouchableOpacity
             style={styles.saveButton}
             onPress={() => {
-            feedbackHandler();
-            setFeedbackModalVisible(false);
-            }}>
+              if (!newFeedbackTitle || !newFeedbackDescription) {
+                  // Show an alert if either of the inputs is null
+                  Alert.alert("Error", "Please fill in both title and description.");
+              } else {
+                  feedbackHandler();
+                  setFeedbackModalVisible(false);
+              }
+          }}>
                 <Text style={styles.saveText}>Send</Text>
         </TouchableOpacity>
       </View>

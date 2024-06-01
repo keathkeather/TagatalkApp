@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button } from 'react-native';
+import { Text, Modal, View, Image, TouchableOpacity, TextInput, Button, Alert } from 'react-native';
 import icons from '../../constants/icons'
 import { styles } from './helpDeskModalStyles';
 import { report } from '~/components/report';
@@ -35,9 +35,15 @@ const ReportModal = ({
             setShouldReport(false);  // reset the trigger
         }
     },[shouldReport])
-    const ReportHandler = ()=>{
-        setShouldReport(true);
-    }
+    const ReportHandler = () => {
+        if (!newReportTitle || !newReportDescription) {
+          // Show an alert if either of the inputs is blank
+          Alert.alert("Error", "Please fill in both title and description.");
+        } else {
+          // If both inputs are filled, trigger the report
+          setShouldReport(true);
+        }
+      }
     return (
         
         <Modal
@@ -75,12 +81,21 @@ const ReportModal = ({
                 />
                 <TextInput
                 style={styles.bugDescription}
+                multiline
                 onChangeText={text=>setNewReportDescription(text)}
                 placeholder="Is something not working well? We want to fix it. Tell us in detail what happened..."
                 />
                 <TouchableOpacity
-                    style={styles.saveButton}onPress={() => {ReportHandler()}}
-                    >
+                    style={styles.saveButton}
+                    onPress={() => {
+                        if (!newReportTitle || !newReportDescription) {
+                            // Show an alert if either of the inputs is null
+                            Alert.alert("Error", "Please fill in both title and description.");
+                        } else {
+                            ReportHandler();
+                            setReportModalVisible(false);
+                        }
+                    }}>
                     <Text style={styles.saveText}>Send</Text>
                 </TouchableOpacity>
             </View>
