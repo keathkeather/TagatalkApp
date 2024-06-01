@@ -25,8 +25,8 @@ export const styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      width: 366,
-      height: 393,
+      width: 340,
+      height: 390,
     },
     repModalView: {
       backgroundColor: "white",
@@ -41,8 +41,8 @@ export const styles = StyleSheet.create({
       shadowOpacity: 0.25,
       shadowRadius: 4,
       elevation: 5,
-      width: 366,
-      height: 393,
+      width: 340,
+      height: 390,
     },
     modalText: {
       marginBottom: 15,
@@ -64,7 +64,7 @@ export const styles = StyleSheet.create({
     },
     optionContainer: {
       backgroundColor: '#344054',
-      width: 291,
+      width: '95%',
       height: 97,
       borderRadius: 15,
       alignItems: 'center',
@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
       marginBottom: 30,
     },
     modalContainer: {
-      width: 216,
+      width: 100,
       height: 68,
       alignItems: 'center',
       justifyContent: 'center',
@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: '500',
       color: '#FFFFFF',
-      width: 165,
+      width: 150,
       height: 52,
     },
       bugDescription: {
@@ -151,5 +151,16 @@ export const styles = StyleSheet.create({
       color: '#fff', 
       fontSize: 18,
       fontWeight: 'bold',
+    },
+    successIndicator: {
+      backgroundColor: '#32CD32', // Green color
+      padding: 10,
+      borderRadius: 5,
+      marginTop: 10,
+      alignItems: 'center',
+    },
+    successText: {
+      color: '#fff', // White color
+      fontSize: 16,
     },
 });
