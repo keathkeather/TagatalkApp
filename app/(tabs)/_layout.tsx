@@ -64,6 +64,7 @@ export default function TabLayout() {
 
                 }}
             />
+            {/*
             <Tabs.Screen
                 name="sandbox"
                 options={{
@@ -92,6 +93,7 @@ export default function TabLayout() {
 
                 }}
             />
+        */}
              <Tabs.Screen
                 name="leaderboard"
                 options={{
@@ -137,6 +139,11 @@ export default function TabLayout() {
                             }}>
                                 <Image 
                                     source={focused ? icons.profileOutline : icons.profile}
+                                    style={{
+                                        height: 32, 
+                                        width: 24,
+                                        resizeMode: 'contain',
+                                    }}
                                 />
                             </View>
                         )
@@ -162,8 +169,9 @@ export default function TabLayout() {
                                 <Image 
                                     source={focused ? icons.settingOutline : icons.setting}
                                     style={{
-                                        height: 24, 
+                                        height: 32, 
                                         width: 24,
+                                        resizeMode: 'contain',
                                     }}
                                 />
                             </View>
