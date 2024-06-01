@@ -109,6 +109,48 @@ export async function verifyCode(OTP: string) :Promise<boolean | null>{
   }
 }
 
+export async function changePassword(oldPassword: string, newPassword: string): Promise<boolean | null> {
+  try {
+    // Retrieve the token from AsyncStorage
+    const token = await AsyncStorage.getItem('token');
+
+    // If no token is found, throw an error
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    // Create the Axios request configuration with Bearer token
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    // Make the API call to change the password
+    const response = await axios.put('http://13.236.105.57:3000/auth/changePassword', {
+      oldPassword: oldPassword,
+      newPassword: newPassword
+    }, config);
+
+    // Check if the response status is 200 (OK)
+    if (response.status === 200) {
+      return true;
+    } else {
+      return false;
+    }
+
+  } catch (error) {
+    console.log(error);
+    if (axios.isAxiosError(error)) {
+      const serverError = error as AxiosError;
+      if (serverError && serverError.response) {
+        console.log(serverError.response.data);
+      }
+    }
+    return null;
+  }
+}
+
 export async function resetPassword(OTP: string, newPassword: string) :Promise<boolean | null>{
   try {
     console.log(OTP)
