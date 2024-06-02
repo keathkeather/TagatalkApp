@@ -31,7 +31,7 @@ const Reading = () => {
         switch (currentStep) {
           case 1:
             console.log(currentStep);
-            return <ReadTest1 lessonNumber={1} />;
+            return <ReadGame3 onContinue={handleContinue} />;
           case 2:
             console.log(currentStep);
             return <ReadGame1 onContinue={handleContinue} />;

@@ -6,14 +6,37 @@ import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/ProgressBar'; 
 import { Container } from '../../tamagui.config';
-import ListenGame2 from '../listeningGames/listenGame2';
+import SpeakGame2 from '../speakingGames/speakGame2';
+import SpeakGame3 from '../speakingGames/speakGame3';
 
-const Speaking = () => {
+const Reading = () => {
     const navigation = useNavigation();
+    const [currentStep, setCurrentStep] = useState(1);
+    const [progress, setProgress] = useState(0);
+    const totalSteps = 2; // total number of items
+    const progressIncrement = 100 / totalSteps; // calculate progress increment
     
     const handleGoBack = () => {
         navigation.goBack();
     };
+
+    const handleContinue = () => {
+        setCurrentStep(prevStep => prevStep + 1);
+        setProgress(prevProgress => prevProgress + progressIncrement);
+      };
+    
+      const renderCurrentGame = () => {
+        switch (currentStep) {
+          case 1:
+            console.log(currentStep);
+            return <SpeakGame2  onContinue={handleContinue} />;
+          case 2:
+            console.log(currentStep);
+            return <SpeakGame3 onContinue={handleContinue} />;
+          default:
+            return <Text>All games completed!</Text>;
+        }
+      };
     
     return (
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -23,50 +46,47 @@ const Speaking = () => {
                     <Image source={icons.modbackarrow} style={styles.backArrow} />
                 </TouchableOpacity>
                 <View style={styles.progressBarContainer}>
-                    <ProgressBar value={0} indicatorColor={'#FD9F10'}/>
+                    <ProgressBar value={progress} indicatorColor={'#FD9F10'}/>
                 </View>              
             </View>
             <Container style={{
-                alignItems: 'center',
-                justifyContent: 'center',
+                width: '100%',
+                height: '100%',
             }}>
-                   {/* //TODO: Map the 3 gametypes of Speaking skill here */}
-                   <Text>
-                        Sample Content
-                     </Text>
+                   {/* //TODO: Map the 3 gametypes of reading skill here */}
+                   {renderCurrentGame()}
             </Container>
         </SafeAreaView>
     )
 }
 
-export default Speaking
+export default Reading
 
 const styles = StyleSheet.create({
-    backArrow: {
-        resizeMode: 'cover',
-        width: 34,
-        height: 34,
-        borderColor: 'white',
-        borderWidth: 1,
-      },
-      headerContainer: {
-        height: '5%',
-        marginTop: 25,
-        flexDirection: 'row',
-        justifyContent: 'center',
-        borderColor: 'white',
-        borderWidth: 1,
-        width: '90%',
-        alignSelf: 'center',
-      },
-      progressBarContainer: {
-        marginLeft: 20,
-        alignSelf: 'center',
-        width: '80%',
-      },
-      buttonContainer: {
-        width: '90%',
-        alignSelf: 'center',
-        margin: 20,
-      },
+  backArrow: {
+      resizeMode: 'cover',
+      width: 34,
+      height: 34,
+      borderColor: 'white',
+      borderWidth: 1,
+    },
+    headerContainer: {
+      height: '5%',
+      marginTop: 25,
+      flexDirection: 'row',
+      width: '90%',
+      marginLeft: 15,
+    },
+    progressBarContainer: {
+      marginTop: 10,
+      marginLeft: 20,
+      alignSelf: 'center',
+      width: '80%',
+      height: '100%',
+    },
+    buttonContainer: {
+      width: '90%',
+      alignSelf: 'center',
+      margin: 20,
+    },
 })

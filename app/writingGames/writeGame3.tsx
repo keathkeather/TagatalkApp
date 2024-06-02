@@ -45,15 +45,17 @@ const WriteGame3 = ({onContinue} : {onContinue : any}) => {
         setFeedback('Correct!');
         setIsModalVisible(true);
       } else {
-        setFeedback('Incorrect. Try again.');
+        setFeedback('Woopsie Daisy!');
         setIsModalVisible(true);
       }
     };
 
-    const handleContinue = () => {
-      setIsModalVisible(false);
-      if (onContinue) {
+    const handleModalClose = () => {
+      
+      if (feedback === 'Correct!' && onContinue) {
         onContinue();
+      } else {
+        setIsModalVisible(false);
       }
     };
   
@@ -85,7 +87,7 @@ const WriteGame3 = ({onContinue} : {onContinue : any}) => {
           </View>
         <FeedbackModal visible={isModalVisible}
           feedback={feedback}
-          onClose={handleContinue}
+          onClose={handleModalClose}
         />
         </View>
     );

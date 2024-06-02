@@ -6,7 +6,7 @@ const WriteGame2 = ({onContinue} : {onContinue : any}) => {
     const [typedText, setTypedText] = useState('');
     const [currentItem, setCurrentItem] = useState<{ scenario: string, question: string, correctText: string } | null>(null);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [feedback, setFeedback] = useState<string>('');
+    const [feedback, setFeedback] = useState<string | null>(null);
   
     // Array of scenarios & questions and their correct answers
     const items = [
@@ -50,15 +50,17 @@ const WriteGame2 = ({onContinue} : {onContinue : any}) => {
         setFeedback('Correct!');
         setIsModalVisible(true);
       } else {
-        setFeedback('Incorrect. Try again.');
+        setFeedback('Woopsie Daisy!');
         setIsModalVisible(true);
       }
     };
 
-    const handleContinue = () => {
-      setIsModalVisible(false);
-      if (onContinue) {
+    const handleModalClose = () => {
+      
+      if (feedback === 'Correct!' && onContinue) {
         onContinue();
+      } else {
+        setIsModalVisible(false);
       }
     };
   
@@ -99,7 +101,7 @@ const WriteGame2 = ({onContinue} : {onContinue : any}) => {
           </View>
               <FeedbackModal visible={isModalVisible}
                 feedback={feedback}
-                onClose={handleContinue}
+                onClose={handleModalClose}
               />
       </View>
     );

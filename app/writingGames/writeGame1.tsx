@@ -11,7 +11,8 @@ const WriteGame1 = ({onContinue} : {onContinue : any}) => {
     const [typedText, setTypedText] = useState('');
     const [currentItem, setCurrentItem] = useState<{ image: any, correctText: string } | null>(null);
     const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [feedback, setFeedback] = useState<string>('');
+    const [feedback, setFeedback] = useState<string | null>(null);
+    const [continueClicked, setContinueClicked] = useState<boolean>(false);
   
     // Array of images and their correct answers
     const items = [
@@ -35,21 +36,23 @@ const WriteGame1 = ({onContinue} : {onContinue : any}) => {
   
     const checkAnswer = () => {
       if (!currentItem) return;
-  
+    
       if (typedText.trim().toLowerCase() === currentItem.correctText.toLowerCase()) {
         setFeedback('Correct!');
-        setIsModalVisible(true);
       } else {
-        setFeedback('Incorrect. Try again.');
-        setIsModalVisible(true);
+        setFeedback('Woopsie Daisy!');
+        // Remove the call to onContinue here
       }
+
+    setContinueClicked(true);
     };
 
-    const handleContinue = () => {
-      setIsModalVisible(false);
-      if (onContinue) {
+    const handleModalClose = () => {
+      
+      if (feedback === 'Correct!' && onContinue) {
         onContinue();
       }
+      setFeedback(null);
     };
   
     return (
@@ -78,10 +81,11 @@ const WriteGame1 = ({onContinue} : {onContinue : any}) => {
           <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
           </View>
-        <FeedbackModal visible={isModalVisible}
-          feedback={feedback}
-          onClose={handleContinue}
-        />
+          <FeedbackModal
+            visible={feedback !== null}
+            feedback={feedback}
+            onClose={handleModalClose}
+          />
         </View>
     );
   };
