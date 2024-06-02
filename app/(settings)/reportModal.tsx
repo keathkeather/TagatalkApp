@@ -28,6 +28,8 @@ const ReportModal = ({
             const succesful =await report(newReportTitle, newReportDescription);
             if(succesful == true){
                 setReportModalVisible(false);
+                // Success message to be improved
+                Alert.alert("Success!", "Your report has been sent.");
             }
         };
         if (shouldReport) {
