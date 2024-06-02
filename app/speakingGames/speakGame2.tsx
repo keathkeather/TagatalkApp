@@ -7,7 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 
-const SpeakGame2 = () => {
+const SpeakGame2 = ({onContinue} : {onContinue : any}) => {
   const [started, setStarted] = useState(false);
   const [results, setResults] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -36,7 +36,7 @@ const SpeakGame2 = () => {
       const matchFound = recognized.toLowerCase() === targetText.toLowerCase();
       setMatchFound(matchFound);
       if (!matchFound) {
-        setFeedback('Incorrect. Try again.');
+        setFeedback('Woopsie Daisy!');
       } else {
         setFeedback('Correct!');
       }
@@ -48,17 +48,16 @@ const SpeakGame2 = () => {
     }
   };
 
+  const handleContinue = () => {
+    if (feedback === 'Correct!' && onContinue) {
+      onContinue();
+    } else {
+      setIsModalVisible(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.backContainer}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Image source={icons.modbackarrow} style={styles.backArrow} />
-        </TouchableOpacity>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar value={20} indicatorColor={'#FD9F10'} />
-        </View>
-      </View>
+    <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between',}}>
       <Text style={styles.header}>Complete the conversation.</Text>
       <Text style={styles.subheader}>In this scenario, you haven't eaten yet.</Text>
       <View style={styles.contentContainer}>
@@ -87,15 +86,15 @@ const SpeakGame2 = () => {
         <TouchableOpacity
           style={[styles.continueButton, !matchFound ? styles.disabledButton : null]}
           disabled={!matchFound}>
-          <Text style={styles.continueText}>CONTINUE</Text>
+          <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
       </View>
       <FeedbackModal
         visible={isModalVisible}
         feedback={feedback}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleContinue}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -121,7 +120,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: -80,
     marginLeft: 20,
-    marginBottom: 30,
+    marginBottom: 10,
     backgroundColor: '#DA9EFF',
     flexDirection: 'column',
     borderRadius: 10,
@@ -182,7 +181,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginLeft: 20,
-    marginTop: 40,
   },
   subheader: {
     fontSize: 16,
@@ -229,11 +227,12 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: '#FD9F10',
     borderRadius: 30,
-    width: 390,
-    height: 48,
+    width: '100%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
+    marginBottom: 20,
   },
   continueText: {
     fontSize: 18,

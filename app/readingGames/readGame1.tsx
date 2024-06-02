@@ -40,7 +40,7 @@ const GameScreen = ({onContinue} : {onContinue : any}) => {
     if (selectedWord === timeOfDay) {
       setFeedback("Correct!"); 
     } else {
-      setFeedback("Incorrect!");
+      setFeedback("Woopsie Daisy!");
     }
     setContinueClicked(true);
   };

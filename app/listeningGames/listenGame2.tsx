@@ -52,15 +52,16 @@ const ListenGame2 = ({onContinue} : {onContinue : any}) => {
       setFeedback('Correct!');
       setIsModalVisible(true);
     } else {
-      setFeedback('Incorrect. Try again.');
+      setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
     }
   };
 
   const handleContinue = () => {
-    setIsModalVisible(false);
-    if (onContinue) {
+    if (feedback === 'Correct!' && onContinue) {
       onContinue();
+    } else {
+      setIsModalVisible(false);
     }
   };
 

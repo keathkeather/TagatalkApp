@@ -8,11 +8,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 
-const SpeakGame3 = () => {
+const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
   const [started, setStarted] = useState(false);
   const [results, setResults] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [feedback, setFeedback] = useState('');
+  const [feedback, setFeedback] = useState<string | null>(null);
   const [recognizedText, setRecognizedText] = useState('');
   const [matchFound, setMatchFound] = useState(false);
   const [currentItem, setCurrentItem] = useState<{ image: any, correctText: string } | null>(null)
@@ -55,7 +55,7 @@ const SpeakGame3 = () => {
       const matchFound = recognized.toLowerCase() === targetText.toLowerCase();
       setMatchFound(matchFound);
       if (!matchFound) {
-        setFeedback('Incorrect. Try again.');
+        setFeedback('Woopsie Daisy!');
       } else {
         setFeedback('Correct!');
       }
@@ -67,17 +67,17 @@ const SpeakGame3 = () => {
     }
   };
 
+  const handleModalClose = () => {
+      
+    if (feedback === 'Correct!' && onContinue) {
+      onContinue();
+    } else {
+      setIsModalVisible(false);
+    }
+  };
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-      <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.backContainer}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Image source={icons.modbackarrow} style={styles.backArrow} />
-        </TouchableOpacity>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar value={20} indicatorColor={'#FD9F10'} />
-        </View>
-      </View>
+    <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between',}}>
       <Text style={styles.header}>Guess the image below.</Text>
       <View style={styles.contentContainer}>
         <View style={styles.iconContainer}>
@@ -99,15 +99,15 @@ const SpeakGame3 = () => {
         <TouchableOpacity
           style={[styles.continueButton, !matchFound ? styles.disabledButton : null]}
           disabled={!matchFound}>
-          <Text style={styles.continueText}>CONTINUE</Text>
+          <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
       </View>
       <FeedbackModal
         visible={isModalVisible}
         feedback={feedback}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleModalClose}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   subSubheaderContainer: {
-    marginBottom: 40,
+    marginBottom: 30,
   },
   subSubheaderText: {
     fontSize: 15,
@@ -164,8 +164,8 @@ const styles = StyleSheet.create({
     height: 70,
   },
   icon: {
-    width: 200,
-    height: 235,
+    width: 235,
+    height: 230,
     resizeMode: 'contain',
   },
   iconContainer: {
@@ -180,7 +180,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginLeft: 20,
-    marginTop: 40,
   },
   contentContainer: {
     alignItems: "center",
@@ -189,7 +188,7 @@ const styles = StyleSheet.create({
   },
   micButton: {
     fontSize: 25,
-    marginTop: 27,
+    marginTop: 10,
     marginLeft: 20,
     borderRadius: 35,
     width: 70,
@@ -223,11 +222,12 @@ const styles = StyleSheet.create({
   continueButton: {
     backgroundColor: '#FD9F10',
     borderRadius: 30,
-    width: 390,
-    height: 48,
+    width: '100%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
+    marginBottom: 20,
   },
   continueText: {
     fontSize: 18,

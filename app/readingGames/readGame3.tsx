@@ -33,7 +33,7 @@ const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
       setFeedback('Correct!');
       setIsModalVisible(true);
     } else {
-      setFeedback('Incorrect. Try again.');
+      setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
     }
   };
