@@ -25,12 +25,15 @@ const ReportModal = ({
     const [shouldReport, setShouldReport] = useState(false);
     useEffect(()=>{
         const handleReport = async()=>{
-            const succesful =await report(newReportTitle, newReportDescription);
-            if(succesful == true){
-                setReportModalVisible(false);
-                // Success message to be improved
-                Alert.alert("Success!", "Your report has been sent.");
-            }
+            const successful =await report(newReportTitle, newReportDescription);
+                if (successful) {
+                    setReportModalVisible(false);
+                    // Success message to be improved
+                    Alert.alert("Success!", "Your report has been sent.");
+                } else {
+                    // Failure message to be improved
+                    Alert.alert("Failure.", "Failed to send your report.");
+                }
         };
         if (shouldReport) {
             handleReport();

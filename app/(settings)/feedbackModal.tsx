@@ -28,12 +28,13 @@ const FeedbackModal = ({
 
   useEffect(()=>{
     const handleFeedback = async()=>{
-        const succesful =await feedback(newFeedbackTitle, newFeedbackDescription);
-        if(succesful == true){
+        const successful =await feedback(newFeedbackTitle, newFeedbackDescription);
+          if (successful) {
             setFeedbackModalVisible(false);
-            // Success message to be improved
-            Alert.alert("Success!", "Your feedback has been sent.");
-        }
+            Alert.alert("Success!", "Your feedback has been sent."); // Show an alert when feedback is sent successfully
+          } else {
+            Alert.alert("Failure.", "Failed to send your feedback."); // Show an alert when feedback fails to send
+          }
     };
     if (shouldFeedback) {
         handleFeedback();
