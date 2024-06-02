@@ -8,6 +8,7 @@ import ProgressBar from '../../components/ProgressBar';
 import { Container } from '../../tamagui.config';
 import SpeakGame2 from '../speakingGames/speakGame2';
 import SpeakGame3 from '../speakingGames/speakGame3';
+import LessonComplete from './lessonComplete';
 
 const Reading = () => {
     const navigation = useNavigation();
@@ -34,7 +35,7 @@ const Reading = () => {
             console.log(currentStep);
             return <SpeakGame3 onContinue={handleContinue} />;
           default:
-            return <Text>All games completed!</Text>;
+            return <LessonComplete/>;
         }
       };
     

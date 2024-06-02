@@ -9,6 +9,7 @@ import { Container } from '../../tamagui.config';
 //import ListenGame1 from '../listeningGames/listenGame1';
 import ListenGame2 from '../listeningGames/listenGame2';
 import ListenGame3 from '../listeningGames/listenGame3';
+import LessonComplete from './lessonComplete';
 
 const Listening = () => {
     const navigation = useNavigation();
@@ -35,7 +36,7 @@ const Listening = () => {
             console.log(currentStep);
             return <ListenGame3 onContinue={handleContinue} />;
           default:
-            return <Text>All games completed!</Text>;
+            return <LessonComplete/>;
         }
       };
     
