@@ -28,13 +28,15 @@ const VerifyCode = () => {
         const resultAction = await dispatch(handleVerifyCode({OTP}));
         console.log("Code successfully verified:", resultAction);
         if (handleVerifyCode.fulfilled.match(resultAction)) {
-          console.log("Code successfully verify, triggering onVerifyCodeSuccess...");
+          console.log("Code successfully verified, triggering onVerifyCodeSuccess...");
+          Alert.alert("Code successfully verified");
           router.push({
             pathname: '/auth/forgotPassword/resetPassword',
             params: { OTP, email },
           });
         } else if(handleVerifyCode.rejected.match(resultAction)){
-          console.log("Sending code failed.");
+          console.log("Verifying code failed.");
+          Alert.alert("Verifying code failed");
         }
       };
 
@@ -47,6 +49,7 @@ const VerifyCode = () => {
           Alert.alert("Verification code resent");
         } else if(handleSendCode.rejected.match(resultAction)){
           console.log("Resending code failed.");
+          Alert.alert("Resending code failed");
         }
       };
 
