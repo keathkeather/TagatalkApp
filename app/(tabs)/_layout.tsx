@@ -93,7 +93,7 @@ export default function TabLayout() {
 
                 }}
             />
-        */}
+        
              <Tabs.Screen
                 name="leaderboard"
                 options={{
@@ -122,6 +122,7 @@ export default function TabLayout() {
 
                 }}
             />
+            */}
             <Tabs.Screen
                 name="profile"
                 options={{

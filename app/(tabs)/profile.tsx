@@ -18,10 +18,10 @@ const Profile = () => {
   // // }, [userState.user]); 
   // const user = useSelector((state: RootState) => state.user.userState);
   //*Change the progress based of the logged in user
-  const readingProgress = 90;
-  const speakingProgress = 20;
-  const writingProgress = 40;
-  const listeningProgress = 65;
+  const readingProgress = 0;
+  const speakingProgress = 0;
+  const writingProgress = 0;
+  const listeningProgress = 0;
   const streak = 12;
   const life = 5;
   const bio = useSelector((state: RootState) => state.user.profileDescription);
@@ -84,7 +84,7 @@ const Profile = () => {
         </Text>
       <View style={styles.line}/>
       <Text style={{
-        fontSize: 20,
+        fontSize: 32,
         fontWeight: 'bold',
         color: '#344054',
         marginBottom: 10,
@@ -94,35 +94,7 @@ const Profile = () => {
         Statistics
       </Text>
       <View style={{flex:1, flexDirection: 'row', marginHorizontal: 30, }}>
-        <View style={styles.statsContainer} >
-          <Image 
-                source={icons.flame}
-                  style={{
-                    resizeMode: 'contain',
-                    height: 28, 
-                    width: 28,
-                }}
-            />
-          <View>
-            <Text style={{fontSize: 16, color: '#545F71', fontWeight:'bold', width:'100%'}}>{streak}</Text>
-            <Text style={{fontSize: 16, color: '#D0D5DD', fontWeight:'500', width:'100%'}}>day streak!</Text>
-          </View>
-        </View>
-        <View style={{margin:5}}/>
-        <View style={styles.statsContainer} >
-          <Image 
-              source={icons.heart}
-                style={{
-                  resizeMode: 'contain',
-                  height: 24, 
-                  width: 24,
-              }}
-          />
-          <View>
-            <Text style={{fontSize: 16, color: '#545F71', fontWeight:'bold', width:80}}>{life}</Text>
-            <Text style={{fontSize: 16, color: '#D0D5DD', fontWeight:'500', width:80}}>full life!</Text>
-          </View>
-        </View>
+        
       </View>
       <View style={styles.progressContainer}>
         <Text style={styles.skillText}>
