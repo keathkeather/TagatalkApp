@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import icons from '../../constants/icons';
@@ -10,6 +10,7 @@ import ReadGame2 from '../readingGames/readGame2';
 import ReadGame3 from '../readingGames/readGame3';
 import ReadGame1 from '../readingGames/readGame1';
 import ReadTest1 from '../readingGames/readTest1';
+import LessonComplete from './lessonComplete';
 
 const Reading = () => {
     const navigation = useNavigation();
@@ -18,6 +19,14 @@ const Reading = () => {
     const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
     
+    useEffect(() => {
+      return () => {
+          // Reset state when component is unmounted
+          setCurrentStep(1);
+          setProgress(0);
+      };
+  }, []);
+
     const handleGoBack = () => {
         navigation.goBack();
     };
@@ -39,7 +48,7 @@ const Reading = () => {
             console.log(currentStep);
             return <ReadGame2 onContinue={handleContinue} />;
           default:
-            return <Text>All games completed!</Text>;
+            return <LessonComplete/>;
         }
       };
     

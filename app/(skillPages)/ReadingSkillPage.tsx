@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Stack, Link } from 'expo-router';
+import { Stack, Link, router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
@@ -29,7 +29,7 @@ const ReadingSkillPage = () => {
     const navigation = useNavigation();
 
     const handleGoBack = () => {
-        navigation.goBack();
+        router.push('/(tabs)');
     };
 
     return (

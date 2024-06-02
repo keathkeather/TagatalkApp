@@ -9,6 +9,7 @@ import { Container } from '../../tamagui.config';
 import WriteGame1 from '../writingGames/writeGame1';
 import WriteGame2 from '../writingGames/writeGame2';
 import WriteGame3 from '../writingGames/writeGame3';
+import LessonComplete from './lessonComplete';
 
 const Writing = () => {
     const navigation = useNavigation();
@@ -38,7 +39,7 @@ const Writing = () => {
             console.log(currentStep);
             return <WriteGame3 onContinue={handleContinue} />;
           default:
-            return <Text>All games completed!</Text>;
+            return <LessonComplete/>;
         }
       };
 
