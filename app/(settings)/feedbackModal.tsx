@@ -31,6 +31,8 @@ const FeedbackModal = ({
         const succesful =await feedback(newFeedbackTitle, newFeedbackDescription);
         if(succesful == true){
             setFeedbackModalVisible(false);
+            // Success message to be improved
+            Alert.alert("Success!", "Your feedback has been sent.");
         }
     };
     if (shouldFeedback) {
