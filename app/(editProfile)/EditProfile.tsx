@@ -16,13 +16,17 @@ const EditProfile = () => {
   const [image, setImage] = useState<string>('');
   const [bio, setBio] = useState<string>('');
   const [username, setUsername] = useState<string>('');
+  const [initialUsername, setInitialUsername] = useState<string>('');
+  const [initialBio, setInitialBio] = useState<string>('');
+  const [initialImageUri, setInitialImageUri] = useState<string>('');
   const [shouldEditUser, setShouldEditUser] = useState(false);
   const maxLength = 100;
 
   useEffect(() => {
-    console.log("Inside useEffect for edit profile");
-    console.log("username:", username);
-    console.log("bio:", bio);
+    // Set initial state when component mounts
+    setInitialUsername(username);
+    setInitialBio(bio);
+    setInitialImageUri(imageUri);
 
     const editUser = async () => {
       console.log("Attempting edit user...");
@@ -44,7 +48,13 @@ const EditProfile = () => {
   }, [shouldEditUser]);
 
   const handleSaveChanges = () => {
-    setShouldEditUser(true);
+    // Check if username, bio, or image has changed
+    if (username !== initialUsername || bio !== initialBio || imageUri !== initialImageUri) {
+      setShouldEditUser(true);
+    } else {
+      // If no changes, show an alert
+      Alert.alert("You haven't changed anything");
+    }
   };
 
   const pickImage = async () => {
@@ -98,7 +108,7 @@ const EditProfile = () => {
                 placeholder='Enter your bio here'
                 value={bio}
                 onChangeText={setBio}
-                maxLength={100}
+                maxLength={maxLength}
                 numberOfLines={6}
                 multiline={true}
               />
