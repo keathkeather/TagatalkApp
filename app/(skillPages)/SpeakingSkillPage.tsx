@@ -1,133 +1,87 @@
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image } from 'react-native'
 import React from 'react';
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { Stack, router } from 'expo-router'
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { Stack, Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
-
-// Assuming you have the list of game types
-const gameTypes = ['SpeakGame1', 'SpeakGame2', 'SpeakGame3'];
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { handleCourseTree } from '../redux/game/courseTreeSlice';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
 
 const SpeakingSkillPage = () => {
-    const navigation = useNavigation();
+    const dispatch = useDispatch<AppDispatch>();
+    useEffect(() => {
+        const fetchCourseTree = async () => {
+          const resultAction = await dispatch(handleCourseTree('SPEAKING'));
+          if(handleCourseTree.fulfilled.match(resultAction)){
+              console.log("Course Tree fetched successfully");
+          }
+          else if(handleCourseTree.rejected.match(resultAction)){
+              console.log("Course Tree fetch failed");
+          }
+        };
+    
+        fetchCourseTree();
+      }, [dispatch])
 
-    // Function to generate a random game type link
-    const generateRandomLink = (): any => {
-      const randomIndex = Math.floor(Math.random() * gameTypes.length);
-      return `../(speakingGameTypes)/${gameTypes[randomIndex]}`;
-  };
-  
+    const courses = useSelector((state: RootState) => state.courseTree.course);
+    console.log(courses)
+    const navigation = useNavigation();
 
     const handleGoBack = () => {
       navigation.goBack();
     };
 
-    const unit1Lessons = [
-      {
-        number: 'Lesson 1',
-        title: 'Greetings and \nIntroductions',
-        logo: require('../../app/assets/lesson1Logo.png'),
-      },
-      {
-        number: 'Lesson 2',
-        title: 'Basic\nDialogues',
-        logo: require('../../app/assets/lesson2Logo.png'),
-      },
-      {
-        number: 'Lesson 3',
-        title: 'Requests and\nAsking for Help',
-        logo: require('../../app/assets/lesson3Logo.png'),
-      },
-      // Add more lessons as needed
-    ];
-
-    const unit2Lessons = [
-      {
-        number: 'Lesson 1',
-        title: 'Vocabulary for Daily\nActivities',
-        logo: require('../../app/assets/lesson1Logo.png'),
-      },
-      {
-        number: 'Lesson 2',
-        title: 'Talk About Daily\nSchedules',
-        logo: require('../../app/assets/lesson2Logo.png'),
-      },
-      {
-        number: 'Lesson 3',
-        title: 'Household Chores\nand Responsibilities',
-        logo: require('../../app/assets/lesson3Logo.png'),
-      },
-      // Add more lessons as needed
-    ];
-
   return (
-    <SafeAreaView style={{backgroundColor:'#fff'}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+        <Stack.Screen options={{headerShown: false }} />
+        <ScrollView overScrollMode="never">
         <View>
-            <Stack.Screen options={{ title: 'Change Password', headerShown: false }} />
-            <ScrollView overScrollMode="never">
-                <View>
-                    <View style={styles.headerReading}>
-                        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-                            <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
-                        </TouchableOpacity>
-                        <Text style={styles.headerText}> Speaking Skills </Text>
-                    </View>
-                    <View style={styles.headerContainer}>
-                        <View style={styles.unitBgContainer}>
-                            <Image source={require('../../app/assets/speakUnitBg.png')} style={styles.unitBg} />
-                            <Text style={styles.textUnitBg}> Unit 1 </Text>
-                            <Text style={styles.subtextUnitBg}> Let's learn basic conversations!</Text>
-                        </View>
-                        {unit1Lessons.map((lesson, index) => (
-                        <TouchableOpacity 
-                            key={index} 
-                            onPress={() => {router.push(generateRandomLink())}}
-                            //href={'/speakingGames/speakGame3'}
-                            style={styles.mainContainer}>
-                        <View>
-                            <View style={styles.shapeContainer}>
-                                <Image source={lesson.logo} style={[styles.lessonLogos, { resizeMode: 'contain' }]} />
-                            <View style={styles.innerContainer} />
+            <View style={styles.headerReading}>
+                <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+                    <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
+                </TouchableOpacity>
+                <Text style={styles.headerText}> Speaking Skills </Text>
+            </View>
+                <View style={styles.headerContainer}>
+                        {/* Map through the courses and display the units and lessons */}
+                        {courses.map((course, index) => (
+                            <View key={index}>
+                                <View style={styles.unitBgContainer}>
+                                    <Image source={require('../../app/assets/speakUnitBg.png')} style={styles.unitBg} />
+                                    <Text style={styles.textUnitBg}>Unit {course.unitNumber}</Text>
+                                    <Text style={styles.subtextUnitBg}>{course.unitName}</Text>
+                                </View>
+                                 {/* Map through the lessons and display them */}
+                                 {course.lesson.map((lesson, lessonIndex) => (
+                                    <Link
+                                        key={lessonIndex}
+                                        href={'/(gameScreens)/speaking'}
+                                        style={styles.mainContainer}
+                                    >
+                                        <View>
+                                            <View style={styles.shapeContainer}>
+                                                {/* Choose cute illustration */}
+                                                {lessonIndex === 0 && <Image source={require('../../app/assets/lesson1Logo.png')} style={styles.lessonLogos} />}
+                                                {lessonIndex === 1 && <Image source={require('../../app/assets/lesson2Logo.png')} style={styles.lessonLogos} />}
+                                                {lessonIndex === 2 && <Image source={require('../../app/assets/lesson3Logo.png')} style={styles.lessonLogos} />}
+                                                <View style={styles.innerContainer} />
+                                            </View>
+                                            <View style={styles.rectangleContainer}>
+                                                <Text style={styles.subtextLesson}>Lesson {lesson.lessonNumber}</Text>
+                                                <Text style={styles.textLesson}>{lesson.lessonName}</Text>
+                                            </View>
+                                        </View>
+                                    </Link>
+                                ))}
                             </View>
-                            <View style={styles.rectangleContainer}>
-                                <Text style={styles.subtextLesson}>{lesson.number}</Text> 
-                                <Text style={styles.textLesson}>{lesson.title}</Text> 
-                            </View>
-                        </View>
-                        </TouchableOpacity>
                         ))}
-                        <View style={styles.unitBgContainer}>
-                            <Image source={require('../../app/assets/speakUnitBg.png')} style={styles.unitBg} />
-                            <Text style={styles.textUnitBg}> Unit 2 </Text>
-                            <Text style={styles.subtextUnitBg}> Try talking about your daily act!</Text>
-                        </View>
-                        {unit2Lessons.map((lesson, index) => (
-                            <TouchableOpacity 
-                            key={index} 
-                            onPress={() => {router.push(generateRandomLink())}}
-                            //href={'/speakingGames/speakGame3'}
-                            style={styles.mainContainer}
-                          >
-                        <View >
-                            <View style={styles.shapeContainer}>
-                                <Image source={lesson.logo} style={[styles.lessonLogos, { resizeMode: 'contain' }]} />
-                            <View style={styles.innerContainer} />
-                            </View>
-                            <View style={styles.rectangleContainer}>
-                                <Text style={styles.subtextLesson}>{lesson.number}</Text> 
-                                <Text style={styles.textLesson}>{lesson.title}</Text> 
-                            </View>
-                        </View>
-                        </TouchableOpacity>
-                        ))}
-                    </View>
                 </View>
+            </View>
         </ScrollView>
-        </View>
     </SafeAreaView>
   )
 }
-
-export default SpeakingSkillPage
 
 const styles = StyleSheet.create({
   headerContainer: {
@@ -237,3 +191,5 @@ const styles = StyleSheet.create({
       borderWidth: 2,
     },
 });
+
+export default SpeakingSkillPage
