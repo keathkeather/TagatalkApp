@@ -37,6 +37,7 @@ const ResetPassword = () => {
           router.push('/auth/forgotPassword/passwordChanged');
         } else if(handleResetPassword.rejected.match(resultAction)){
           console.log("Resetting password failed.");
+          Alert.alert("Resetting password failed");
         }
       };
 
