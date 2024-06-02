@@ -1,33 +1,35 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-interface CourseTree {
-    gameUnit: string; // Unit Description
-    gameUnitNumber: number; // Unit Number
-    gameLessonNumber: number; // Lesson Number
-    gameLesson: string; // Lesson Title
-    isCompleted: boolean; // Lesson Completion Status
+interface Lesson {
+    id: string;
+    lessonNumber: number;
+    lessonName: string;
 }
 
-export interface CourseTreeArray {
-    course: CourseTree[];
+interface Unit {
+    unitName: string;
+    unitNumber: number;
+    lesson: Lesson[];
 }
 
-// Function to get course tree needed data
-export async function getCourseTree(gameSkill: string): Promise<CourseTreeArray | null> {
+interface CourseTreeArray {
+    course: Unit[];
+}
+
+export async function getCourseTree(skillName: string): Promise<CourseTreeArray | null> {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`http://13.236.105.57:3000/user/getAllGamesForCourseTree/${gameSkill}`, {
+        const response = await axios.get(`http://13.236.105.57:3000/unit/courseTree/${skillName}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         });
-        if (!response) {
+        if (!response.data) {
             console.log('No response');
             return null;
         }
-        console.log('response')
-        console.log(response.data);
+        console.log('response', response.data);
         return { course: response.data }; // Ensure this matches the expected structure
     } catch (error) {
         console.log(error);

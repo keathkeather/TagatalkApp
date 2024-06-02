@@ -1,134 +1,86 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, Link } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { handleCourseTree } from '../redux/game/courseTreeSlice';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { AppDispatch, RootState } from '../redux/store';
-
-interface Course {
-  gameUnit: string;
-  gameUnitNumber: number;
-  gameLessonNumber: number;
-  gameLesson: string;
-  isCompleted: boolean;
-}
-
-interface Unit {
-  gameUnit: string;
-  gameUnitNumber: number;
-  lessons: {
-      gameLessonNumber: number;
-      gameLesson: string;
-      isCompleted: boolean;
-  }[];
-}
 
 const ReadingSkillPage = () => {
     const dispatch = useDispatch<AppDispatch>();
+
     useEffect(() => {
         const fetchCourseTree = async () => {
-          const resultAction = await dispatch(handleCourseTree('Reading'));
-          if(handleCourseTree.fulfilled.match(resultAction)){
-              console.log("Course Tree fetched successfully");
-          }
-          else if(handleCourseTree.rejected.match(resultAction)){
-              console.log("Course Tree fetch failed");
-          }
+            const resultAction = await dispatch(handleCourseTree('READING'));
+            if (handleCourseTree.fulfilled.match(resultAction)) {
+                console.log("Course Tree fetched successfully");
+            } else if (handleCourseTree.rejected.match(resultAction)) {
+                console.log("Course Tree fetch failed");
+            }
         };
-    
+
         fetchCourseTree();
-      }, [])
+    }, [dispatch]);
 
     const courses = useSelector((state: RootState) => state.courseTree.course);
-    console.log(courses)
+    console.log(courses);
+
     const navigation = useNavigation();
 
     const handleGoBack = () => {
-      navigation.goBack();
+        navigation.goBack();
     };
 
-    // Group courses by gameUnitNumber and gameUnit
-    const unitLessonsMap: { [key: string]: Unit } = {};
-
-    courses.forEach((course: Course) => {
-      const unitKey = `${course.gameUnitNumber}-${course.gameUnit}`;
-      if (!unitLessonsMap[unitKey]) {
-          unitLessonsMap[unitKey] = {
-              gameUnit: course.gameUnit,
-              gameUnitNumber: course.gameUnitNumber,
-              lessons: []
-          };
-      }
-      const existingLesson = unitLessonsMap[unitKey].lessons.find(
-          lesson => lesson.gameLessonNumber === course.gameLessonNumber
-      );
-      if (!existingLesson) {
-          unitLessonsMap[unitKey].lessons.push({
-              gameLessonNumber: course.gameLessonNumber,
-              gameLesson: course.gameLesson,
-              isCompleted: course.isCompleted
-          });
-      }
-  });
-
-    // Convert unitLessonsMap to an array for mapping
-    const uniqueCourses = Object.values(unitLessonsMap);
-    
-
-  return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
-        <Stack.Screen options={{headerShown: false }} />
-        <ScrollView overScrollMode="never">
-        <View>
-            <View style={styles.headerReading}>
-                <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
-                    <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
-                </TouchableOpacity>
-                <Text style={styles.headerText}> Reading Skills </Text>
-            </View>
-            <View style={styles.headerContainer}>
-            {/* Map through the unique courses and display the units and lessons */}
-            {uniqueCourses.map((course, index) => (
-                        <View key={index}>
-                            <View style={styles.unitBgContainer}>
-                                <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg} />
-                                <Text style={styles.textUnitBg}>Unit {course.gameUnitNumber}</Text>
-                                <Text style={styles.subtextUnitBg}>{course.gameUnit}</Text>
-                            </View>
-                            {/* Map through the lessons and display them */}
-                            {course.lessons.map((lesson, index) => (
-                              <Link 
-                              key={index} 
-                              href={'/(gameScreens)/reading'}
-                              style={styles.mainContainer}>
-                                <View>
-                         
-                                    <View style={styles.shapeContainer}>
-                                     {/* Choose cute illus */}
-                                            {index === 0 && <Image source={require('../../app/assets/lesson1Logo.png')} style={styles.lessonLogos} />}
-                                            {index === 1 && <Image source={require('../../app/assets/lesson2Logo.png')} style={styles.lessonLogos} />}
-                                            {index === 2 && <Image source={require('../../app/assets/lesson3Logo.png')} style={styles.lessonLogos} />}
-                                      
-                                        <View style={styles.innerContainer} />
-                                    </View>
-                                    <View style={styles.rectangleContainer}>
-                                        <Text style={styles.subtextLesson}>Lesson {lesson.gameLessonNumber}</Text>
-                                        <Text style={styles.textLesson}>{lesson.gameLesson}</Text>
-                                    </View>
-                                 
-                                </View>
-                                </Link>
-                            ))}
-                        </View>
-                    ))}
+    return (
+        <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
+            <Stack.Screen options={{ headerShown: false }} />
+            <ScrollView overScrollMode="never">
+                <View>
+                    <View style={styles.headerReading}>
+                        <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+                            <Image source={require('../../app/assets/backButton.png')} style={styles.buttonText} />
+                        </TouchableOpacity>
+                        <Text style={styles.headerText}> Reading Skills </Text>
                     </View>
-        </View>
-        </ScrollView>
-    </SafeAreaView>
-  )
+                    <View style={styles.headerContainer}>
+                        {/* Map through the courses and display the units and lessons */}
+                        {courses.map((course, index) => (
+                            <View key={index}>
+                                <View style={styles.unitBgContainer}>
+                                    <Image source={require('../../app/assets/readUnitBg.png')} style={styles.unitBg} />
+                                    <Text style={styles.textUnitBg}>Unit {course.unitNumber}</Text>
+                                    <Text style={styles.subtextUnitBg}>{course.unitName}</Text>
+                                </View>
+                                 {/* Map through the lessons and display them */}
+                                 {course.lesson.map((lesson, lessonIndex) => (
+                                    <Link
+                                        key={lessonIndex}
+                                        href={'/(gameScreens)/reading'}
+                                        style={styles.mainContainer}
+                                    >
+                                        <View>
+                                            <View style={styles.shapeContainer}>
+                                                {/* Choose cute illustration */}
+                                                {lessonIndex === 0 && <Image source={require('../../app/assets/lesson1Logo.png')} style={styles.lessonLogos} />}
+                                                {lessonIndex === 1 && <Image source={require('../../app/assets/lesson2Logo.png')} style={styles.lessonLogos} />}
+                                                {lessonIndex === 2 && <Image source={require('../../app/assets/lesson3Logo.png')} style={styles.lessonLogos} />}
+                                                <View style={styles.innerContainer} />
+                                            </View>
+                                            <View style={styles.rectangleContainer}>
+                                                <Text style={styles.subtextLesson}>Lesson {lesson.lessonNumber}</Text>
+                                                <Text style={styles.textLesson}>{lesson.lessonName}</Text>
+                                            </View>
+                                        </View>
+                                    </Link>
+                                ))}
+                            </View>
+                        ))}
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
 
 const styles = StyleSheet.create({
