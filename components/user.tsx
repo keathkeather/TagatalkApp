@@ -10,7 +10,7 @@ export interface User {
     profileDescription: string,
 }
 
-export interface LeaderboardUser {
+export interface UserLeaderboard {
     userId: string;
     email: string;
     name: string;
@@ -41,7 +41,7 @@ export async function getUser(): Promise<User | null> {
 }
 
 // Function to fetch leaderboard data
-export async function getLeaderBoard(): Promise<LeaderboardUser[] | null> {
+export async function getLeaderBoard(): Promise<UserLeaderboard[] | null> {
     try {
         // Retrieve the token from AsyncStorage
         const token = await AsyncStorage.getItem('token');
@@ -57,7 +57,7 @@ export async function getLeaderBoard(): Promise<LeaderboardUser[] | null> {
         });
 
         // Return the leaderboard data
-        return response.data as LeaderboardUser[];
+        return response.data as UserLeaderboard[];
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
         if (axios.isAxiosError(error)) {
