@@ -1,6 +1,15 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { editUser, getUser,} from "~/components/user";
+import { editUser, getUser, getLeaderBoard } from "~/components/user";
+
+interface LeaderboardUser{
+    userId: string;
+    userProfileImage: string;
+    email: string;
+    name: string;
+    userPoints: number;
+    rank: number;
+}
 
 interface userState{
     userId:string,
@@ -10,6 +19,7 @@ interface userState{
     profileDescription:string
     editSuccess: boolean;
     error: string | null;
+    leaderBoard: LeaderboardUser[];
 }
 
 const initialState:userState={
@@ -20,7 +30,9 @@ const initialState:userState={
     profileDescription:"",
     editSuccess: false,
     error: null,
+    leaderBoard: [],
 }
+
 export const handleEditUser = createAsyncThunk(
     'user/editUser',
     async ({ file, username, bio }: { file: string | null, username: string, bio: string }) => {
@@ -28,10 +40,20 @@ export const handleEditUser = createAsyncThunk(
       return success;
     }
   );
-export const handleUser = createAsyncThunk('user/getUser',async()=>{
-    const user = await getUser();
-    return user;
-});
+export const handleUser = createAsyncThunk(
+    'user/getUser',
+    async()=>{
+        const user = await getUser();
+        return user;
+    }
+);
+export const handleLeaderBoard = createAsyncThunk<LeaderboardUser[], void>(
+    'user/getLeaderBoard',
+    async () => {
+        const leaderboard = await getLeaderBoard();
+        return (leaderboard ?? []) as LeaderboardUser[];
+    }
+);
 
 const userSlice = createSlice({
     name:"userState",
@@ -50,7 +72,13 @@ const userSlice = createSlice({
                 state.editSuccess = true;
                 state.error = null;
               })
-            
+            .addCase(handleLeaderBoard.fulfilled, (state, action) => {
+                state.leaderBoard = action.payload; 
+                state.error = null;
+            })
+            .addCase(handleLeaderBoard.rejected, (state, action) => {
+                state.error = action.error.message || "Failed to fetch leaderboard";
+            });
     }
 });
 

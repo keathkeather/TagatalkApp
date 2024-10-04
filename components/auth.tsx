@@ -18,7 +18,7 @@ export async function registerFunction(email: string, password: string) :Promise
     console.log(email)
     console.log(password)
     //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://13.236.105.57:3000/auth/register', {
+    const res = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/register`, {
       email: email,
       password: password
     });
@@ -42,12 +42,12 @@ export async function registerFunction(email: string, password: string) :Promise
 
 export async function login(email: string, password: string): Promise<string> {
   try {
-    const response = await axios.post('http://13.236.105.57:3000/auth/login', {
+    const response = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/login`, {
       email: email,
       password: password
     });
-    console.log(response.data)
-    await AsyncStorage.setItem('token', response.data);
+    console.log(response.data.token)
+    await AsyncStorage.setItem('token', response.data.token);
     console.log(await AsyncStorage.getItem('token'))
     return response.data;
     
@@ -62,8 +62,7 @@ export async function login(email: string, password: string): Promise<string> {
 export async function sendCode(email: string) :Promise<boolean | null>{
   try {
     console.log(email)
-    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://13.236.105.57:3000/auth/requestOTP', {
+    const res = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/requestOTP`, {
       email: email
     });
     if(res.status===201){
@@ -87,8 +86,7 @@ export async function sendCode(email: string) :Promise<boolean | null>{
 export async function verifyCode(OTP: string) :Promise<boolean | null>{
   try {
     console.log(OTP)
-    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://13.236.105.57:3000/auth/verifyOTP', {
+    const res = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/verifyOTP`, {
       OTP: OTP
     });
     if(res.status===201){
@@ -127,7 +125,7 @@ export async function changePassword(oldPassword: string, newPassword: string): 
     };
 
     // Make the API call to change the password
-    const response = await axios.put('http://13.236.105.57:3000/auth/changePassword', {
+    const response = await axios.put(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/changePassword`, {
       oldPassword: oldPassword,
       newPassword: newPassword
     }, config);
@@ -155,8 +153,7 @@ export async function resetPassword(OTP: string, newPassword: string) :Promise<b
   try {
     console.log(OTP)
     console.log(newPassword)
-    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.put('http://13.236.105.57:3000/auth/forgotPassword', {
+    const res = await axios.put(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/forgotPassword`, {
       OTP: OTP,
       newPassword: newPassword
     });
@@ -181,8 +178,7 @@ export async function resetPassword(OTP: string, newPassword: string) :Promise<b
 export async function resendEmail(email: string) :Promise<boolean | null>{
   try {
     console.log(email)
-    //* Change to whateveer is your local ip address run ipconfig in cmd to get it put your ipv4 address
-    const res = await axios.post('http://13.236.105.57:3000/auth/resendVerification', {
+    const res = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/resendVerification`, {
       email: email
     });
     if(res.status===201){
@@ -221,7 +217,7 @@ export async function editUserName(username: string): Promise<boolean> {
     };
 
     // Make the API call to update the username
-    const response = await axios.put('http://13.236.105.57:3000/user/addUserName', {
+    const response = await axios.put(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/addUserName`, {
       name: username,
     }, config);
 
@@ -258,7 +254,7 @@ export async function logout(){
 export async function handletokenRefresh(): Promise<boolean | null> {
   try {
     const token = await AsyncStorage.getItem('token');
-    const response = await axios.get('http://13.236.105.57:3000/auth/changePassword',{
+    const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/auth/changePassword`,{
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -295,7 +291,6 @@ export async function checkTokenHealth(): Promise<boolean | null> {
       }
       console.log("token not expired")
       return true
-        
     }else{
       console.log("token expired")
       return false

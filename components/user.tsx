@@ -10,13 +10,21 @@ export interface User {
     profileDescription: string,
 }
 
+export interface UserLeaderboard {
+    userId: string;
+    email: string;
+    name: string;
+    userPoints: number;
+    rank: number;
+}
+
 //*Function to get user data
 const formdata = global.FormData
 
 export async function getUser(): Promise<User | null> {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('http://13.236.105.57:3000/user/getUserData', {
+        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/getUserData`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -32,34 +40,35 @@ export async function getUser(): Promise<User | null> {
       }
 }
 
-//*Function to update user data
-// export async function handleEditProfile(newProfileImage: File | null, newName: string, newProfileDescription: string): Promise<boolean> {
-//   try {
-//     const token = await AsyncStorage.getItem('token');
-//     const formData = new FormData();
-//     if (newProfileImage) {
-//       formData.append('profileImage', newProfileImage);
-//     }
-//     formData.append('name', newName);
-//     formData.append('profileDescription', newProfileDescription);
+// Function to fetch leaderboard data
+export async function getLeaderBoard(): Promise<UserLeaderboard[] | null> {
+    try {
+        // Retrieve the token from AsyncStorage
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+            throw new Error('No token found');
+        }
 
-//     const response = await axios.put('http://13.236.105.57:3000/editUser', formData, {
-//       headers: {
-//         Authorization: `Bearer ${token}`,
-//         'Content-Type': 'multipart/form-data'
-//       }
-//     });
+        // Make an API request to get leaderboard data
+        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/getLeaderBoard`, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
 
-//     if (response && response.status === 200) {
-//       console.log(response.data);
-//       return true;
-//     }
-//     return false;
-//   } catch (error) {
-//     console.log(error);
-//     return false;
-//   }
-// }
+        // Return the leaderboard data
+        return response.data as UserLeaderboard[];
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+        if (axios.isAxiosError(error)) {
+            const serverError = error as AxiosError;
+            if (serverError && serverError.response) {
+                console.error(serverError.response.data);
+            }
+        }
+        return null;
+    }
+}
 
 export async function editUser(file: string | null, username: string, profileDescription: string): Promise<boolean> {
   try {
@@ -96,7 +105,7 @@ export async function editUser(file: string | null, username: string, profileDes
     };
 
     // Make the API call to edit the user profile
-    const response = await axios.put('http://13.236.105.57:3000/user/editUser', formData, config);
+    const response = await axios.put(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/editUser`, formData, config);
 
     // Check if the response status is 200 (OK)
     return response.status === 200;
