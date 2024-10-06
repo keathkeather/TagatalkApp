@@ -6,9 +6,16 @@ import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
+import { Audio } from 'expo-av';
+import { handleSpeechToText } from '~/components/speech-to-text';
 
 const SpeakGame2 = ({onContinue} : {onContinue : any}) => {
   const [started, setStarted] = useState(false);
+
+  const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
+  const [permissionResponse, requestPermission] = Audio.usePermissions();
+  const [recordedURI, setRecordedURI] = useState<string | null>(null);
+  const [transcription, setTranscription] = useState('');
   const [results, setResults] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState('');
@@ -22,32 +29,80 @@ const SpeakGame2 = ({onContinue} : {onContinue : any}) => {
   const handleGoBack = () => {
     navigation.goBack();
   };
+  useEffect(() => {
+    return () => {
+      if (recording) {
+        recording.stopAndUnloadAsync();
+      }
+    };
+  }, [recording]);
 
   // FOR simulation
-  const handleMicPress = () => {
-    if (started) {
-      // Simulate stopping the recording
-      setStarted(false);
-      
-      // Randomly choose between simulatedText and simulatedWrong
-      const recognized = Math.random() < 0.5 ? simulatedCorrect : simulatedWrong;
-      setRecognizedText(recognized);
-
-      const matchFound = recognized.toLowerCase() === targetText.toLowerCase();
-      setMatchFound(matchFound);
-      if (!matchFound) {
-        setFeedback('Woopsie Daisy!');
-      } else {
-        setFeedback('Correct!');
-      }
+  const handleMicPress = async () => {
+    if (!recording) {
       setIsModalVisible(true);
+      await startRecording();
     } else {
-      // Simulate starting the recording
-      setStarted(true);
-      setRecognizedText('');
+      await stopRecording();
     }
   };
 
+  const startRecording = async () => {
+    try {
+      if (permissionResponse?.status !== 'granted') {
+        console.log('Requesting permission...');
+        await requestPermission();
+      }
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
+
+      console.log('Starting recording...');
+      const { recording } = await Audio.Recording.createAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY
+      );
+      setRecording(recording);
+      console.log('Recording started');
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  };
+
+  const stopRecording = async () => {
+    console.log('Stopping recording...');
+    if (recording) {
+      await recording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
+      const uri = recording.getURI();
+      console.log(uri);
+      setRecordedURI(uri);
+      console.log('Recording stopped and stored at', uri);
+      setRecording(undefined);
+      
+      // await saveRecordingAsWav(uri); // Save recording as .wav file
+      if (uri) {
+        await handleTranscription(uri);
+      } else {
+        console.warn('Recording URI is null.');
+      }
+    } else {
+      console.warn('Recording does not exist.');
+    }
+  };
+  
+
+  //* Function to handle the transcription of the recorded audio
+  async function handleTranscription(uri:string){
+    try{
+      await handleSpeechToText(uri)
+    }catch(error){
+      console.log(error)
+    }
+  }
+ 
   const handleContinue = () => {
     if (feedback === 'Correct!' && onContinue) {
       onContinue();

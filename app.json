@@ -1,16 +1,17 @@
 {
   "expo": {
-    "name": "tagatalkapp",
-    "slug": "tagatalkapp",
-    "version": "1.0.0",
-    "scheme": "tagatalkapp",
-    "web": {
-      "bundler": "metro",
-      "output": "static",
-      "favicon": "./assets/favicon.png"
-    },
+    "output": "static",
+    "favicon": "./assets/favicon.png",
     "plugins": [
-      "expo-router"
+      "expo-router",
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ],
+      "expo-font",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -34,16 +35,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.whitelotus.tagatalk"
-    },
-    "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "6d6e4a64-fd8d-448b-995d-d99798bd74a3"
+        "backgroundColor": "#FFFFFF"
       }
     }
   }

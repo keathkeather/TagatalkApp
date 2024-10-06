@@ -9,6 +9,7 @@ import { Container } from '../../tamagui.config';
 import SpeakGame2 from '../speakingGames/speakGame2';
 import SpeakGame3 from '../speakingGames/speakGame3';
 import LessonComplete from './lessonComplete';
+import SpeakGame1 from '../speakingGames/speakGame1';
 
 const Reading = () => {
     const navigation = useNavigation();
@@ -30,8 +31,11 @@ const Reading = () => {
         switch (currentStep) {
           case 1:
             console.log(currentStep);
-            return <SpeakGame2  onContinue={handleContinue} />;
+            return <SpeakGame1 onContinue={handleContinue} />;
           case 2:
+            console.log(currentStep);
+            return <SpeakGame2 onContinue={handleContinue} />;
+          case 3:
             console.log(currentStep);
             return <SpeakGame3 onContinue={handleContinue} />;
           default:
