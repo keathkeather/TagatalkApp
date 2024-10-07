@@ -7,6 +7,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { AppDispatch, RootState } from '../redux/store';
 
+interface Course {
+    unitName: string;
+    unitNumber: number;
+    lesson: Lesson[];   
+}
+
+interface Lesson {
+    id: string;
+    lessonNumber: number;
+    lessonName: string;
+}
+
 const ReadingSkillPage = () => {
     const dispatch = useDispatch<AppDispatch>();
 
@@ -23,9 +35,9 @@ const ReadingSkillPage = () => {
         fetchCourseTree();
     }, [dispatch]);
 
-    const courses = useSelector((state: RootState) => state.courseTree.course);
-    console.log(courses);
-
+    const courses = (useSelector((state: RootState) => state.courseTree.course));
+    //console.log(courses); //*for debugging purposes only
+    
     const navigation = useNavigation();
 
     const handleGoBack = () => {
@@ -56,7 +68,7 @@ const ReadingSkillPage = () => {
                                  {course.lesson.map((lesson, lessonIndex) => (
                                     <Link
                                         key={lessonIndex}
-                                        href={'/(gameScreens)/reading'}
+                                        href={`/(gameScreens)/reading?lessonIndex=${lessonIndex}&unitIndex=${index}`}
                                         style={styles.mainContainer}
                                     >
                                         <View>

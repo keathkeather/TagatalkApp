@@ -9,48 +9,85 @@ import { Container } from '../../tamagui.config';
 import ReadGame2 from '../readingGames/readGame2';
 import ReadGame3 from '../readingGames/readGame3';
 import ReadGame1 from '../readingGames/readGame1';
-import ReadTest1 from '../readingGames/readTest1';
 import LessonComplete from './lessonComplete';
+import { AppDispatch, RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRoute } from '@react-navigation/native';
 
-const Reading = () => {
+
+  const Reading = () => {
+    const dispatch = useDispatch<AppDispatch>();
+
+    const courses = useSelector((state: RootState) => state.courseTree.course);
+    const route = useRoute();
+    const { lessonIndex, unitIndex } = route.params as { lessonIndex: number, unitIndex: number }; //current lesson clicked by the user
     const navigation = useNavigation();
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(0);
     const [progress, setProgress] = useState(0);
     const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
-    
+
     useEffect(() => {
       return () => {
           // Reset state when component is unmounted
           setCurrentStep(1);
           setProgress(0);
-      };
-  }, []);
+        };
+    }, []);
 
     const handleGoBack = () => {
-        navigation.goBack();
+      navigation.goBack();
     };
 
+    //access current course using the passed unitIndex 
+    const currentCourse = courses[unitIndex];
+
+    // Access the current lesson
+    const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
+    if (!currentLesson) {
+        console.error(`No lesson found in course.`);
+        return null; // or handle the error accordingly
+    } else {
+        console.log(currentLesson);
+    }
+
+    // Access the games safely - debbug purposes only (//!will delete this later)
+    const games = currentLesson.game || []; 
+    // if (games.length > 0) {
+    //     console.log(`Game Length: ${games.length}`); // Access game type
+    // } else {
+    //     console.log("No games available for the current lesson.");
+    // }
+
     const handleContinue = () => {
-        setCurrentStep(prevStep => prevStep + 1);
-        setProgress(prevProgress => prevProgress + progressIncrement);
-      };
+      setCurrentStep(prevStep => prevStep + 1);
+      setProgress(prevProgress => prevProgress + progressIncrement);
+    };
     
-      const renderCurrentGame = () => {
-        switch (currentStep) {
-          case 1:
-            console.log(currentStep);
-            return <ReadGame3 onContinue={handleContinue} />;
-          case 2:
-            console.log(currentStep);
-            return <ReadGame1 onContinue={handleContinue} />;
-          case 3:
-            console.log(currentStep);
-            return <ReadGame2 onContinue={handleContinue} />;
-          default:
-            return <LessonComplete/>;
-        }
-      };
+    const renderCurrentGame = () => {
+      const currentGame = games[currentStep]; // Get the current game based on step
+
+      if (!currentGame) {
+        return <LessonComplete />; // No more games to play
+      }
+
+      switch (currentGame.gameType) {
+        case 1:
+          console.log(`Current Question:${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`); //! this is for debugging purposes only
+          return <ReadGame1 gameId={currentGame.id} onContinue={handleContinue} />;
+        case 2:
+          console.log(`${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
+          return <ReadGame2 gameId={currentGame.id}  onContinue={handleContinue} />;
+        case 3:
+          console.log(`${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
+          return <ReadGame3  gameId={currentGame.id}  onContinue={handleContinue}/>;
+        default:
+          return <LessonComplete/>;
+      }
+    };
     
     return (
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -67,7 +104,7 @@ const Reading = () => {
                 width: '100%',
                 height: '100%',
             }}>
-                   {/* //TODO: Map the 3 gametypes of reading skill here */}
+                   {/* Map the 3 gametypes of reading skill here/} */ }
                    {renderCurrentGame()}
             </Container>
         </SafeAreaView>

@@ -1,35 +1,48 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import FeedbackModal from '../feedbackModal';
+import { AppDispatch, RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { handleCourseTree } from '../redux/game/courseTreeSlice';
+import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-interface WordMapping {
-  [key: string]: string;
-}
+const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) => {
+  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<string>('');
+  const courses = useSelector((state: RootState) => state.courseTree.course);
+ 
+  //TODO: GET GAME ASSETS OF THE CURRENT GAME
+  // Find the specific game by passed gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId); 
 
-const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
+  // Extract the game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
 
-  const wordMapping: WordMapping = {
-    evening: 'gabi',
-    morning: 'umaga',
-    noon: 'tanghali',
-    afternoon: 'hapon',
-  };
+  // Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract the question text, correct answer and choices from the textAssets
+  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "given");
+  const questionText = givenTextAsset ? givenTextAsset.textContent : ''
+  const correctAnswer = textAssets.find(asset => asset.isCorrectAnswer)?.textContent;
+
+  // Extract the choices
+  const choices = textAssets
+  .filter(asset => asset.assetClassifier === "choices") 
+  .map(choice => choice.textContent);
 
   const handleChoicePress = (choice: string) => {
     setSelectedChoice(choice);
   };
-  
-  const englishWords = Object.keys(wordMapping);
-  const filipinoWords = Object.values(wordMapping);
-  
-  const [askedWord, setAskedWord] = useState<string>(englishWords[Math.floor(Math.random() * englishWords.length)]);
-  const [choices, setChoices] = useState<string[]>(filipinoWords);
-  const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
-  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-  const [feedback, setFeedback] = useState<string>('');
 
+  //Check if selected choice is correct
   const handleContinuePress = () => {
-    if (selectedChoice === wordMapping[askedWord]) {
+    if (selectedChoice === correctAnswer) {
       setFeedback('Correct!');
       setIsModalVisible(true);
     } else {
@@ -44,22 +57,22 @@ const ReadGame3 = ({ onContinue } : {onContinue : any}) => {
       onContinue();
     }
   };
-  
+
   return (
     <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Question and Answer.</Text>
-      <Text style={styles.word}>How do you say "{askedWord}"?</Text>
+      <Text style={styles.word}>{questionText}</Text>
         <View style={styles.contentContainer}>
       <View style={styles.choicesContainer}>
         {choices.map((choice, index) => (
-          <TouchableOpacity 
-            key={index} 
-            style={[styles.choices1, choice === selectedChoice && styles.matched]} 
-            onPress={() => handleChoicePress(choice)}
-          >
-            <Text style={styles.choicesText}>{choice}</Text>
-          </TouchableOpacity>
-        ))}
+            <TouchableOpacity 
+              key={index} 
+              style={[styles.choices1, choice === selectedChoice && styles.matched]} 
+              onPress={() => handleChoicePress(choice)}
+            >
+              <Text style={styles.choicesText}>{choice}</Text>
+            </TouchableOpacity>
+          ))}
         <TouchableOpacity 
         style={[styles.checkButton, !selectedChoice && styles.disabledButton]}
         onPress={handleContinuePress}
@@ -85,7 +98,6 @@ const styles = StyleSheet.create({
   word: {
     fontSize: 20,
     fontWeight: "600",
-    textDecorationLine: 'underline',
     color: '#344054',
   },
   contentContainer: {
