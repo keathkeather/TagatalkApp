@@ -1,20 +1,63 @@
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+interface FileAsset {
+  assetId: string,
+  assetClassifier: string,
+  assetType: string,
+  isCorrectAnswer: boolean,
+  fileUrl: string,
+}
+
+interface TextAsset {
+  assetId: string,
+  assetClassifier: string,
+  assetType: string,
+  isCorrectAnswer: boolean,
+  textContent: string,
+}
+
+interface GameAsset {
+  gameAssetId: string,
+  gameId: string,
+  isCorrectAnswer: string,
+  textContent: string,
+  assetClassifier: string,
+  fileUrl: string,
+  gameLessonNumber: number,
+  gameSkill: string,
+  gameUnitNumber: number,
+  textAssets: TextAsset[],
+  fileAssets: FileAsset[],
+}
+
+interface Game {
+  id: string;
+  gameType: string; // 'Type 1', 'Type 2', 'Type 3'
+  gameValue: number; // score
+  gameSkill: string; // 'reading', 'writing', 'listening', 'speaking'
+  gameUnit: string; // Unit Description
+  gameUnitNumber: number; // Unit Number
+  gameLessonNumber: number; // Lesson Number
+  gameLesson: string; // Lesson Title
+  gameAssets: GameAsset[];
+}
+
 interface Lesson {
-    id: string;
-    lessonNumber: number;
-    lessonName: string;
+  id: string;
+  lessonNumber: number;
+  lessonName: string;
+  games: Game[];
 }
 
 interface Unit {
-    unitName: string;
-    unitNumber: number;
-    lesson: Lesson[];
+  unitName: string;
+  unitNumber: number;
+  lesson: Lesson[];
 }
 
 interface CourseTreeArray {
-    course: Unit[];
+  course: Unit[];
 }
 
 export async function getCourseTree(skillName: string): Promise<CourseTreeArray | null> {
