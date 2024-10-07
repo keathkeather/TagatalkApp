@@ -2,49 +2,62 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import FeedbackModal from '../feedbackModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const GameScreen = ({onContinue} : {onContinue : any}) => {
+const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
   const [randomQuestion, setRandomQuestion] = useState<string>("");
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const navigation = useNavigation();
+
+  const courses = useSelector((state: RootState) => state.courseTree.course);
+ 
+  //TODO: GET GAME ASSETS OF THE CURRENT GAME
+  // Find the specific game by gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId); 
+
+  // Extract the game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+  // Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract the conversation text from the textAssets
+  const conversationText = textAssets.find(asset => asset.assetClassifier === "conversation")?.textContent;
+  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "given");
+  const questionText = givenTextAsset ? givenTextAsset.textContent : ''
+  const correctAnswer = textAssets.find(asset => asset.isCorrectAnswer)?.textContent;
+
+  // Extract the choices
+  const choices = textAssets
+  .filter(asset => asset.assetClassifier === "choices")
+  .map(choice => choice.textContent);
+
+  console.log('Game Assets:', gameAsset);
+  console.log('Game', game);
 
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-  const words: string[] = ["umaga", "tanghali", "gabi"];
-  const questions = [
-    "Magandang gabi, Anna! Matutulog ka na ba?",
-    "Magandang umaga, Anna! Kumain ka na ba?",
-    "Magandang tanghali, Anna! Kumain ka na ba?",
-    // Add more questions as needed
-  ];
-
-  useEffect(() => {
-    // Select a random question when the component mounts
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    setRandomQuestion(questions[randomIndex]);
-  }, []);
-
   const checkAnswer = () => {
-    // Regular expression to match the time of day phrase
-    const timeOfDayRegex = /Magandang (umaga|tanghali|gabi)/;
-    const match = randomQuestion.match(timeOfDayRegex);
-  
-    // Extract the time of day from the matched result
-    const timeOfDay = match ? match[1] : "";
-  
-    // Compare the selected word with the correct answer based on the time of day
-    if (selectedWord === timeOfDay) {
+    if (selectedWord === correctAnswer) {
+      setIsModalVisible(true);
       setFeedback("Correct!"); 
     } else {
+      setIsModalVisible(true);
       setFeedback("Woopsie Daisy!");
     }
-    setContinueClicked(true);
-  };
-  
+    
+  }; 
 
   const handleWordPress = (word: string) => {
     if (!continueClicked) {
@@ -52,16 +65,11 @@ const GameScreen = ({onContinue} : {onContinue : any}) => {
     }
   };
 
-  const handleContinue = () => {
-    checkAnswer();
-    setTimeout(() => {
-      setFeedback(null);
-      setSelectedWord(null);
-      setContinueClicked(false);
-      if (onContinue) {
-        onContinue();
-      }
-    }, 1500);
+  const handleModalClose = () => {
+    setIsModalVisible(false);
+    if (feedback === 'Correct!' && onContinue) {
+      onContinue();
+    }
   };
 
   return (
@@ -71,23 +79,23 @@ const GameScreen = ({onContinue} : {onContinue : any}) => {
           <View style={styles.questionContainer}>
             <Image source={require('../assets/TeeTee.png')} style={styles.teetee} />
               <View style={styles.imgBubble}> 
-                <Text style={styles.questionText}>{randomQuestion}</Text>
+                <Text style={styles.questionText}>{conversationText}</Text>
                 <Image source={require('../assets/textbubble.png')} />
             </View>
           </View>
-            <Text style={styles.subQuestionText}>Anong oras na ngayon base sa sinabi TeeTee?</Text>
+            <Text style={styles.subQuestionText}>{questionText}</Text>
               <View style={styles.wordContainer}>
-                {words.map((word, index) => (
+                {choices.map((choice, index) => (
                   <TouchableOpacity
                     key={index}
                     style={[
                       styles.wordButton,
-                      selectedWord === word && styles.selectedWordButton
+                      selectedWord === choice && styles.selectedWordButton
                     ]}
-                    onPress={() => handleWordPress(word)}
+                    onPress={() => handleWordPress(choice)}
                     disabled={continueClicked}
                     > 
-                      <Text style={styles.wordText}>{word}</Text>
+                      <Text style={styles.wordText}>{choice}</Text>
                   </TouchableOpacity>
                 ))}
                   <TouchableOpacity 
@@ -96,19 +104,19 @@ const GameScreen = ({onContinue} : {onContinue : any}) => {
                       continueClicked && styles.continueButtonDisabled,
                       selectedWord === null && styles.continueButtonDisabled,
                     ]}
-                    onPress={selectedWord !== null ? handleContinue : undefined}
-                    disabled={continueClicked || selectedWord === null}
+                    onPress={checkAnswer}
+                    disabled={!selectedWord}
                     >
                       <Text style={styles.continueText}>CHECK</Text>
                     </TouchableOpacity>
               </View>
         </View>
-            {/* Render the modal */}
-          <FeedbackModal
-            visible={feedback !== null}
-            feedback={feedback}
-            onClose={() => setFeedback(null)}
-          />
+          {/* Render the modal */}
+        <FeedbackModal
+          visible={isModalVisible}
+          feedback={feedback}
+          onClose={handleModalClose}
+        />
     </View>  
   );
 };
