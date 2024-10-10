@@ -6,7 +6,7 @@ import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/ProgressBar'; 
 import { Container } from '../../tamagui.config';
-//import ListenGame1 from '../listeningGames/listenGame1';
+import ListenGame1 from '../listeningGames/listenGame1';
 import ListenGame2 from '../listeningGames/listenGame2';
 import ListenGame3 from '../listeningGames/listenGame3';
 import LessonComplete from './lessonComplete';
@@ -31,8 +31,11 @@ const Listening = () => {
         switch (currentStep) {
           case 1:
             console.log(currentStep);
-            return <ListenGame2 onContinue={handleContinue} />;
+            return <ListenGame1 onContinue={handleContinue} />;
           case 2:
+            console.log(currentStep);
+            return <ListenGame2 onContinue={handleContinue} />;
+          case 3:
             console.log(currentStep);
             return <ListenGame3 onContinue={handleContinue} />;
           default:
