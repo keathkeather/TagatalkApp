@@ -16,11 +16,11 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [recordedURI, setRecordedURI] = useState<string | null>(null);
-
+  const [isCorrect , setIsCorrect] = useState<boolean | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [recognizedText, setRecognizedText] = useState('');
-  const [matchFound, setMatchFound] = useState(false);
+  const [matchFound, setMatchFound] = useState();
   const [currentItem, setCurrentItem] = useState<{ audio: any, correctText: string } | null>(null);
   const [targetText, setTargetText] = useState('');
   const simulatedWrong = 'Leche flan';
@@ -46,7 +46,6 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
     setCurrentItem(randomItem);
   }, []);
   
-  console.log(3)
   
   const playAudio = async () => {
     if (!currentItem) 
@@ -66,13 +65,12 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
   // FOR simulation
   const handleMicPress = async () => {
     if (!recording) {
-      setIsModalVisible(true);
       await startRecording();
     } else {
       await stopRecording();
     }
   };
-
+  
   const startRecording = async () => {
     try {
       if (permissionResponse?.status !== 'granted') {
@@ -110,7 +108,8 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
       
       // await saveRecordingAsWav(uri); // Save recording as .wav file
       if (uri) {
-        await handleTranscription(uri);
+        //* correct text should be passed in this function as the second parameter
+        await handleTranscription(uri,"Kumusta, ako si keith Ian Lavador, ako ay nakatira sa");
       } else {
         console.warn('Recording URI is null.');
       }
@@ -121,9 +120,10 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
   
 
   //* Function to handle the transcription of the recorded audio
-  async function handleTranscription(uri:string){
+  async function handleTranscription(uri:string, correctText:string){
     try{
-      await handleSpeechToText(uri)
+      setIsCorrect(await handleSpeechToText(uri, correctText));
+      console.log(isCorrect);
     }catch(error){
       console.log(error)
     }

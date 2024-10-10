@@ -2,7 +2,10 @@ import axios, { AxiosError } from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system'; // Required for file handling in React Native
 
-export async function handleSpeechToText(uri: string) {
+
+
+
+export async function handleSpeechToText(uri: string,correctText:string) {
     try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -23,7 +26,7 @@ export async function handleSpeechToText(uri: string) {
             type: 'audio/m4a', // specify the correct MIME type
             name: 'audio.m4a', // the filename that will be used on the server
         }as any);
-
+        formData.append('correctAnswer',correctText);
         // Create the Axios request configuration with Bearer token
         const config = {
             headers: {
@@ -34,11 +37,15 @@ export async function handleSpeechToText(uri: string) {
 
         // API REQUEST ON BACKEND TO START SPEECH TO TEXT
         const response = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/speech-to-text/process-audio-file`,
+            `http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/speech-to-text/process-audio-file-with-checker`,
             formData,
             config
         );
-        return response.data;
+        console.log("The response is: "+response.data.isCorrect)
+        const isCorrect = (response.data.isCorrect == 1) ? true : false
+        return isCorrect
+        
+
     } catch (error) {
         if (axios.isAxiosError(error)) {
             const serverError = error as AxiosError;

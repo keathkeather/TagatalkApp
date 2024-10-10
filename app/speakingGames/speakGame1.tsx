@@ -87,7 +87,7 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
   //* Function to handle the transcription of the recorded audio
   async function handleTranscription(uri:string){
     try{
-      await handleSpeechToText(uri)
+      await handleSpeechToText(uri,"dasdada")
     }catch(error){
       console.log(error)
     }
