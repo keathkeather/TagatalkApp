@@ -67,7 +67,7 @@ export async function getCourseTree(skillName: string): Promise<CourseTreeArray 
       console.log('Skill Name:', skillName);
       console.log('Local IP:', process.env.EXPO_PUBLIC_LOCAL_IP);
       
-      const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/unit/courseTree/${skillName}`, {
+      const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/unit/courseTree/${skillName}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
