@@ -1,11 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Stack, Link, router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { handleCourseTree } from '../redux/game/courseTreeSlice';
-import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { AppDispatch, RootState } from '../redux/store';
 
 const ListeningSkillPage = () => {
@@ -25,8 +24,8 @@ const ListeningSkillPage = () => {
     }, [dispatch]);
 
     const courses = useSelector((state: RootState) => state.courseTree.course);
-    console.log(courses)
-    const navigation = useNavigation();
+    // console.log(courses)
+    // const navigation = useNavigation();
 
     const handleGoBack = () => {
         router.push('/(tabs)');
@@ -56,7 +55,7 @@ const ListeningSkillPage = () => {
                                  {course.lesson.map((lesson, lessonIndex) => (
                                     <Link
                                         key={lessonIndex}
-                                        href={'/(gameScreens)/listening'}
+                                        href={`/(gameScreens)/listening?lessonIndex=${lessonIndex}&unitIndex=${index}`}
                                         style={styles.mainContainer}
                                     >
                                         <View>
