@@ -3,27 +3,79 @@ import React, { useState, useEffect } from 'react'
 import FeedbackModal from '../feedbackModal';
 import icons from '../../constants/icons';
 import { Audio } from 'expo-av';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame3= ({onContinue} : {onContinue : any}) => {    
+const ListenGame3= ({gameId, onContinue} : {gameId : any, onContinue : any}) => {    
+  // Get courses from the redux store
+  const courses = useSelector((state: RootState) => state.courseTree.course);
 
-  const initialWords = [
-    { audio: require('../assets/umaga.mp3'), match: 'morning', isMatched: false },
-    { audio: require('../assets/gabi.mp3'), match: 'night', isMatched: false },
-    { audio: require('../assets/tanghali.mp3'), match: 'noon', isMatched: false },
-    { audio: require('../assets/hapon.mp3'), match: 'afternoon', isMatched: false },
-    // Add more audio files here
-  ]
-    
+  // TODO: GET GAME ASSETS OF THE CURRENT GAME
+  // find the specific game by passed gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId);
+
+  // Extract game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+  //Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract file assets
+  const fileAssets: FileAsset[] = gameAsset.flatMap(asset => asset.fileAssets);
+
+  //console.log(fileAssets.map(file => file.filename));
+
+  const initialWords = fileAssets.map((fileAsset) => {
+    // Safeguard against undefined fileName
+    const fileName = fileAsset?.filename ? fileAsset.filename.replace(/\.[^/.]+$/, "") : null;
+
+    if (!fileName) {
+      return null; // skip if fileName is invalid
+    }
+
+    // find the corresponding text asset with matching content
+    const matchedTextAsset = textAssets.find(textAsset => {
+      return fileName === textAsset.textContent;
+    });
+
+    // Return the object containing audio file URL and the match (textContent)
+    return {
+      audio: { uri: fileAsset.fileUrl }, 
+      match: matchedTextAsset?.textContent || '',  // Fallback to empty string if not found
+      isMatched: false,
+    };
+  }).filter(Boolean); // Filter out any null values
+
+  // *Optional: Log to see if everything is matched correctly
+  // console.log('Initial Words:', initialWords.map(word => word?.match));
+
   const [matchedWords, setMatchedWords] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<{ type: 'audio' | 'match', value: string } | null>(null);
-  const initialAudios = initialWords.map(word => ({ audio: word.audio, match: word.match }));
-  const initialMatches = initialWords.map(word => word.match);
+
+    // Extract the audio files and matches from the initial words
+    const initialAudios = initialWords
+      .filter((word): word is NonNullable<typeof word> => word !== null)
+      .map(word => ({ audio: word.audio, match: word.match }));
+
+    // Extract the matches from the initial words
+    const initialMatches = initialWords
+      .filter((word): word is NonNullable<typeof word> => word !== null)
+      .map(word => word.match);
+
   const [audios, setAudios] = useState(initialAudios);
   const [matches, setMatches] = useState(initialMatches);
   const isMatched = (match: string) => matchedWords.includes(match);
   
   useEffect(() => {
     setMatches(shuffleArray([...initialMatches]));
+    if (matchedWords.length === initialWords.length) {
+        setIsModalVisible(true);
+        }
   }, []);
 
   const playSound = async (audio: any) => {
@@ -56,16 +108,17 @@ const ListenGame3= ({onContinue} : {onContinue : any}) => {
       setSelectedItem({ type: 'match', value: match });
     }
   };
+  
+  const shuffleArray = (array: any[]) => {
+          for (let i = array.length - 1; i > 0; i--) {
+              const j = Math.floor(Math.random() * (i + 1));
+              [array[i], array[j]] = [array[j], array[i]];
+          }
+          return array;
+  }
 
-
-const shuffleArray = (array: any[]) => {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-        return array;
-}
 const [isModalVisible, setIsModalVisible] = useState(false)
+
     useEffect(() => {
         if (matchedWords.length === initialWords.length) {
         setIsModalVisible(true);

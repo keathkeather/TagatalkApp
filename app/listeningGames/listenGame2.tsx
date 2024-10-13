@@ -1,41 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Audio } from 'expo-av';
 import icons from '../../constants/icons';
 import FeedbackModal from '../feedbackModal';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame2 = ({onContinue} : {onContinue : any}) => {
+const ListenGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
   const [typedText, setTypedText] = useState('');
-  const [currentItem, setCurrentItem] = useState<{ audio: any, correctText: string } | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>('');
 
-  // Array of audio files and their correct answers
-  const items = [
-    { audio: require('../assets/umaga.mp3'), correctText: 'Umaga' },
-    { audio: require('../assets/gabi.mp3'), correctText: 'Gabi' },
-    { audio: require('../assets/hapon.mp3'), correctText: 'Hapon' },
-    { audio: require('../assets/tanghali.mp3'), correctText: 'Tanghali' },
-    // Add more items here...
-  ];
+  //Get courses from the redux store
+  const courses = useSelector((state: RootState) => state.courseTree.course);
 
-  useEffect(() => {
-    // Select a random item from the array
-    const randomItem = items[Math.floor(Math.random() * items.length)];
-    setCurrentItem(randomItem);
-  }, []);
+  // TODO: GET GAME ASSETS OF THE CURRENT GAME
+  // find the specific game by passed gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId);
+
+  // Extract game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+  
+  // Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract file assets
+  const fileAssets = gameAsset.flatMap(asset => asset.fileAssets);
+
+  // Extract the audio file
+  const audioFile = fileAssets.find(asset => asset.assetClassifier === 'GIVEN');
+  
+  // Extract the correct answer from the text assets
+  const correctAnswer: TextAsset | undefined = textAssets.find(asset => asset.isCorrectAnswer === true);
+
+  // console.log(correctAnswer?.textContent)
+
+  // useEffect(() => {
+  //   // Select a random item from the array
+  //   const randomItem = items[Math.floor(Math.random() * items.length)];
+  //   setCurrentItem(randomItem);
+  // }, []);
+  
 
   const playAudio = async () => {
-    if (!currentItem) 
+    if (!audioFile) 
       return;
 
     try {
-      setIsPlaying(true);
-      const sound = new Audio.Sound();
-      await sound.loadAsync(currentItem.audio);
-      await sound.playAsync();
-      setIsPlaying(false);
+      if (audioFile && audioFile.fileUrl) {
+        // construct the audio file url
+        const audioFileUri = audioFile.fileUrl;
+
+        setIsPlaying(true);
+        // create a new sound object
+        const sound = new Audio.Sound();
+        // Load the audio file using the URI
+        await sound.loadAsync({ uri: audioFileUri });
+        console.log('Audio loaded successfully from:', audioFileUri);
+
+        // Optionally, play the sound
+        await sound.playAsync();
+        setIsPlaying(false);
+      } else {
+        console.warn('Audio file URL is null');
+      }
     } catch (error) {
       console.log('Error playing audio:', error);
     }
@@ -46,9 +80,9 @@ const ListenGame2 = ({onContinue} : {onContinue : any}) => {
   };
 
   const checkAnswer = () => {
-    if (!currentItem) return;
+    if (!correctAnswer) return;
 
-    if (typedText.trim().toLowerCase() === currentItem.correctText.toLowerCase()) {
+    if (typedText.trim().toLowerCase() === correctAnswer.textContent.toLowerCase()) {
       setFeedback('Correct!');
       setIsModalVisible(true);
     } else {
@@ -66,7 +100,10 @@ const ListenGame2 = ({onContinue} : {onContinue : any}) => {
   };
 
   return (
-    <View style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
     <Text style={styles.header}>Write what you hear.</Text>
         <View style={styles.contentContainer}>
           <TouchableOpacity 
@@ -83,7 +120,7 @@ const ListenGame2 = ({onContinue} : {onContinue : any}) => {
         placeholderTextColor={'#D0D5DD'}
         autoCapitalize="none"
         autoCorrect={false}
-        multiline
+        multiline={true}
         numberOfLines={3}
       />
       <TouchableOpacity 
@@ -98,7 +135,8 @@ const ListenGame2 = ({onContinue} : {onContinue : any}) => {
         feedback={feedback}
         onClose={handleContinue}
       />
-      </View>
+      </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
   );
 };
 
@@ -138,8 +176,8 @@ const styles = StyleSheet.create({
     borderColor: '#D4D4D8',
     borderWidth: 1,
     borderRadius: 20,
-    marginTop: 70,
-    marginBottom: 30,
+    marginTop: '10%',
+    marginBottom: '10%',
     textAlign: 'left',
     textAlignVertical: 'top',
     fontSize: 20,

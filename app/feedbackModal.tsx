@@ -46,8 +46,8 @@ const FeedbackModal = ({ visible, feedback, onClose }: FeedbackModalProps) => {
         <View style={styles.modalContent}>
           <Text style={[styles.modalText, { color: getTextColor() }]}>{feedback}</Text>
           <Text style={styles.additionalText}>{getAdditionalText()}</Text>
-          <TouchableOpacity onPress={onClose}>
-            <Text style={[styles.closeButton, { backgroundColor: getButtonColor() }]}>Continue</Text>
+          <TouchableOpacity style={[styles.closeButton, { backgroundColor: getButtonColor() }]} onPress={onClose}>
+            <Text style={styles.closeButtonText} >Continue</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -93,7 +93,14 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     backgroundColor: '#344054',
     borderRadius: 20,
-    width: '100%',
+    width: '70%',
+    height: '20%',
+    justifyContent: 'center',
+  },
+  closeButtonText: {
+    color: 'white',
+    fontSize: 18,
+    textAlign: 'center',
   },
 });
 
