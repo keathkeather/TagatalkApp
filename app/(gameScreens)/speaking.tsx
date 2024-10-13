@@ -1,47 +1,87 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from 'react-native'
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { Stack } from 'expo-router'
 import icons from '../../constants/icons';
 import { useNavigation } from '@react-navigation/native';
 import ProgressBar from '../../components/ProgressBar'; 
 import { Container } from '../../tamagui.config';
+import SpeakGame1 from '../speakingGames/speakGame1';
 import SpeakGame2 from '../speakingGames/speakGame2';
 import SpeakGame3 from '../speakingGames/speakGame3';
 import LessonComplete from './lessonComplete';
-import SpeakGame1 from '../speakingGames/speakGame1';
+import { AppDispatch, RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRoute } from '@react-navigation/native';
 
-const Reading = () => {
+const Speaking = () => {
+    const dispatch = useDispatch<AppDispatch>();
+
+    const courses = useSelector((state: RootState) => state.courseTree.course);
+    const route = useRoute();
+    const { lessonIndex, unitIndex } = route.params as { lessonIndex: number, unitIndex: number }; //current lesson clicked by the user
     const navigation = useNavigation();
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(0);
     const [progress, setProgress] = useState(0);
-    const totalSteps = 2; // total number of items
+    const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
+
+    useEffect(() => {
+      return () => {
+          // Reset state when component is unmounted
+          setCurrentStep(1);
+          setProgress(0);
+        };
+    }, []);
     
     const handleGoBack = () => {
         navigation.goBack();
     };
 
+    //access current course using the passed unitIndex 
+    const currentCourse = courses[unitIndex];
+
+    // Access the current lesson
+    const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
+    if (!currentLesson) {
+        console.error(`No lesson found in course.`);
+        return null; // or handle the error accordingly
+    } else {
+        console.log(currentLesson);
+    }
+
+    // Access the games safely - debbug purposes only (//!will delete this later)
+    const games = currentLesson.game || [];
+
     const handleContinue = () => {
         setCurrentStep(prevStep => prevStep + 1);
         setProgress(prevProgress => prevProgress + progressIncrement);
-      };
+    };
     
-      const renderCurrentGame = () => {
-        switch (currentStep) {
-          case 1:
-            console.log(currentStep);
-            return <SpeakGame1 onContinue={handleContinue} />;
-          case 2:
-            console.log(currentStep);
-            return <SpeakGame2 onContinue={handleContinue} />;
-          case 3:
-            console.log(currentStep);
-            return <SpeakGame3 onContinue={handleContinue} />;
-          default:
-            return <LessonComplete/>;
-        }
-      };
+    const renderCurrentGame = () => {
+      const currentGame = games[currentStep]; // Get the current game based on step
+
+      if (!currentGame) {
+        return <LessonComplete />; // No more games to play
+      }
+
+      switch (currentGame.gameType) {
+        case 1:
+          console.log(`Current Question:${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`); //! this is for debugging purposes only
+          return <SpeakGame1 gameId={currentGame.id} onContinue={handleContinue} />;
+        case 2:
+          console.log(`${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
+          return <SpeakGame2 gameId={currentGame.id}  onContinue={handleContinue} />;
+        case 3:
+          console.log(`${Number(currentStep) + 1}`);
+          console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
+          return <SpeakGame3  gameId={currentGame.id}  onContinue={handleContinue}/>;
+        default:
+          return <LessonComplete/>;
+      }
+    };
     
     return (
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
@@ -65,7 +105,7 @@ const Reading = () => {
     )
 }
 
-export default Reading
+export default Speaking
 
 const styles = StyleSheet.create({
   backArrow: {

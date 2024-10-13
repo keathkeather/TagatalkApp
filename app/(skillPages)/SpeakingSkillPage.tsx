@@ -8,8 +8,21 @@ import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 
+interface Course {
+    unitName: string;
+    unitNumber: number;
+    lesson: Lesson[];   
+}
+
+interface Lesson {
+    id: string;
+    lessonNumber: number;
+    lessonName: string;
+}
+
 const SpeakingSkillPage = () => {
     const dispatch = useDispatch<AppDispatch>();
+
     useEffect(() => {
         const fetchCourseTree = async () => {
           const resultAction = await dispatch(handleCourseTree('SPEAKING'));
@@ -56,7 +69,7 @@ const SpeakingSkillPage = () => {
                                  {course.lesson.map((lesson, lessonIndex) => (
                                     <Link
                                         key={lessonIndex}
-                                        href={'/(gameScreens)/speaking'}
+                                        href={`/(gameScreens)/speaking?lessonIndex=${lessonIndex}&unitIndex=${index}`}
                                         style={styles.mainContainer}
                                     >
                                         <View>

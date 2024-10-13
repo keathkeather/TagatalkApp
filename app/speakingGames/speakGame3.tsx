@@ -1,62 +1,64 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import Voice from '@react-native-voice/voice';
-import { Stack } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 import { Audio } from 'expo-av';
 import { handleSpeechToText } from '~/components/speech-to-text';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 
-const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
+const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  => {
   const [started, setStarted] = useState(false);
-  const [results, setResults] = useState([]);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [recordedURI, setRecordedURI] = useState<string | null>(null);
-
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [recognizedText, setRecognizedText] = useState('');
   const [matchFound, setMatchFound] = useState(false);
-  const [currentItem, setCurrentItem] = useState<{ image: any, correctText: string } | null>(null)
-  const [targetText, setTargetText] = useState('');
-  const simulatedWrong = 'Leche flan';
-  
-  const navigation = useNavigation();
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  const courses = useSelector((state: RootState) => state.courseTree.course);
 
-  // Array of images and their correct answers
-  const items = [
-    { image: require('../assets/palabok.png'), correctText: 'Palabok' },
-    { image: require('../assets/bibingka.png'), correctText: 'Bibingka' },
-    { image: require('../assets/lechon.jpg'), correctText: 'Lechon Baboy' },
-    { image: require('../assets/halohalo.jpg'), correctText: 'Halohalo' },
-    // Add more items here...
-  ];
+  // GET GAME ASSETS OF THE CURRENT GAME
+  // Find the specific game by gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId); 
+
+  // Extract the game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+  // Extract files and text assets
+  const fileAssets: FileAsset[] = gameAsset.flatMap(asset => asset.fileAssets);
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract the image from the file assets and answer from text assets
+  const imageFile = fileAssets.find(asset => asset.assetClassifier === "ITEM")?.fileUrl;
+  const correctAnswer = textAssets.find(asset => asset.assetClassifier === "ANSWER")?.textContent;
+  const correctText: string = correctAnswer || "";
+
+  console.log('Game Assets:', gameAsset);
+  console.log('Game', game);
+  console.log('Image:', imageFile);
+  console.log('Answer:', correctText);
 
   useEffect(() => {
-    // Select a random item from the array
-    const randomItem = items[Math.floor(Math.random() * items.length)];
-    setCurrentItem(randomItem);
-    setTargetText(randomItem.correctText);
-
-  }, []);
-  console.log(3)
-  
-  // FOR simulation
-  const handleMicPress = async () => {
-    if (!recording) {
-      setIsModalVisible(true);
-      await startRecording();
-    } else {
-      await stopRecording();
-    }
-  };
+    return () => {
+      if (recording) {
+        recording.getStatusAsync().then((status) => {
+          if (status.isRecording) {
+            // Stop the recording if it is still in progress
+            recording.stopAndUnloadAsync().catch((err) => {
+              console.warn('Error stopping and unloading recording:', err);
+            });
+          }
+        }).catch((err) => {
+          console.warn('Error getting recording status:', err);
+        });
+      }
+    };
+  }, [recording]);
 
   const startRecording = async () => {
     try {
@@ -68,7 +70,6 @@ const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-
       console.log('Starting recording...');
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
@@ -92,8 +93,6 @@ const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
       setRecordedURI(uri);
       console.log('Recording stopped and stored at', uri);
       setRecording(undefined);
-      
-      // await saveRecordingAsWav(uri); // Save recording as .wav file
       if (uri) {
         await handleTranscription(uri);
       } else {
@@ -103,27 +102,34 @@ const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
       console.warn('Recording does not exist.');
     }
   };
-  
 
-  //* Function to handle the transcription of the recorded audio
+  // Function to handle the transcription of the recorded audio
   async function handleTranscription(uri:string){
     try{
-      await handleSpeechToText(uri)
+      const result = await handleSpeechToText(uri, correctText);
+      console.log('Match:', result);
+      // setFeedback
+      if (result === true) {
+        setFeedback('Correct!');
+      } else {
+        setFeedback('Woopsie Daisy!');
+      }
+    // show modal
+    setIsModalVisible(true);
     }catch(error){
       console.log(error)
     }
   }
- 
-  const handleContinue = () => {
-    if (feedback === 'Correct!' && onContinue) {
-      onContinue();
+
+  const handleMicPress = async () => {
+    if (!recording) {
+      await startRecording();
     } else {
-      setIsModalVisible(false);
+      await stopRecording();
     }
   };
 
   const handleModalClose = () => {
-      
     if (feedback === 'Correct!' && onContinue) {
       onContinue();
     } else {
@@ -136,19 +142,22 @@ const SpeakGame3 = ({onContinue} : {onContinue : any})  => {
       <Text style={styles.header}>Guess the image below.</Text>
       <View style={styles.contentContainer}>
         <View style={styles.iconContainer}>
-            {currentItem && (
-            <Image source={currentItem.image} style={styles.icon} />
-            )}
+          {imageFile && (
+            <Image
+              source={{ uri: imageFile }}
+              style={styles.icon}
+            />
+          )}
         </View>
         <TouchableOpacity
-          style={[styles.micButton, started ? styles.micButtonActive : null]}
+          style={[styles.micButton, recording ? styles.micButtonActive : null]}
           onPress={handleMicPress}
           disabled={matchFound}>
           <Image source={icons.mic} style={styles.micIcon} />
         </TouchableOpacity>
         <View style={styles.subheaderContainer}>
           <Text style={styles.subheaderText}>
-            {!started ? 'I-tap para magsalita' : 'Magsalita ka...'}
+            {!recording ? 'I-tap para magsalita' : 'Magsalita ka...'}
           </Text>
         </View>
         <TouchableOpacity

@@ -1,39 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
-import * as FileSystem from 'expo-file-system';
 import { Stack } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
 import icons from '../../constants/icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
-import axios, { AxiosError } from 'axios';
 import { handleSpeechToText } from '~/components/speech-to-text';
-// import { KJUR, KEYUTIL, RSAKey } from 'jsrsasign';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
 
-const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
+const SpeakGame1 = ({gameId, onContinue} : {gameId: any, onContinue : any})  => {
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined);
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [recordedURI, setRecordedURI] = useState<string | null>(null);
-  const [isTranscribing, setIsTranscribing] = useState(false);
-  const [transcription, setTranscription] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [matchFound, setMatchFound] = useState(false);
-  const targetText = 'Nakakapagpabagabag ang sinabi ni Juan sa akin';
-  const simulatedCorrect = 'Nakakapagpabagabag ang sinabi ni Juan sa akin';
-  const simulatedWrong = 'Nakakapagbagabagagabag ang sinabi ni Juan sa akin';
-  const navigation = useNavigation();
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  const courses = useSelector((state: RootState) => state.courseTree.course);
+
+  // GET GAME ASSETS OF THE CURRENT GAME
+  // Find the specific game by gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId); 
+
+  // Extract the game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+  // Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract the conversation text and correct answer
+  const conversationText = textAssets.find(asset => asset.assetClassifier === "CONVERSATION")?.textContent;
+  const correctAnswer = textAssets.find(asset => asset.assetClassifier === "ANSWER")?.textContent;
+  const correctText: string = correctAnswer || "";
+
+  console.log('Game Assets:', gameAsset);
+  console.log('Game', game);
+  console.log('Conversation:', conversationText);
+  console.log('Answer:', correctAnswer);
   
   useEffect(() => {
     return () => {
       if (recording) {
-        recording.stopAndUnloadAsync();
+        recording.getStatusAsync().then((status) => {
+          if (status.isRecording) {
+            // Stop the recording if it is still in progress
+            recording.stopAndUnloadAsync().catch((err) => {
+              console.warn('Error stopping and unloading recording:', err);
+            });
+          }
+        }).catch((err) => {
+          console.warn('Error getting recording status:', err);
+        });
       }
     };
   }, [recording]);
@@ -48,7 +71,6 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-
       console.log('Starting recording...');
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
@@ -72,8 +94,6 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
       setRecordedURI(uri);
       console.log('Recording stopped and stored at', uri);
       setRecording(undefined);
-      
-      // await saveRecordingAsWav(uri); // Save recording as .wav file
       if (uri) {
         await handleTranscription(uri);
       } else {
@@ -84,17 +104,24 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
     }
   };
 
-  //* Function to handle the transcription of the recorded audio
+  // Function to handle the transcription of the recorded audio
   async function handleTranscription(uri:string){
     try{
-      await handleSpeechToText(uri,"dasdada")
+      const result = await handleSpeechToText(uri, correctText);
+      console.log('Match:', result);
+      // setFeedback
+      if (result === true) {
+        setFeedback('Correct!');
+      } else {
+        setFeedback('Woopsie Daisy!');
+      }
+      // show modal
+      setIsModalVisible(true);
     }catch(error){
       console.log(error)
     }
   }
 
-  
-  
   const handleMicPress = async () => {
     if (!recording) {
       await startRecording();
@@ -102,35 +129,18 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
       await stopRecording();
     }
   };
+
   const handleModalClose = () => {
-      
     if (feedback === 'Correct!' && onContinue) {
       onContinue();
     } else {
       setIsModalVisible(false);
     }
   };
-  const checkAnswer = () => {
-    if (matchFound) {
-      setFeedback('Correct!');
-    } else {
-      setFeedback('Incorrect. Try again.');
-    }
-    setIsModalVisible(true);
-  };
-
-
+  
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View style={styles.backContainer}>
-        <TouchableOpacity onPress={handleGoBack}>
-          <Image source={icons.modbackarrow} style={styles.backArrow} />
-        </TouchableOpacity>
-        <View style={styles.progressBarContainer}>
-          <ProgressBar value={20} indicatorColor={'#FD9F10'} />
-        </View>
-      </View>
       <Text style={styles.header}>Speak the sentence below.</Text>
       <View style={styles.contentContainer}>
         <View style={styles.iconContainer}>
@@ -138,9 +148,7 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
         </View>
         <View style={styles.formContainer}>
           <View style={styles.subSubheaderContainer}>
-            <Text style={styles.subSubheaderText}>Nakakapagpabagabag</Text>
-            <Text style={styles.subSubheaderText}>ang sinabi ni Juan sa</Text>
-            <Text style={styles.subSubheaderText}>akin.</Text>
+            <Text style={styles.subSubheaderText}>{conversationText}</Text>
           </View>
         </View>
         <TouchableOpacity
@@ -163,7 +171,7 @@ const SpeakGame1 = ({onContinue} : {onContinue : any})  => {
       <FeedbackModal
         visible={isModalVisible}
         feedback={feedback}
-        onClose={() => setIsModalVisible(false)}
+        onClose={handleModalClose}
       />
     </SafeAreaView>
   );
@@ -187,8 +195,8 @@ const styles = StyleSheet.create({
     height: 43,
   },
   formContainer: {
-    width: '48%',
-    height: 100,
+    width: '55%',
+    height: 95,
     padding: 18,
     marginTop: -250,
     marginLeft: 60,
@@ -198,14 +206,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'column',
     borderRadius: 20,
+    flexWrap: 'wrap',
+    overflow: 'hidden',
   },
   subSubheaderContainer: {
-    marginBottom: 40,
+    marginBottom: 0,
   },
   subSubheaderText: {
     fontSize: 15,
     fontWeight: '600',
     color: "#344054",
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    lineHeight: 18,
   },
   subheaderContainer: {
     marginBottom: 10,
@@ -239,7 +252,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginLeft: 20,
-    marginTop: 40,
   },
   contentContainer: {
     alignItems: "center",
