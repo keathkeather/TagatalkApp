@@ -1,67 +1,97 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import { Stack } from 'expo-router';
-import { useNavigation } from '@react-navigation/native';
-import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame1 = ({onContinue} : {onContinue : any}) => {
-    const [typedText, setTypedText] = useState('');
-    const [currentItem, setCurrentItem] = useState<{ image: any, correctText: string } | null>(null);
-    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
-    const [feedback, setFeedback] = useState<string | null>(null);
-    const [continueClicked, setContinueClicked] = useState<boolean>(false);
+const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) => {
+  const [typedText, setTypedText] = useState('');
+  const [currentItem, setCurrentItem] = useState<{ given: string, correctAnswer: string[], image: any } | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const courses = useSelector((state: RootState) => state.courseTree.course);
   
-    // Array of images and their correct answers
-    const items = [
-      { image: require('../assets/palabok.png'), correctText: 'Palabok' },
-      { image: require('../assets/bibingka.png'), correctText: 'Bibingka' },
-      { image: require('../assets/lechon.jpg'), correctText: 'Lechon Baboy' },
-      { image: require('../assets/halohalo.jpg'), correctText: 'Halohalo' },
-      // Add more items here...
-    ];
-  
-    useEffect(() => {
-      // Select a random item from the array
-      const randomItem = items[Math.floor(Math.random() * items.length)];
-      setCurrentItem(randomItem);
-    }, []);
-  
-    const handleTextChange = (text: any) => {
-      setTypedText(text);
-      
-    };
-  
-    const checkAnswer = () => {
-      if (!currentItem) return;
+  useEffect(() => {
+    // Find the specific game by gameId
+    const game = courses
+      .flatMap(course => course.lesson)
+      .flatMap(lesson => lesson.game)
+      .find(game => game.id === gameId);
+
+    // Extract the game assets from the game
+    const gameAsset: GameAsset[] = game ?
+      (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+    // Extract text assets for conversation and question
+    const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+    // Extract file assets for images
+    const fileAssets: FileAsset[] = gameAsset.flatMap(asset => asset.fileAssets);
     
-      if (typedText.trim().toLowerCase() === currentItem.correctText.toLowerCase()) {
-        setFeedback('Correct!');
-      } else {
-        setFeedback('Woopsie Daisy!');
-        // Remove the call to onContinue here
-      }
+    // Extract the given image from the fileAssets
+    const givenFile = fileAssets.find(asset => asset.assetClassifier === "GIVEN");
 
-    setContinueClicked(true);
-    };
+    // Extract each individual correct answer from the textAssets
+    const correctAnswer = textAssets
+      .filter(asset => asset.assetClassifier === "ANSWER")
+      .map(answer => answer.textContent.toLowerCase());
 
-    const handleModalClose = () => {
-      
-      if (feedback === 'Correct!' && onContinue) {
-        onContinue();
-      }
-      setFeedback(null);
-    };
+    // Debugging purposes only
+    console.log('Game Assets:', gameAsset);
+    console.log('Game:', game);
+    console.log('Given Image:', givenFile);
+    console.log('Correct Answers:', correctAnswer);
+
+    // Set the current item
+    setCurrentItem({
+      given: givenFile?.fileUrl || '',
+      correctAnswer: correctAnswer,
+      image: givenFile ? { uri: givenFile.fileUrl } : null
+    });
+  }, [gameId, courses]);
+
+  const handleTextChange = (text: any) => {
+    setTypedText(text);
+  };
+
+  // Function to normalize text by removing punctuation and making it lowercase
+  const normalizeText = (text: string) => {
+    return text.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").toLowerCase().trim();
+  };
+
+  // Check if the user's answer matches one of the correct answers
+  const checkAnswer = () => {
+    if (!currentItem) return;
+
+    const userAnswer = normalizeText(typedText);
+    const isCorrect = currentItem.correctAnswer.some(answer => normalizeText(answer) === userAnswer);
+
+    if (isCorrect) {
+      setFeedback('Correct!');
+      setIsModalVisible(true);
+    } else {
+      setFeedback('Woopsie Daisy!');
+      setIsModalVisible(true);
+    }
+  };
+
+  const handleModalClose = () => {
+    if (feedback === 'Correct!' && onContinue) {
+      onContinue();
+    } else {
+      setIsModalVisible(false);
+    }
+  };
   
-    return (
+  return (
     <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Write what you see.</Text>
-          <View style={styles.contentContainer}>
-            {currentItem && (
-              <Image source={currentItem.image} style={styles.image} />
-            )}
+      <View style={styles.contentContainer}>
+        {currentItem && currentItem.image && (
+          <Image source={currentItem.image} style={styles.image} />
+        )}
         <TextInput
           style={styles.textBox}
           onChangeText={handleTextChange}
@@ -80,72 +110,73 @@ const WriteGame1 = ({onContinue} : {onContinue : any}) => {
         >
           <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
-          </View>
-          <FeedbackModal
-            visible={feedback !== null}
-            feedback={feedback}
-            onClose={handleModalClose}
-          />
-        </View>
-    );
-  };
-export default WriteGame1
+      </View>
+      <FeedbackModal
+        visible={feedback !== null}
+        feedback={feedback}
+        onClose={handleModalClose}
+      />
+    </View>
+  );
+};
+
+export default WriteGame1;
 
 const styles = StyleSheet.create({
-    image: {
-      marginTop: 25,
-      width: '100%',
-      height: 200,
-      resizeMode: 'contain',
-      alignSelf: 'center',
-    },
-    header: {
-      marginTop: 20,
-      fontSize: 25,
-      fontWeight: "900",
-    },
-    contentContainer: {
-      alignItems: 'center',
-    },
-    textBox: {
-      width: '100%',
-      height: '45%',
-      borderColor: '#D4D4D8',
-      borderWidth: 1,
-      borderRadius: 20,
-      marginTop: 40,
-      marginBottom: 30,
-      textAlign: 'left',
-      textAlignVertical: 'top',
-      fontSize: 20,
-      fontWeight: '700',
-      padding: 20,
-    },
-    continueButton: {
-      backgroundColor: '#FD9F10',
-      borderRadius: 30,
-      width: '100%',
-      height: '7%',
-      alignItems: 'center',
-      justifyContent: 'center',
-      elevation: 4,
-    },
-    continueText: {
-      fontSize: 18,
-      color: 'white',
-      fontWeight: 'bold',
-      height: '50%',
-      letterSpacing: 1,
-    },
-    success: {
-      fontSize: 18,
-      color: 'black',
-      fontWeight: 'bold',
-    },
-    disabledButton: {
-      backgroundColor: 'gray',
-    },
-    matched: {
-      backgroundColor: 'gray',
-    },
-  })
+  image: {
+    marginTop: 25,
+    width: '100%',
+    height: 200,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+  header: {
+    marginTop: 20,
+    fontSize: 25,
+    fontWeight: "900",
+  },
+  contentContainer: {
+    alignItems: 'center',
+  },
+  textBox: {
+    width: '100%',
+    height: '45%',
+    borderColor: '#D4D4D8',
+    borderWidth: 1,
+    borderRadius: 20,
+    marginTop: 40,
+    marginBottom: 30,
+    textAlign: 'left',
+    textAlignVertical: 'top',
+    fontSize: 20,
+    fontWeight: '700',
+    padding: 20,
+  },
+  continueButton: {
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '100%',
+    height: '7%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  continueText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+    height: '50%',
+    letterSpacing: 1,
+  },
+  success: {
+    fontSize: 18,
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
+  },
+  matched: {
+    backgroundColor: 'gray',
+  },
+});
