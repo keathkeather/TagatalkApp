@@ -3,6 +3,8 @@ import { WritableDraft } from "immer";
 import { getCourseTree } from "~/components/courseTree";
 
 export interface FileAsset {
+    assetName: any;
+    filename: string;
     assetId: string,
     assetClassifier: string,
     assetType: string,

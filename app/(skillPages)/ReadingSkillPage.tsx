@@ -7,18 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { AppDispatch, RootState } from '../redux/store';
 
-interface Course {
-    unitName: string;
-    unitNumber: number;
-    lesson: Lesson[];   
-}
-
-interface Lesson {
-    id: string;
-    lessonNumber: number;
-    lessonName: string;
-}
-
 const ReadingSkillPage = () => {
     const dispatch = useDispatch<AppDispatch>();
 

@@ -1,68 +1,89 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
-import Voice from '@react-native-voice/voice';
-import { Stack } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
 import icons from '../../constants/icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ProgressBar from '../../components/ProgressBar';
 import FeedbackModal from '../feedbackModal';
 import { Audio } from 'expo-av';
 import { handleSpeechToText } from '~/components/speech-to-text';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/store';
+import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame1 = ({onContinue} : {onContinue : any})  => {
+const ListenGame1 = ({gameId, onContinue} : {gameId: any, onContinue : any})  => {
   const [started, setStarted] = useState(false);
-  const [results, setResults] = useState([]);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
   const [recordedURI, setRecordedURI] = useState<string | null>(null);
   const [isCorrect , setIsCorrect] = useState<boolean | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
-  const [recognizedText, setRecognizedText] = useState('');
   const [matchFound, setMatchFound] = useState();
-  const [currentItem, setCurrentItem] = useState<{ audio: any, correctText: string } | null>(null);
-  const [targetText, setTargetText] = useState('');
-  const simulatedWrong = 'Leche flan';
   const [isPlaying, setIsPlaying] = useState(false);
-  
+
+  // Get courses from the store
+  const courses = useSelector((state: RootState) => state.courseTree.course);
+
+  //TODO: GET GAME ASSETS OF THE CURRENT GAME
+  // Find the specific game by gameId
+  const game = courses
+    .flatMap(course => course.lesson) 
+    .flatMap(lesson => lesson.game) 
+    .find(game => game.id === gameId);
+
+  // Extract the game assets from the game
+  const gameAsset: GameAsset[] = game ? 
+    (Array.isArray(game.gameAssets) ? game.gameAssets : [game.gameAssets]) : [];
+
+  // Extract file assets
+  const fileAssets = gameAsset.flatMap(asset => asset.fileAssets);
+
+  // Extract text assets
+  const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
+
+  // Extract the audio file in mp3 form from the file assets NOTE: make the storage an audio file
+  const audioFile = fileAssets.find(asset => asset.assetClassifier === 'GIVEN');
+
+
+  // Extract the correct answer from the text assets
+  const correctAnswer: TextAsset | undefined = textAssets.find(asset => asset.isCorrectAnswer === true);
+
+  console.log(correctAnswer?.textContent)
+
+  console.log('Game Assets:', gameAsset);
+ 
   const navigation = useNavigation();
+
   const handleGoBack = () => {
     navigation.goBack();
   };
 
-  // Array of audio files and their correct answers
-  const items = [
-    { audio: require('../assets/umaga.mp3'), correctText: 'Umaga' },
-    { audio: require('../assets/gabi.mp3'), correctText: 'Gabi' },
-    { audio: require('../assets/hapon.mp3'), correctText: 'Hapon' },
-    { audio: require('../assets/tanghali.mp3'), correctText: 'Tanghali' },
-    // Add more items here...
-  ];
-
-  useEffect(() => {
-    // Select a random item from the array
-    const randomItem = items[Math.floor(Math.random() * items.length)];
-    setCurrentItem(randomItem);
-  }, []);
-  
-  
   const playAudio = async () => {
-    if (!currentItem) 
+    if (!audioFile) 
       return;
 
     try {
-      setIsPlaying(true);
-      const sound = new Audio.Sound();
-      await sound.loadAsync(currentItem.audio);
-      await sound.playAsync();
-      setIsPlaying(false);
+      if (audioFile && audioFile.fileUrl) {
+        // construct the audio file url
+        const audioFileUri = audioFile.fileUrl;
+
+        setIsPlaying(true);
+        // create a new sound object
+        const sound = new Audio.Sound();
+        // Load the audio file using the URI
+        await sound.loadAsync({ uri: audioFileUri });
+        console.log('Audio loaded successfully from:', audioFileUri);
+
+        // Optionally, play the sound
+        await sound.playAsync();
+        setIsPlaying(false);
+      } else {
+        console.warn('Audio file URL is null');
+      }
     } catch (error) {
       console.log('Error playing audio:', error);
     }
   };
 
-  // FOR simulation
   const handleMicPress = async () => {
     if (!recording) {
       await startRecording();
@@ -109,7 +130,22 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
       // await saveRecordingAsWav(uri); // Save recording as .wav file
       if (uri) {
         //* correct text should be passed in this function as the second parameter
-        await handleTranscription(uri,"Kumusta, ako si keith Ian Lavador, ako ay nakatira sa");
+        //* the second parameter is the correct text while the first parameter is the uri of the recorded audio
+        if (correctAnswer) {
+          const result = await handleTranscription(uri, correctAnswer.textContent); // recorded by the user - uri ;  correct text - correctAnswer.textContent
+
+          // setFeedback
+          if (result === true) {
+            setFeedback('Correct!');
+          } else {
+            setFeedback('Woopsie Daisy!');
+          }
+
+          //show modal
+          setIsModalVisible(true);
+        } else {
+          console.warn('Correct answer is undefined.');
+        }
       } else {
         console.warn('Recording URI is null.');
       }
@@ -118,27 +154,20 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
     }
   };
   
-
   //* Function to handle the transcription of the recorded audio
   async function handleTranscription(uri:string, correctText:string){
     try{
-      setIsCorrect(await handleSpeechToText(uri, correctText));
-      console.log(isCorrect);
+      const isCorrect = await handleSpeechToText(uri, correctText); // Happening: Speech to text comparison with the correct text
+      setIsCorrect(isCorrect);
+      return isCorrect;
     }catch(error){
       console.log(error)
     }
   }
  
-  const handleContinue = () => {
-    if (feedback === 'Correct!' && onContinue) {
-      onContinue();
-    } else {
-      setIsModalVisible(false);
-    }
-  };
+  console.log(isCorrect);
 
   const handleModalClose = () => {
-      
     if (feedback === 'Correct!' && onContinue) {
       onContinue();
     } else {
@@ -164,7 +193,7 @@ const ListenGame1 = ({onContinue} : {onContinue : any})  => {
         </TouchableOpacity>
         <View style={styles.subheaderContainer}>
           <Text style={styles.subheaderText}>
-            {!started ? 'I-tap para magsalita' : 'Magsalita ka...'}
+            {!recording ? 'Tap to speak!' : 'Tap again to check your answer!'}
           </Text>
         </View>
         <TouchableOpacity
@@ -235,16 +264,20 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '600',
     color: "#344054",
+    
   },
   subheaderContainer: {
     marginBottom: 10,
     alignItems: "center",
+    justifyContent: "center",
+    marginTop: "5%"
   },
   subheaderText: {
     fontSize: 26,
     fontWeight: 'bold',
     color: "#D0D5DD",
     marginBottom: 80,
+    textAlign: "center" //center the text
   },
   micIcon: {
     width: 70,
