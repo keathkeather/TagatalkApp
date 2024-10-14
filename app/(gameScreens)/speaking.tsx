@@ -62,7 +62,7 @@ const Speaking = () => {
       const currentGame = games[currentStep]; // Get the current game based on step
 
       if (!currentGame) {
-        return <LessonComplete />; // No more games to play
+        return <LessonComplete lessonId={currentLesson.id} />; // No more games to play
       }
 
       switch (currentGame.gameType) {
@@ -79,7 +79,7 @@ const Speaking = () => {
           console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
           return <SpeakGame3  gameId={currentGame.id}  onContinue={handleContinue}/>;
         default:
-          return <LessonComplete/>;
+          return <LessonComplete lessonId={currentLesson.id}/>;
       }
     };
     

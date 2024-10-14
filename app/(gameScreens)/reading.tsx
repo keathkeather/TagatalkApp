@@ -64,11 +64,12 @@ import { useRoute } from '@react-navigation/native';
       setProgress(prevProgress => prevProgress + progressIncrement);
     };
     
+    const currentGame = games[currentStep]; // Get the current game based on step
+
     const renderCurrentGame = () => {
-      const currentGame = games[currentStep]; // Get the current game based on step
 
       if (!currentGame) {
-        return <LessonComplete />; // No more games to play
+        return <LessonComplete lessonId={currentLesson.id} />; // No more games to play
       }
 
       switch (currentGame.gameType) {
@@ -85,7 +86,7 @@ import { useRoute } from '@react-navigation/native';
           console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
           return <ReadGame3  gameId={currentGame.id}  onContinue={handleContinue}/>;
         default:
-          return <LessonComplete/>;
+          return <LessonComplete lessonId={currentLesson.id}/>;
       }
     };
     
@@ -93,7 +94,7 @@ import { useRoute } from '@react-navigation/native';
         <SafeAreaView style={{backgroundColor: 'white', flex: 1}}>
             <Stack.Screen options={{headerShown: false }} />
             <View style={styles.headerContainer}>
-                <TouchableOpacity onPress={handleGoBack}>
+                <TouchableOpacity onPress={handleGoBack} disabled={!currentGame} >
                     <Image source={icons.modbackarrow} style={styles.backArrow} />
                 </TouchableOpacity>
                 <View style={styles.progressBarContainer}>

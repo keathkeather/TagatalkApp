@@ -43,6 +43,7 @@ interface Lesson {
     id: string;
     lessonNumber: number;
     lessonName: string;
+    isComplete: boolean;
     game: Game[];
 }
 
