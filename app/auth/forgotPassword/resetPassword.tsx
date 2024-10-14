@@ -25,11 +25,6 @@ const ResetPassword = () => {
 
       const resetPassword = async () => {
         console.log("Attempting reset password...");
-        if (newPassword !== confirmPassword) {
-          console.log("New password does not match.");
-          Alert.alert("New password does not match");
-          return;
-        }
         const resultAction = await dispatch(handleResetPassword({OTP, newPassword}));
         console.log("Password successfully reset:", resultAction);
         if (handleResetPassword.fulfilled.match(resultAction)) {
@@ -60,6 +55,28 @@ const ResetPassword = () => {
     }, [shouldResetPassword, shouldGoBack]);    
     
   const handleResetting = ()=>{
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!newPassword || !confirmPassword) {
+      Alert.alert(
+        "Blank Entries",
+        "All fields are required."
+      );
+      return;
+    }
+    if (!passwordRegex.test(newPassword)) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must have at least 8 characters, a capital letter, a number, and a special character."
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert(
+        "Unmatching Password",
+        "Ensure that password and confirm password are the same."
+      );
+      return;
+    }
     setResetPassword(true);
   }
 

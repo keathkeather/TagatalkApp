@@ -30,11 +30,6 @@ const Register: React.FC<RegisterProps> = ( ) =>{
   
     const registerUser = async () => {
       console.log("Attempting registration...");
-      if (password !== confirmPassword) {
-        console.log("Password does not match.");
-        Alert.alert("Password does not match");
-        return;
-      }
       const resultAction = await dispatch(handleRegister({email,password}));
       console.log("Registration successful:", resultAction);
       if (handleRegister.fulfilled.match(resultAction)) {
@@ -56,11 +51,30 @@ const Register: React.FC<RegisterProps> = ( ) =>{
   }, [shouldRegister]);  
   
   const handleRegistration = () => {
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!email || !password || !confirmPassword) {
+      Alert.alert(
+        "Blank Entries",
+        "All fields are required."
+      );
+      return;
+    }
+    if (!passwordRegex.test(password)) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must have at least 8 characters, a capital letter, a number, and a special character."
+      );
+      return;
+    }
+    if (password !== confirmPassword) {
+      Alert.alert(
+        "Unmatching Password",
+        "Ensure that password and confirm password are the same."
+      );
+      return;
+    }
     setShouldRegister(true);  // trigger the registration effect
   };
-  
-
-
 
   return (
     <View style={{ flex: 1, width:'100%', justifyContent: 'center'}}>

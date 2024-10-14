@@ -22,16 +22,6 @@ const ChangePassword = () => {
     console.log("confirmPassword:", confirmPassword);
 
     const handlePasswordChange = async()=>{
-      if (!oldPassword || !newPassword || !confirmPassword) {
-        Alert.alert("All fields are required");
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
-        Alert.alert("New password and confirmation do not match");
-        return;
-      }
-
       console.log("Attempting change password...");
       const resultAction = await dispatch(handleChangePassword({oldPassword, newPassword}));
       if (handleChangePassword.fulfilled.match(resultAction)) {
@@ -50,6 +40,28 @@ const ChangePassword = () => {
   },[shouldChangePassword])
 
   const ChangePasswordHandler = ()=>{
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      Alert.alert(
+        "Blank Entries",
+        "All fields are required."
+      );
+      return;
+    }
+    if (!passwordRegex.test(newPassword)) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must have at least 8 characters, a capital letter, a number, and a special character."
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert(
+        "Unmatching Password",
+        "Ensure that password and confirm password are the same."
+      );
+      return;
+    }
     setShouldChangePassword(true);
   }
   return (
