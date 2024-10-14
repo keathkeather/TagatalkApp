@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Image, Modal } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { addUserProgress } from '~/components/userProgress';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { Dispatch } from 'redux';
 
 const LessonComplete = ({ lessonId }: { lessonId: string }) => {
   const navigation = useNavigation();
   const [isModalVisible, setModalVisible] = useState(false);
   const [earnedPoints, setEarnedPoints] = useState(0); // Points for the first completion
-  const [isLessonCompleted, setLessonCompleted] = useState(false); // State to determine if modal shows "Good Job" or "Points Earned"
+  const [isLessonCompleted, setLessonCompleted] = useState(false); // State to determine if modal shows points or retake message
 
   const courses = useSelector((state: RootState) => state.courseTree.course);
+  const dispatch = useDispatch<Dispatch>();
 
   // Check if the lesson is complete
   const isComplete = courses
@@ -21,23 +23,20 @@ const LessonComplete = ({ lessonId }: { lessonId: string }) => {
     console.log(isComplete);
   const handleGoBack = () => {
     if (isComplete) {
-      // Show "Good Job, you did it again!" modal for completed lessons
+      // Show modal for retake completed lessons
       setLessonCompleted(true);
       setModalVisible(true);
     } else {
       // Show points earned modal for new lesson completion
       setLessonCompleted(false);
       setModalVisible(true);
-      const points = 100; // Simulated points, replace with actual points logic
+      const points = 100; 
       setEarnedPoints(points);
+      addUserProgress(lessonId);
     }
   };
 
   const handleCloseModal = () => {
-    if (!isComplete) {
-      // Add progress for first-time completion
-      addUserProgress(lessonId);
-    }
     // Close modal and navigate back
     setModalVisible(false);
     navigation.goBack();
@@ -58,7 +57,7 @@ const LessonComplete = ({ lessonId }: { lessonId: string }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Modal for showing earned points or "Good Job" message */}
+      {/* Modal for showing earned points or retake completion message */}
       <Modal
         transparent={true}
         visible={isModalVisible}
