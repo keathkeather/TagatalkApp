@@ -66,16 +66,6 @@ export const handleCourseTree = createAsyncThunk('courseTree/getCourseTree', asy
     return courseTree;
 });
 
-// export const handleGameAsset = createAsyncThunk('courseTree/getGameAssets', async (gameId: string) => {
-//     const gameAsset = await getGameAssets(gameId);
-//     return gameAsset;
-// });
-
-// export const handleGame = createAsyncThunk('courseTree/getGame', async (gameLessonNumber: number) => {
-//     const game = await getGame(gameLessonNumber);
-//     return game;
-// });
-
 const courseTreeSlice = createSlice({
     name: "courseTreeState",
     initialState,
