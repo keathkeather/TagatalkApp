@@ -4,34 +4,54 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import icons from '../../constants/icons';
 import React, { useEffect, useState } from 'react'
 import ProgressBar from '../../components/ProfileProgressBar'; 
-import { User , getUser } from '~/components/user';
-import { useUser } from '../context/UserContext';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { CourseTreeArray, getCourseTree } from '~/components/courseTree';
+
 const Profile = () => {
-  // const [user ,setUser]= useState<User | null>(null);
-  // const {userState} = useUser();
-  // // useEffect(() => {
-  // //   console.log("Inside useEffect for profile");
-  // //   setUser(userState.user);
-  // //   console.log("User:", userState.user);
-  // // }, [userState.user]); 
-  // const user = useSelector((state: RootState) => state.user.userState);
+  const dispatch = useDispatch<AppDispatch>();
+  const [readingCourseTree, setReadingCourseTree] = useState<CourseTreeArray | null>(null);
+  const [speakingCourseTree, setSpeakingCourseTree] = useState<CourseTreeArray | null>(null);
+  const [writingCourseTree, setWritingCourseTree] = useState<CourseTreeArray | null>(null);
+  const [listeningCourseTree, setListeningCourseTree] = useState<CourseTreeArray | null>(null);
+
+  // Get the info of the courses
+  useEffect(() => {
+    const fetchCourseTree = async () => {
+      const reading = await getCourseTree('READING');
+      const speaking = await getCourseTree('SPEAKING');
+      const writing = await getCourseTree('WRITING');
+      const listening = await getCourseTree('LISTENING');
+      setReadingCourseTree(reading);
+      setSpeakingCourseTree(speaking);
+      setWritingCourseTree(writing);
+      setListeningCourseTree(listening);
+    }
+    fetchCourseTree();
+  }, [dispatch]);
+
+  // Get the number of lessons for each courses
+  const readingLessons = readingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.length, 0);
+  const speakingLessons = speakingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.length, 0);
+  const writingLessons = writingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.length, 0);
+  const listeningLessons = listeningCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.length, 0);
+
+  // Get the number of completed lessons for each courses using course tree info
+  const readingCompleted = readingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.filter(lesson => lesson.isComplete).length, 0);
+  const speakingCompleted = speakingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.filter(lesson => lesson.isComplete).length, 0);
+  const writingCompleted = writingCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.filter(lesson => lesson.isComplete).length, 0);
+  const listeningCompleted = listeningCourseTree?.course.reduce((acc, unit) => acc + unit.lesson.filter(lesson => lesson.isComplete).length, 0);
+
   //*Change the progress based of the logged in user
-  const readingProgress = 0;
-  const speakingProgress = 0;
-  const writingProgress = 0;
-  const listeningProgress = 0;
-  const streak = 12;
-  const life = 5;
+  const readingProgress = readingLessons ? Math.round(((readingCompleted ?? 0) / readingLessons) * 100) : 0;
+  const speakingProgress = speakingLessons ? Math.round(((speakingCompleted ?? 0) / speakingLessons) * 100) : 0;
+  const writingProgress = writingLessons ? Math.round(((writingCompleted ?? 0) / writingLessons) * 100) : 0;
+  const listeningProgress = listeningLessons ? Math.round(((listeningCompleted ?? 0) / listeningLessons) * 100) : 0;
+  // const streak = 12;
+  // const life = 5;
   const bio = useSelector((state: RootState) => state.user.profileDescription);
   const username = useSelector((state: RootState) => state.user.name);
   let profileImage =useSelector((state: RootState) => state.user.profileImage);
-  
-  // if(profileImage === ""){
-  //   profileImage = '../app/assets/default_profile.png'
-  // }
-  
   
   return (
     <SafeAreaView style={{backgroundColor:'white', flex:1,}}>
@@ -91,7 +111,7 @@ const Profile = () => {
         alignSelf: 'flex-start',
         marginHorizontal: 30,
       }}>
-        Statistics
+        Overview
       </Text>
       <View style={{flex:1, flexDirection: 'row', marginHorizontal: 30, }}>
         
