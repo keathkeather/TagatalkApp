@@ -47,6 +47,7 @@ interface Lesson {
   id: string;
   lessonNumber: number;
   lessonName: string;
+  isComplete: boolean;
   games: Game[];
 }
 
@@ -56,7 +57,7 @@ interface Unit {
   lesson: Lesson[];
 }
 
-interface CourseTreeArray {
+export interface CourseTreeArray {
   course: Unit[];
 }
 

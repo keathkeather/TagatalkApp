@@ -1,7 +1,9 @@
-import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { orange } from '@tamagui/themes';
 
 const pages = [
   {
@@ -35,6 +37,7 @@ const Index = () => {
 
   const renderItem = ({ item, index } : {item: any, index: any}) => (
     <View style={styles.pageContainer}>
+      {Platform.OS === 'ios' && (<StatusBar barStyle="dark-content" backgroundColor={"blue"} />)}
       <View style={styles.imgRedRectangleContainer}>
         <Image source={item.imageRectangle} style={styles.imgRedRectangle} />
         <Text style={styles.imgtextHeader}>{item.header}</Text>
@@ -104,13 +107,15 @@ const styles = StyleSheet.create({
     marginTop: 70,
   },
   subtextHeader: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 10,
+    color: '#344054',
   },
   subtextHeader2: {
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 5,
-    marginBottom: 30,
+    marginBottom: '10%',
+    color: '#344054',
   },
   pageContainer: {
     width: Dimensions.get('window').width,
@@ -132,7 +137,7 @@ const styles = StyleSheet.create({
   },
   imgsubtextHeader: {
     color: '#f8f8ff',
-    fontSize: 12,
+    fontSize: 16,
     position: 'absolute',
     marginTop: 90,
   },
