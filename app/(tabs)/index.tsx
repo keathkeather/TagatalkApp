@@ -1,9 +1,8 @@
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, FlatList, Dimensions, StatusBar, Platform } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { orange } from '@tamagui/themes';
 
 const pages = [
   {
@@ -32,8 +31,15 @@ const pages = [
   },
 ];
 
+const generateRepeatedPages = (pages: any, repeatCount: any) => Array(repeatCount).fill(pages).flat();
+
 const Index = () => {
   const username = useSelector((state: RootState) => state.user.name);
+  const [repeatedPages, setRepeatedPages] = useState(generateRepeatedPages(pages, 10));
+
+  const loadMorePages = () => {
+    setRepeatedPages(prevPages => [...prevPages, ...generateRepeatedPages(pages, 10)]);
+  };
 
   const renderItem = ({ item, index } : {item: any, index: any}) => (
     <View style={styles.pageContainer}>
@@ -46,7 +52,7 @@ const Index = () => {
         <TouchableOpacity
           style={styles.continueButton}
           onPress={() => {
-            switch (index) {
+            switch (index % 4) {
               case 0:
                 router.push('/(skillPages)/ReadingSkillPage');
                 break;
@@ -81,11 +87,13 @@ const Index = () => {
         <Text style={styles.subtextHeader2}>Just swipe left! ➡️</Text>
       </View>
       <FlatList
-        data={pages}
+        data={repeatedPages}
         horizontal
         pagingEnabled
         renderItem={renderItem}
         keyExtractor={(item, index) => index.toString()}
+        onEndReached={loadMorePages}
+        onEndReachedThreshold={0.5}
       />
     </View>
   );
