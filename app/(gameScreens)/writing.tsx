@@ -14,6 +14,15 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
 
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+  return array;
+};
+
+
 const Writing = () => {
   const dispatch = useDispatch<AppDispatch>();
 
@@ -26,27 +35,9 @@ const Writing = () => {
   const totalSteps = 3; // total number of items
   const progressIncrement = 100 / totalSteps; // calculate progress increment
 
-  useEffect(() => {
-    return () => {
-      // Reset state when component is unmounted
-      setCurrentStep(1);
-      setProgress(0);
-    };
-  }, []);
-
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
-
-  // Debugging logs
-  console.log('Route Params:', route.params);
-  console.log('Courses:', courses);
-  console.log('Unit Index:', unitIndex);
-  console.log('Lesson Index:', lessonIndex);
-
   // Access current course using the passed unitIndex
   const currentCourse = courses[unitIndex];
-
+  
   // Access the current lesson
   const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
   if (!currentLesson) {
@@ -57,12 +48,33 @@ const Writing = () => {
   }
 
   // Access the games safely - debug purposes only (//!will delete this later)
-  const games = currentLesson.game || [];
+  const [games, setGames] = useState(currentLesson.game || []);
   // if (games.length > 0) {
   //     console.log(`Game Length: ${games.length}`); // Access game type
   // } else {
   //     console.log("No games available for the current lesson.");
   // }
+
+  const handleGoBack = () => {
+    navigation.goBack();
+  };
+
+  useEffect(() => {
+    // Shuffle games when component mounts
+    setGames(prevGames => shuffleArray([...prevGames]));
+
+    return () => {
+      // Reset state when component is unmounted
+      setCurrentStep(0);
+      setProgress(0);
+    };
+  }, []);
+
+  // Debugging logs
+  console.log('Route Params:', route.params);
+  console.log('Courses:', courses);
+  console.log('Unit Index:', unitIndex);
+  console.log('Lesson Index:', lessonIndex);
 
   const handleContinue = () => {
     setCurrentStep(prevStep => prevStep + 1);
