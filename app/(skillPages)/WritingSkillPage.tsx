@@ -20,6 +20,8 @@ import { useFocusEffect } from '@react-navigation/native';
 const WritingSkillPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [alreadyTakenModalVisible, setAlreadyTakenModalVisible] = useState(false);
+  const [currentLesson, setCurrentLesson] = useState({ lessonIndex: 0, unitIndex: 0 });
 
   // Refetch course tree whenever the page regains focus
   useFocusEffect(
@@ -37,7 +39,6 @@ const WritingSkillPage = () => {
     }, [dispatch])
   );
   const courses = useSelector((state: RootState) => state.courseTree.course);
-  //console.log(courses)
   const navigation = useNavigation();
 
   const handleGoBack = () => {
@@ -46,11 +47,19 @@ const WritingSkillPage = () => {
 
   const handleLessonClick = (lessonIndex: number, index: number) => {
     if (lessonIndex > 0 && !courses[index].lesson[lessonIndex - 1].isComplete) {
-      console.log(lessonIndex);
       setModalVisible(true);
+      return false;
+    } else if (courses[index].lesson[lessonIndex].isComplete) {
+      setCurrentLesson({ lessonIndex, unitIndex: index });
+      setAlreadyTakenModalVisible(true);
       return false;
     }
     return true;
+  };
+
+  const proceedToLesson = () => {
+    setAlreadyTakenModalVisible(false);
+    router.push(`/(gameScreens)/writing?lessonIndex=${currentLesson.lessonIndex}&unitIndex=${currentLesson.unitIndex}`);
   };
 
   return (
@@ -68,7 +77,6 @@ const WritingSkillPage = () => {
             <Text style={styles.headerText}> Writing Skills </Text>
           </View>
           <View style={styles.headerContainer}>
-            {/* Map through the courses and display the units and lessons */}
             {courses.map((course, index) => (
               <View key={index}>
                 <View style={styles.unitBgContainer}>
@@ -79,7 +87,6 @@ const WritingSkillPage = () => {
                   <Text style={styles.textUnitBg}>Unit {course.unitNumber}</Text>
                   <Text style={styles.subtextUnitBg}>{course.unitName}</Text>
                 </View>
-                {/* Map through the lessons and display them */}
                 {course.lesson.map((lesson, lessonIndex) => (
                   <Link
                     key={lessonIndex}
@@ -92,7 +99,6 @@ const WritingSkillPage = () => {
                     }}>
                     <View>
                       <View style={styles.shapeContainer}>
-                        {/* Choose cute illustration */}
                         {lessonIndex === 0 && (
                           <Image
                             source={require('../../app/assets/lesson1Logo.png')}
@@ -125,7 +131,6 @@ const WritingSkillPage = () => {
           </View>
         </View>
       </ScrollView>
-      {/* Modal for warning */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -137,6 +142,25 @@ const WritingSkillPage = () => {
           <View style={styles.modalView}>
             <Text style={styles.modalText}>Please complete the previous lesson first.</Text>
             <Button onPress={() => setModalVisible(false)} title="Okay" color="#FD9F10" />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={alreadyTakenModalVisible}
+        onRequestClose={() => {
+          setAlreadyTakenModalVisible(!alreadyTakenModalVisible);
+        }}>
+        <View style={styles.modalContainer}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Do you want to retake this lesson? No points will be added!</Text>
+            <TouchableOpacity style={styles.yesButtonContainer} onPress={proceedToLesson}>
+              <Text style={styles.modalButtonText}>Yes</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.noButtonContainer} onPress={() => setAlreadyTakenModalVisible(false)}>
+              <Text style={styles.modalButtonText}>No</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -221,18 +245,18 @@ const styles = StyleSheet.create({
   shapeContainer: {
     width: '100%',
     height: '100%',
-    borderRadius: 63, // half of w & h
+    borderRadius: 63,
     borderWidth: 8,
-    borderColor: '#EDF0F5', // color of border
-    backgroundColor: '#FFFFFF', // color between border & circle
+    borderColor: '#EDF0F5',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   innerContainer: {
     width: 100,
     height: 100,
-    borderRadius: 50, // half of w & h
-    backgroundColor: '#7AD635', // color inside the circle
+    borderRadius: 50,
+    backgroundColor: '#7AD635',
   },
   mainContainer: {
     marginBottom: 25,
@@ -259,16 +283,46 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: 300,
-    padding: 20,
+    width: 350,
+    height: 200,
+    padding: 35,
     backgroundColor: 'white',
     borderRadius: 20,
     alignItems: 'center',
   },
   modalText: {
-    fontSize: 16,
+    fontSize: 18,
     marginBottom: 15,
     textAlign: 'center',
+  },
+  yesButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    left: 40,
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '40%',
+    height: '40%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  noButtonContainer: {
+    position: 'absolute',
+    bottom: 20,
+    right: 40,
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '40%',
+    height: '40%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  modalButtonText: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
