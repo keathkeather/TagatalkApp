@@ -1,27 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  ScrollView,
-  Modal,
-  Button,
-} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView, SafeAreaView, Modal, Button } from 'react-native';
 import { Stack, Link, router } from 'expo-router';
 import { useNavigation } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { AppDispatch, RootState } from '../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
+import { handleCourseTree } from '../redux/game/courseTreeSlice';
+import AlreadyTakenModal from './AlreadyTakenModal';
 
 const ListeningSkillPage = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [modalVisible, setModalVisible] = useState(false);
+  const [alreadyTakenModalVisible, setAlreadyTakenModalVisible] = useState(false);
+  const [currentLesson, setCurrentLesson] = useState({ lessonIndex: 0, unitIndex: 0 });
 
-  // Refetch course tree whenever the page regains focus
   useFocusEffect(
     useCallback(() => {
       const fetchCourseTree = async () => {
@@ -38,8 +30,7 @@ const ListeningSkillPage = () => {
   );
 
   const courses = useSelector((state: RootState) => state.courseTree.course);
-  // console.log(courses)
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const handleGoBack = () => {
     router.push('/(tabs)');
@@ -47,11 +38,19 @@ const ListeningSkillPage = () => {
 
   const handleLessonClick = (lessonIndex: number, index: number) => {
     if (lessonIndex > 0 && !courses[index].lesson[lessonIndex - 1].isComplete) {
-      console.log(lessonIndex);
       setModalVisible(true);
+      return false;
+    } else if (courses[index].lesson[lessonIndex].isComplete) {
+      setCurrentLesson({ lessonIndex, unitIndex: index });
+      setAlreadyTakenModalVisible(true);
       return false;
     }
     return true;
+  };
+
+  const proceedToLesson = () => {
+    setAlreadyTakenModalVisible(false);
+    router.push(`/(gameScreens)/listening?lessonIndex=${currentLesson.lessonIndex}&unitIndex=${currentLesson.unitIndex}`);
   };
 
   return (
@@ -69,7 +68,6 @@ const ListeningSkillPage = () => {
             <Text style={styles.headerText}> Listening Skills </Text>
           </View>
           <View style={styles.headerContainer}>
-            {/* Map through the courses and display the units and lessons */}
             {courses.map((course, index) => (
               <View key={index}>
                 <View style={styles.unitBgContainer}>
@@ -80,7 +78,6 @@ const ListeningSkillPage = () => {
                   <Text style={styles.textUnitBg}>Unit {course.unitNumber}</Text>
                   <Text style={styles.subtextUnitBg}>{course.unitName}</Text>
                 </View>
-                {/* Map through the lessons and display them */}
                 {course.lesson.map((lesson, lessonIndex) => (
                   <Link
                     key={lessonIndex}
@@ -93,7 +90,6 @@ const ListeningSkillPage = () => {
                     }}>
                     <View>
                       <View style={styles.shapeContainer}>
-                        {/* Choose cute illustration */}
                         {lessonIndex === 0 && (
                           <Image
                             source={require('../../app/assets/lesson1Logo.png')}
@@ -126,7 +122,6 @@ const ListeningSkillPage = () => {
           </View>
         </View>
       </ScrollView>
-      {/* Modal for warning */}
       <Modal
         animationType="slide"
         transparent={true}
@@ -141,6 +136,11 @@ const ListeningSkillPage = () => {
           </View>
         </View>
       </Modal>
+      <AlreadyTakenModal
+        visible={alreadyTakenModalVisible}
+        onClose={() => setAlreadyTakenModalVisible(false)}
+        onProceed={proceedToLesson}
+      />
     </SafeAreaView>
   );
 };
@@ -222,18 +222,18 @@ const styles = StyleSheet.create({
   shapeContainer: {
     width: '100%',
     height: '100%',
-    borderRadius: 63, // half of w & h
+    borderRadius: 63,
     borderWidth: 8,
-    borderColor: '#EDF0F5', // color of border
-    backgroundColor: '#FFFFFF', // color between border & circle
+    borderColor: '#EDF0F5',
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
   },
   innerContainer: {
     width: 100,
     height: 100,
-    borderRadius: 50, // half of w & h
-    backgroundColor: '#01C4FD', // color inside the circle
+    borderRadius: 50,
+    backgroundColor: '#7AD635',
   },
   mainContainer: {
     marginBottom: 25,
