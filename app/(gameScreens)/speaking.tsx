@@ -14,6 +14,14 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
 
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+  return array;
+};
+
 const Speaking = () => {
     const dispatch = useDispatch<AppDispatch>();
 
@@ -25,19 +33,6 @@ const Speaking = () => {
     const [progress, setProgress] = useState(0);
     const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
-
-    useEffect(() => {
-      return () => {
-          // Reset state when component is unmounted
-          setCurrentStep(1);
-          setProgress(0);
-        };
-    }, []);
-    
-    const handleGoBack = () => {
-        navigation.goBack();
-    };
-
     //access current course using the passed unitIndex 
     const currentCourse = courses[unitIndex];
 
@@ -49,9 +44,24 @@ const Speaking = () => {
     } else {
         console.log(currentLesson);
     }
+    
+    // Access the games safely - debug purposes only (//!will delete this later)
+    const [games, setGames] = useState(currentLesson.game || []);
 
-    // Access the games safely - debbug purposes only (//!will delete this later)
-    const games = currentLesson.game || [];
+    const handleGoBack = () => {
+      navigation.goBack();
+    };
+
+    useEffect(() => {
+      // Shuffle games when component mounts
+      setGames(prevGames => shuffleArray([...prevGames]));
+  
+      return () => {
+        // Reset state when component is unmounted
+        setCurrentStep(0);
+        setProgress(0);
+      };
+    }, []);
 
     const handleContinue = () => {
         setCurrentStep(prevStep => prevStep + 1);

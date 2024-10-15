@@ -14,6 +14,14 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
 
+const shuffleArray = (array: any[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+  }
+  return array;
+};
+
 const Listening = () => {
     const dispatch = useDispatch<AppDispatch>();
     const courses = useSelector((state: RootState) => state.courseTree.course);
@@ -25,21 +33,7 @@ const Listening = () => {
     const [progress, setProgress] = useState(0);
     const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
-    
-    useEffect(() => {
-      return () => {
-          // Reset state when component is unmounted
-          setCurrentStep(1);
-          setProgress(0);
-        };
-    }, []);
-
-    const handleGoBack = () => {
-        navigation.goBack();
-    };
-
-    //access current course using the passed unitIndex
-    const currentCourse = courses[unitIndex];
+    const currentCourse = courses[unitIndex]; //access current course using the passed unitIndex
 
     // Access the current lesson
     const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
@@ -51,13 +45,28 @@ const Listening = () => {
     }
 
     // Access the games safely - debbug purposes only (//!will delete this later)
-    const games = currentLesson.game || [];
+    const [games, setGames] = useState(currentLesson.game || []);
     // if (games.length > 0) {
     //     console.log(`Game Length: ${games.length}`); // Access game type
     // } else {
     //     console.log("No games available for the current lesson.");
     // }
-    
+
+    const handleGoBack = () => {
+        navigation.goBack();
+    };
+
+    useEffect(() => {
+      // Shuffle games when component mounts
+      setGames(prevGames => shuffleArray([...prevGames]));
+  
+      return () => {
+        // Reset state when component is unmounted
+        setCurrentStep(0);
+        setProgress(0);
+      };
+    }, []);
+
     const handleContinue = () => {
         setCurrentStep(prevStep => prevStep + 1);
         setProgress(prevProgress => prevProgress + progressIncrement);
