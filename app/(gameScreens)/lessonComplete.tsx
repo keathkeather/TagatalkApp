@@ -51,11 +51,9 @@ const LessonComplete = ({ lessonId }: { lessonId: string }) => {
         <Text style={styles.title}>Lesson Complete!</Text>
         <Text style={styles.subtitle}>Way to go, kaibigan! You're making great strides!</Text>
       </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleGoBack}>
+        <TouchableOpacity style={styles.buttonContainer} onPress={handleGoBack}>
           <Text style={styles.buttonText}>Continue</Text>
         </TouchableOpacity>
-      </View>
 
       {/* Modal for showing earned points or retake completion message */}
       <Modal
@@ -148,7 +146,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: 300,
+    width: '60%',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
@@ -162,18 +160,22 @@ const styles = StyleSheet.create({
   },
   modalSubtitle: {
     fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
   },
   modalPoints: {
-    fontSize: 22,
+    fontSize: 20,
+    fontWeight: 'bold',
     marginBottom: 20,
     color: '#333',
   },
   modalButton: {
+    width: '40%',
     backgroundColor: '#FD9F10',
     padding: 10,
     borderRadius: 5,
+    alignItems: 'center',
   },
   modalButtonText: {
     color: 'white',

@@ -8,6 +8,7 @@ import { AppDispatch, RootState } from '../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
 import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import AlreadyTakenModal from './AlreadyTakenModal';
+import LessonIncompleteModal from './LessonIncompleteModal';
 
 const ListeningSkillPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -123,20 +124,10 @@ const ListeningSkillPage = () => {
           </View>
         </View>
       </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <LessonIncompleteModal
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Please complete the previous lesson first.</Text>
-            <Button onPress={() => setModalVisible(false)} title="Okay" color="#FD9F10" />
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setModalVisible(false)}
+      />
       <AlreadyTakenModal
         visible={alreadyTakenModalVisible}
         onClose={() => setAlreadyTakenModalVisible(false)}
@@ -253,24 +244,6 @@ const styles = StyleSheet.create({
     zIndex: -1,
     borderColor: '#EDF0F5',
     borderWidth: 2,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalView: {
-    width: 300,
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 20,
-    alignItems: 'center',
-  },
-  modalText: {
-    fontSize: 16,
-    marginBottom: 15,
-    textAlign: 'center',
   },
 });
 
