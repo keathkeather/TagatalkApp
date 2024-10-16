@@ -7,6 +7,8 @@ import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../redux/store';
 import { useFocusEffect } from '@react-navigation/native';
+import AlreadyTakenModal from './AlreadyTakenModal';
+import LessonIncompleteModal from './LessonIncompleteModal';
 
 const WritingSkillPage = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -122,39 +124,15 @@ const WritingSkillPage = () => {
           </View>
         </View>
       </ScrollView>
-      <Modal
-        animationType="slide"
-        transparent={true}
+      <LessonIncompleteModal
         visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Please complete the previous lesson first.</Text>
-            <Button onPress={() => setModalVisible(false)} title="Okay" color="#FD9F10" />
-          </View>
-        </View>
-      </Modal>
-      <Modal
-        animationType="slide"
-        transparent={true}
+        onClose={() => setModalVisible(false)}
+      />
+      <AlreadyTakenModal
         visible={alreadyTakenModalVisible}
-        onRequestClose={() => {
-          setAlreadyTakenModalVisible(!alreadyTakenModalVisible);
-        }}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalView}>
-            <Text style={styles.modalText}>Do you want to retake this lesson? No points will be added!</Text>
-            <TouchableOpacity style={styles.yesButtonContainer} onPress={proceedToLesson}>
-              <Text style={styles.modalButtonText}>Yes</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.noButtonContainer} onPress={() => setAlreadyTakenModalVisible(false)}>
-              <Text style={styles.modalButtonText}>No</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+        onClose={() => setAlreadyTakenModalVisible(false)}
+        onProceed={proceedToLesson}
+      />
     </SafeAreaView>
   );
 };

@@ -18,10 +18,10 @@ const AlreadyTakenModal: React.FC<AlreadyTakenModalProps> = ({ visible, onClose,
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Do you want to retake this lesson? No points will be added!</Text>
           <TouchableOpacity style={styles.yesButtonContainer} onPress={onProceed}>
-            <Text style={styles.modalButtonText}>Yes</Text>
+            <Text style={styles.yesModalButtonText}>Yes</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.noButtonContainer} onPress={onClose}>
-            <Text style={styles.modalButtonText}>No</Text>
+            <Text style={styles.noModalButtonText}>No</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -37,7 +37,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalView: {
-    width: 300,
+    width: '74%',
+    height: '20%',
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 20,
@@ -51,11 +52,13 @@ const styles = StyleSheet.create({
   yesButtonContainer: {
     position: 'absolute',
     bottom: 20,
-    left: 20,
+    right: 35,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '40%',
     height: '40%',
+    borderWidth: 1,
+    borderColor: '#D0D5DD',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
@@ -63,18 +66,26 @@ const styles = StyleSheet.create({
   noButtonContainer: {
     position: 'absolute',
     bottom: 20,
-    right: 20,
-    backgroundColor: '#FD9F10',
+    left: 35,
+    backgroundColor: '#FFF',
     borderRadius: 30,
     width: '40%',
     height: '40%',
+    borderWidth: 1,
+    borderColor: '#D0D5DD',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
   },
-  modalButtonText: {
+  yesModalButtonText: {
     fontSize: 18,
     color: 'white',
+    fontWeight: 'bold',
+  },
+  noModalButtonText: {
+    color: '#D0D5DD',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
