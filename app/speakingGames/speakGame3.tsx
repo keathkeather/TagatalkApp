@@ -34,7 +34,7 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
   const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
 
   // Extract the image from the file assets and answer from text assets
-  const imageFile = fileAssets.find(asset => asset.assetClassifier === "ITEM")?.fileUrl;
+  const imageFile = fileAssets.find(asset => asset.assetClassifier === "GIVEN")?.fileUrl;
   const correctAnswer = textAssets.find(asset => asset.assetClassifier === "ANSWER")?.textContent;
   const correctText: string = correctAnswer || "";
 
