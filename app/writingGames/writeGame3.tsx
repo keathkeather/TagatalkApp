@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
@@ -83,6 +83,10 @@ const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
   
     return (
       <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Read and Translate.</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -111,6 +115,8 @@ const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
           feedback={feedback}
           onClose={handleModalClose}
         />
+        </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
         </View>
     );
   };

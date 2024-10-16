@@ -139,7 +139,7 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between',}}>
-      <Text style={styles.header}>Guess the image below.</Text>
+      <Text style={styles.header}>Guess the image in one word.</Text>
       <View style={styles.contentContainer}>
         <View style={styles.iconContainer}>
           {imageFile && (
