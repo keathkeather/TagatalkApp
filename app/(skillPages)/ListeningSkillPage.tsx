@@ -110,6 +110,18 @@ const ListeningSkillPage = () => {
                             style={styles.lessonLogos}
                           />
                         )}
+                        {lessonIndex === 3 && (
+                          <Image
+                            source={require('../../app/assets/lesson4Logo.png')}
+                            style={styles.lessonLogos}
+                          />
+                        )}
+                        {lessonIndex === 4 && (
+                          <Image
+                            source={require('../../app/assets/lesson5Logo.png')}
+                            style={styles.lessonLogos}
+                          />
+                        )}
                         <View style={styles.innerContainer} />
                       </View>
                       <View style={styles.rectangleContainer}>
