@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import icons from '../../constants/icons';
 import FeedbackModal from '../feedbackModal';
 import { Audio } from 'expo-av';
-import { handleSpeechToText } from '~/components/speech-to-text';
+import { handleSpeechToText, transcribeAudioFile, checkTranscription } from '~/components/speech-to-text';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
@@ -16,6 +16,10 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState('');
   const [matchFound, setMatchFound] = useState(false);
+  const [transcription, setTranscription] = useState<string | null>(null); // State for transcription text
+  const [loading, setLoading] = useState(false); // Add loading state
+  const [transcribing, setTranscribing] = useState(false); // New loading state for transcription
+
   const courses = useSelector((state: RootState) => state.courseTree.course);
 
   // GET GAME ASSETS OF THE CURRENT GAME
@@ -42,7 +46,7 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
   console.log('Game', game);
   console.log('Conversation:', conversationText);
   console.log('Question:', questionText);
-  console.log('Answer:', correctAnswer);
+  console.log('Correct Answer:', correctAnswer);
 
   useEffect(() => {
     return () => {
@@ -71,56 +75,54 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-
-      console.log('Starting recording...');
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       setRecording(recording);
-      console.log('Recording started');
     } catch (err) {
       console.error('Failed to start recording', err);
     }
   };
 
   const stopRecording = async () => {
-    console.log('Stopping recording...');
     if (recording) {
       await recording.stopAndUnloadAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
       const uri = recording.getURI();
-      console.log(uri);
       setRecordedURI(uri);
-      console.log('Recording stopped and stored at', uri);
       setRecording(undefined);
+      
       if (uri) {
-        await handleTranscription(uri);
-      } else {
-        console.warn('Recording URI is null.');
+        setTranscribing(true);
+        // Transcribe audio and set transcription to state
+        const transcription = await handleTranscribeAudioFile(uri);
+        setTranscription(transcription);
+        setTranscribing(false);
       }
-    } else {
-      console.warn('Recording does not exist.');
     }
   };
-  
 
-  // Function to handle the transcription of the recorded audio
-  async function handleTranscription(uri:string){
-    try{
-      const result = await handleSpeechToText(uri, correctText);
-      console.log('Match:', result);
-      // setFeedback
-      if (result === true) {
-        setFeedback('Correct!');
-      } else {
-        setFeedback('Woopsie Daisy!');
-      }
-    // show modal
-    setIsModalVisible(true);
-    }catch(error){
-      console.log(error)
+  async function handleTranscribeAudioFile(uri: string) {
+    try {
+      
+      const transcription = await transcribeAudioFile(uri);
+      setTranscription(transcription);
+      return transcription;
+    } catch (error) {
+      console.error('Error transcribing audio file:', error);
+      return null;
+    }
+  }
+
+  async function handleTranscription(uri: string) {
+    setLoading(true); // Start loading
+    const transcription = await handleTranscribeAudioFile(uri);
+
+    if (transcription) {
+      const result = await checkTranscription(transcription, correctText);
+      setFeedback(result === 1 ? 'Correct!' : 'Woopsie Daisy!');
     }
   }
 
@@ -131,8 +133,19 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
       await stopRecording();
     }
   };
+
+  const handleCheckPress = async () => {
+    if (recordedURI) {
+      await handleTranscription(recordedURI);
+      setLoading(false); // Start loading
+      setIsModalVisible(true); // Show modal after checking the transcription
+    } else {
+      console.warn('No recording found');
+    }
+  };
  
   const handleModalClose = () => {
+    setTranscription(null);
     if (feedback === 'Correct!' && onContinue) {
       onContinue();
     } else {
@@ -159,25 +172,45 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
                 style={[styles.micButton, recording ? styles.micButtonActive : null]}
                 onPress={handleMicPress}
                 disabled={matchFound}>
-                <Image source={icons.mic2} style={styles.micIcon} />
+                <Image source={recording ? icons.activeMic2 : icons.mic2} style={styles.micIcon} />
             </TouchableOpacity>
             <View style={styles.subheaderContainer}>
                 <Text style={styles.subheaderText}>
-                    {!recording ? 'I-tap para magsalita' : 'Magsalita ka...'}
+                    {!recording ? 'Tap to record' : 'Tap to stop recording'}
                 </Text>
             </View>
         </View>
-        <TouchableOpacity
-          style={[styles.continueButton, !matchFound ? styles.disabledButton : null]}
-          disabled={!matchFound}>
-          <Text style={styles.continueText}>CHECK</Text>
-        </TouchableOpacity>
+        
       </View>
+      <TouchableOpacity
+        style={[styles.continueButton, transcription === null ? styles.disabledButton : null]}
+        onPress={handleCheckPress}
+        disabled={transcription === null}>
+        <Text style={styles.continueText}>{loading ? 'Loading...' : 'Check'}</Text>
+      </TouchableOpacity>
+
       <FeedbackModal
         visible={isModalVisible}
         feedback={feedback}
         onClose={handleModalClose}
       />
+
+      {/* Loading Overlay */}
+      {transcribing && (
+        <View style={styles.loadingOverlay}>
+          <Text style={styles.loadingText}>Transcribing...</Text>
+        </View>
+      )}
+
+      {/* Transcription View */}
+      {transcription && (
+        <View style={styles.transcriptionView}>
+          <Text style={styles.transcriptionTitle}>Transcription:</Text>
+          <View style={styles.innerTranscriptionView}>
+            <Text style={styles.transcriptionText}>{transcription}</Text>
+          </View>
+        </View>
+      )}
     </View>
   );
 };
@@ -185,6 +218,44 @@ const SpeakGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
 export default SpeakGame2;
 
 const styles = StyleSheet.create({
+  loadingOverlay: {
+    position: 'absolute',
+    bottom: '11.5%',
+    backgroundColor: '#BF85FA',
+    padding: 15,
+    borderRadius: 15,
+    width: '100%',
+    height: '15%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  loadingText: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  transcriptionView: {
+    position: 'absolute',
+    bottom: '11.5%',
+    backgroundColor: '#BF85FA',
+    padding: 15,
+    borderRadius: 15,
+    width: '100%',
+  },
+  innerTranscriptionView: {
+    backgroundColor: 'white',
+    paddingTop: '5%',
+    paddingHorizontal: '5%',
+    borderRadius: 10,
+  },
+  transcriptionTitle: {
+    fontSize: 18,
+    marginBottom: '3%',
+    color: 'white',
+  },
+  transcriptionText: {
+    fontSize: 16,
+  },
   backContainer: {
     height: 43,
     marginTop: 40,
@@ -200,7 +271,8 @@ const styles = StyleSheet.create({
     height: 43,
   },
   formContainer: {
-    width: '40%',
+    width: '50%',
+    height: 'auto',
     padding: 10,
     marginTop: -80,
     marginLeft: 20,
@@ -208,18 +280,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#DA9EFF',
     flexDirection: 'column',
     borderRadius: 10,
+    position: 'absolute',
+    left: '35%',
+    top: '20%',
   },
   subformContainer: {
-    width: '35%',
-    height: 90,
+    width: '50%',
+    height: 'auto',
     padding: 10,
-    marginTop: -70,
-    marginLeft: 75,
-    marginBottom: 320,
     backgroundColor: '#FFB4C4',
-    flexDirection: 'column',
     borderRadius: 10,
-    alignItems: "center"
+    alignItems: "center",
+    position: 'absolute',
+    left: '20%',
+    top: '25%',
   },
   subSubheaderText: {
     fontSize: 14,
@@ -228,6 +302,8 @@ const styles = StyleSheet.create({
   },
   subheaderContainer: {
     alignItems: "center",
+    width: 'auto',
+    height: 'auto',
   },
   subheaderText: {
     fontSize: 14,
@@ -241,41 +317,50 @@ const styles = StyleSheet.create({
   icon: {
     width: 100,
     height: 80,
+    resizeMode: 'contain',
   },
   iconContainer: {
     marginTop: 10,
-    marginRight: 260,
     marginBottom: 10,
     alignItems: "center",
+    position: 'absolute',
+    left: 10,
+    top: 10,
   },
   icon2: {
     width: 60,
     height: 60,
+    resizeMode: 'contain',
   },
   icon2Container: {
     marginTop: 10,
-    marginLeft: 300,
     marginBottom: 10,
     alignItems: "center",
+    position: 'absolute',
+    right: '5%',
+    top: '25%',
   },
   container: {
     color: "white",
   },
   header: {
-    fontSize: 25,
+    fontSize: 23,
     fontWeight: "bold",
-    marginLeft: 20,
+    marginLeft: '3%',
   },
   subheader: {
     fontSize: 16,
     fontWeight: "normal",
-    marginLeft: 20,
+    marginHorizontal: '3%',
     marginTop: 10,
   },
   contentContainer: {
+    // backgroundColor: '#F4F4F4',
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 55,
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   micButton: {
     fontSize: 14,
@@ -316,7 +401,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    marginBottom: 20,
+    position: 'absolute' ,
+    bottom: 0,
   },
   continueText: {
     fontSize: 18,

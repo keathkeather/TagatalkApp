@@ -21,6 +21,10 @@ const camera = require('../app/assets/icons/camera.png')
 const mic = require('../app/assets/icons/mic.png')
 const mic2 = require('../app/assets/icons/mic2.png')
 const defaultProfile = require('../app/assets/default_profile.png')
+const activeMic = require('../app/assets/icons/active-mic.png')
+const activeMic2 = require('../app/assets/icons/active-mic2.png')
+const loading = require('../app/assets/loading.gif')
+
 const icons = {
     homeOutline,
     home,
@@ -44,7 +48,10 @@ const icons = {
     camera,
     mic,
     mic2,
-    defaultProfile
+    defaultProfile,
+    activeMic,
+    activeMic2,
+    loading
 }
 
 export default icons
