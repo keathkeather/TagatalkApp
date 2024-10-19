@@ -5,7 +5,7 @@ import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) => {
+const WriteGame2 = ({ gameId, onContinue, onWrongAttempt}: { gameId: any, onContinue: any, onWrongAttempt: any  }) => {
   const [typedText, setTypedText] = useState('');
   const [currentItem, setCurrentItem] = useState<{ scenario: string, question: string, correctAnswers: string[] } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -75,6 +75,9 @@ const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 
