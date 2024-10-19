@@ -52,7 +52,7 @@ const LessonComplete = ({ lessonId }: { lessonId: string }) => {
         <Text style={styles.subtitle}>Way to go, kaibigan! You're making great strides!</Text>
       </View>
         <TouchableOpacity style={styles.buttonContainer} onPress={handleGoBack}>
-          <Text style={styles.buttonText}>Continue</Text>
+          <Text style={styles.buttonText}>CONTINUE</Text>
         </TouchableOpacity>
 
       {/* Modal for showing earned points or retake completion message */}
@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     fontSize: 18,
+    letterSpacing: 1,
   },
 });
 

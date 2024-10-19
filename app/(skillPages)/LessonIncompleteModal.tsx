@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Modal, Button, StyleSheet } from 'react-native';
+import { View, Text, Modal, Button, StyleSheet, TouchableOpacity } from 'react-native';
 
 interface LessonIncompleteModalProps {
   visible: boolean;
@@ -16,7 +16,9 @@ const LessonIncompleteModal: React.FC<LessonIncompleteModalProps> = ({ visible, 
       <View style={styles.modalContainer}>
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Please complete the previous lesson first.</Text>
-          <Button onPress={onClose} title="Okay" color="#FD9F10" />
+            <TouchableOpacity style={styles.modalButton} onPress={onClose}>
+              <Text style={styles.modalButtonText}>OKAY</Text>
+            </TouchableOpacity>
         </View>
       </View>
     </Modal>
@@ -41,6 +43,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 15,
     textAlign: 'center',
+  },
+  modalButton: {
+    width: '30%',
+    backgroundColor: '#FD9F10',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 
