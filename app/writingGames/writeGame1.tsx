@@ -116,7 +116,7 @@ const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
         </TouchableOpacity>
       </View>
       <FeedbackModal
-        visible={feedback !== null}
+        visible={isModalVisible}
         feedback={feedback}
         onClose={handleModalClose}
       />
