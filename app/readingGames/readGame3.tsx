@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) => {
+const ReadGame3 = ({ gameId, onContinue, onWrongAttempt } : { gameId: string, onContinue: any, onWrongAttempt: any}) => {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>('');
@@ -48,6 +48,9 @@ const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 

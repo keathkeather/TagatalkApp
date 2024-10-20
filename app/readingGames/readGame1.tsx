@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
+const GameScreen = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onContinue : any, onWrongAttempt: any}) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
@@ -55,6 +55,9 @@ const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
     } else {
       setIsModalVisible(true);
       setFeedback("Woopsie Daisy!");
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
     
   }; 
