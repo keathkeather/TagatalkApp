@@ -13,6 +13,8 @@ import LessonComplete from './lessonComplete';
 import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
+import FeedbackModal from '../feedbackModal';
+
 
 const shuffleArray = (array: any[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -35,6 +37,9 @@ const Speaking = () => {
     const progressIncrement = 100 / totalSteps; // calculate progress increment
     //access current course using the passed unitIndex 
     const currentCourse = courses[unitIndex];
+    const [wrongAttempts, setWrongAttempts] = useState(0);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [feedback, setFeedback] = useState<string | null>(null);
 
     // Access the current lesson
     const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
@@ -60,12 +65,32 @@ const Speaking = () => {
         // Reset state when component is unmounted
         setCurrentStep(0);
         setProgress(0);
+        setWrongAttempts(0);
       };
     }, []);
 
     const handleContinue = () => {
         setCurrentStep(prevStep => prevStep + 1);
         setProgress(prevProgress => prevProgress + progressIncrement);
+        setWrongAttempts(0);
+    };
+
+    const handleWrongAttempt = () => {
+      setWrongAttempts(prevAttempts => {
+        if (prevAttempts + 1 >= 5) {
+          setFeedback('Woopsie Daisy!');
+          setIsModalVisible(true);
+          return 0;
+        }
+        return prevAttempts + 1;
+      });
+    };
+  
+    const handleModalClose = () => {
+      if (feedback === 'Correct!' || feedback === 'Woopsie Daisy!') {
+        handleContinue();
+      }
+      setIsModalVisible(false);
     };
     
     const renderCurrentGame = () => {
@@ -79,15 +104,15 @@ const Speaking = () => {
         case 1:
           console.log(`Current Question:${Number(currentStep) + 1}`);
           console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`); //! this is for debugging purposes only
-          return <SpeakGame1 gameId={currentGame.id} onContinue={handleContinue} />;
+          return <SpeakGame1 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
         case 2:
           console.log(`${Number(currentStep) + 1}`);
           console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
-          return <SpeakGame2 gameId={currentGame.id}  onContinue={handleContinue} />;
+          return <SpeakGame2 gameId={currentGame.id}  onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
         case 3:
           console.log(`${Number(currentStep) + 1}`);
           console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
-          return <SpeakGame3  gameId={currentGame.id}  onContinue={handleContinue}/>;
+          return <SpeakGame3  gameId={currentGame.id}  onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
         default:
           return <LessonComplete lessonId={currentLesson.id}/>;
       }
@@ -110,6 +135,11 @@ const Speaking = () => {
             }}>
                    {/* //TODO: Map the 3 gametypes of reading skill here */}
                    {renderCurrentGame()}
+                   <FeedbackModal
+                      visible={isModalVisible}
+                      feedback={feedback}
+                      onClose={handleModalClose}
+              />
             </Container>
         </SafeAreaView>
     )

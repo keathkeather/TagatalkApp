@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
+const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onContinue : any, onWrongAttempt: any}) => {
   const [typedText, setTypedText] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -88,6 +88,9 @@ const ListenGame2 = ({gameId, onContinue} : {gameId: any, onContinue : any}) => 
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 

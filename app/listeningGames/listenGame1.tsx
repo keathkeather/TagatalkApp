@@ -9,7 +9,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame1 = ({gameId, onContinue} : {gameId: any, onContinue : any})  => {
+const ListenGame1 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onContinue : any, onWrongAttempt: any})  => {
   const [started, setStarted] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
@@ -168,6 +168,9 @@ const ListenGame1 = ({gameId, onContinue} : {gameId: any, onContinue : any})  =>
     if (transcription) {
       const result = await checkTranscription(transcription, correctText);
       setFeedback(result === 1 ? 'Correct!' : 'Woopsie Daisy!');
+      if (result !== 1 && onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   }
 
