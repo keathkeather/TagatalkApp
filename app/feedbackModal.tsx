@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     alignItems: 'center',
-    width: '60%', // Adjust the width here
+    width: '65%', // Adjust the width here
     height: '28%', // Adjust the max height here
     justifyContent: 'center',
   },
