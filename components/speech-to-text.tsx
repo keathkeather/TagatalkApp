@@ -35,7 +35,7 @@ export async function handleSpeechToText(uri: string,correctText:string) {
 
         // API REQUEST ON BACKEND TO START SPEECH TO TEXT
         const response = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/speech-to-text/process-audio-file-with-checker`,
+            `https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/speech-to-text/process-audio-file-with-checker`,
             formData,
             config
         );
@@ -89,7 +89,7 @@ export async function transcribeAudioFile(uri: string) {
 
         // API REQUEST ON BACKEND TO START SPEECH TO TEXT
         const response = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/speech-to-text/transcribe-audio-file`,
+            `https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/speech-to-text/transcribe-audio-file`,
             formData,
             config
         );
@@ -133,7 +133,7 @@ export async function checkTranscription(transcription: string, correctAnswer: s
 
         // API REQUEST ON BACKEND TO CHECK TRANSCRIPTION
         const response = await axios.post(
-            `http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/speech-to-text/Check-transcription`,
+            `https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/speech-to-text/Check-transcription`,
             body,
             config
         );

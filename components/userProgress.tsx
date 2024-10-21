@@ -17,7 +17,7 @@ export async function addUserProgress(lessonId: string): Promise<string | null> 
         }
 
         // Make an API request to add user progress
-        const response = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user-progress/create-user-progress/${lessonId}`, {}, {
+        const response = await axios.post(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/user-progress/create-user-progress/${lessonId}`, {}, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -46,7 +46,7 @@ export async function getUserProgress(): Promise<UserProgress[] | null> {
         }
 
         // Make an API request to get user progress
-        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user-progress/getUserProgress`, {
+        const response = await axios.get(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/user-progress/getUserProgress`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
