@@ -20,7 +20,7 @@ export interface Games {
 export async function getGame(gameLessonNumber: number): Promise<Games | null> {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`http://13.236.105.57:3000/game/getGameByLesson/${gameLessonNumber}`, {
+        const response = await axios.get(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/game/getGameByLesson/${gameLessonNumber}`, {
             headers: {
                 Authorization: `Bearer ${token}`
             }

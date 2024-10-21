@@ -24,7 +24,7 @@ const formdata = global.FormData
 export async function getUser(): Promise<User | null> {
     try {
         const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/getUserData`, {
+        const response = await axios.get(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/user/getUserData`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -50,7 +50,7 @@ export async function getLeaderBoard(): Promise<UserLeaderboard[] | null> {
         }
 
         // Make an API request to get leaderboard data
-        const response = await axios.get(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/getLeaderBoard`, {
+        const response = await axios.get(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/user/getLeaderBoard`, {
             headers: {
                 Authorization: `Bearer ${token}`,
             },
@@ -105,7 +105,7 @@ export async function editUser(file: string | null, username: string, profileDes
     };
 
     // Make the API call to edit the user profile
-    const response = await axios.put(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/user/editUser`, formData, config);
+    const response = await axios.put(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/user/editUser`, formData, config);
 
     // Check if the response status is 200 (OK)
     return response.status === 200;

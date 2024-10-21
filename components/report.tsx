@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export async function report(reportTitle:string , reportDescription:string): Promise<boolean>{
     try{
         const token = await AsyncStorage.getItem('token');
-        const res = await axios.post(`http://${process.env.EXPO_PUBLIC_LOCAL_IP}:3000/v1/report/createReport`,{
+        const res = await axios.post(`https://${process.env.EXPO_PUBLIC_LOCAL_IP}/v1/report/createReport`,{
             reportTitle: reportTitle,
             reportDescription: reportDescription
         },{
