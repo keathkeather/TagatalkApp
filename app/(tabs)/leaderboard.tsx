@@ -27,10 +27,13 @@ const LeaderboardScreen = () => {
         }
     };
 
-    const renderItem = ({ item }: { item: { userId: string; userProfileImage: string; name: string; userPoints: number; rank: number; } }) => {
+    const renderItem = ({ item }: { item: { userId: string; userProfileImage: string; name: string | null; userPoints: number; rank: number; } }) => {
         // Use the user's profile image or a placeholder if not available
         const profileImage = item.userProfileImage ? { uri: item.userProfileImage } : require('../assets/default_profile.png');
-
+        
+        // Fallback to "Anonymous" if the name is null, undefined, or an empty string
+        const displayName = item.name && item.name.trim() !== '' ? item.name : 'Anonymous';
+    
         return (
             <View style={[styles.itemContainer, { backgroundColor: getBackgroundColor(item.rank) }]}>
                 <View style={styles.rankContainer}>
@@ -40,12 +43,24 @@ const LeaderboardScreen = () => {
                         style={styles.profileImage}
                         resizeMode='cover'
                     />
-                    <Text style={styles.nameText}>{item.name}</Text>
-                    <Text style={styles.pointsText}>{item.userPoints} points</Text>
+                    <Text
+                        style={styles.nameText}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {displayName}
+                    </Text>
+                    <Text
+                        style={styles.pointsText}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
+                        {item.userPoints} points
+                    </Text>
                 </View>
             </View>
         );
-    };   
+    };         
 
     return (
         <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
@@ -58,7 +73,7 @@ const LeaderboardScreen = () => {
                     data={leaderBoard}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.userId}
-                    contentContainerStyle={styles.listContainer}
+                    contentContainerStyle={[styles.listContainer, { paddingBottom: 80 }]}
                 />
             </View>
         </SafeAreaView>
