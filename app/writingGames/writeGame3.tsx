@@ -106,14 +106,15 @@ const WriteGame3 = ({ gameId, onContinue, onWrongAttempt}: { gameId: any, onCont
           multiline
           numberOfLines={3}
         />
-        <TouchableOpacity 
+        
+          </View>
+          <TouchableOpacity 
           style={[styles.continueButton, typedText.trim() === '' ? styles.disabledButton : null]}
           onPress={checkAnswer}
           disabled={typedText.trim() === ''}
         >
-          <Text style={styles.continueText}>CONTINUE</Text>
+          <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
-          </View>
         <FeedbackModal visible={isModalVisible}
           feedback={feedback}
           onClose={handleModalClose}
@@ -139,7 +140,9 @@ const styles = StyleSheet.create({
       fontWeight: "900",
     },
     contentContainer: {
-      marginTop: 10,
+      marginVertical: 20,
+      width: '100%',
+      height: '90%',
     },
     textBox: {
       width: '100%',
@@ -156,13 +159,15 @@ const styles = StyleSheet.create({
       padding: 20,
     },
     continueButton: {
-       backgroundColor: '#FD9F10',
-       borderRadius: 30,
-       width: '100%',
-       height: '7%',
-       alignItems: 'center',
-       justifyContent: 'center',
-       elevation: 4,
+      backgroundColor: '#FD9F10',
+      borderRadius: 30,
+      width: '100%',
+      height: '8%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 4,
+      position: 'absolute' ,
+      bottom: 0,
     },
     continueText: {
       fontSize: 18,

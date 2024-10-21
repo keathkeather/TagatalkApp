@@ -230,7 +230,7 @@ const ListenGame1 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
         style={[styles.continueButton, transcription === null ? styles.disabledButton : null]}
         onPress={handleCheckPress}
         disabled={transcription === null}>
-        <Text style={styles.continueText}>{loading ? 'Loading...' : 'Check'}</Text>
+        <Text style={styles.continueText}>{loading ? 'LOADING...' : 'CHECK'}</Text>
       </TouchableOpacity>
       <FeedbackModal
         visible={isModalVisible}
