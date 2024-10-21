@@ -27,13 +27,13 @@ const ReadGame3 = ({ gameId, onContinue, onWrongAttempt } : { gameId: string, on
   const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
 
   // Extract the question text, correct answer and choices from the textAssets
-  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "given");
+  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "QUESTION");
   const questionText = givenTextAsset ? givenTextAsset.textContent : ''
   const correctAnswer = textAssets.find(asset => asset.isCorrectAnswer)?.textContent;
 
   // Extract the choices
   const choices = textAssets
-  .filter(asset => asset.assetClassifier === "choices") 
+  .filter(asset => asset.assetClassifier === "CHOICES") 
   .map(choice => choice.textContent);
 
   const handleChoicePress = (choice: string) => {
