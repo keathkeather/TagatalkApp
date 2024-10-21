@@ -186,6 +186,9 @@ const styles = StyleSheet.create({
   },
   choicesContainer: {
     flexDirection: 'column',
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   row: {
     flexDirection: 'row',
@@ -209,13 +212,15 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     backgroundColor: '#FD9F10',
-     borderRadius: 30,
-     width: '100%',
-     height: '7%',
-     alignItems: 'center',
-     justifyContent: 'center',
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '100%',
+    height: '8%',
+    alignItems: 'center',
+    justifyContent: 'center',
     elevation: 4,    
+    position: 'absolute' ,
+    bottom: 0, 
   },
   continueText: {
     fontSize: 18,

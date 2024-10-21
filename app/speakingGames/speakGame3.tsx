@@ -190,7 +190,7 @@ const SpeakGame3 = ({gameId, onContinue, onWrongAttempt} : {gameId : any, onCont
         style={[styles.continueButton, transcription === null ? styles.disabledButton : null]}
         onPress={handleCheckPress}
         disabled={transcription === null}>
-        <Text style={styles.continueText}>{loading ? 'Loading...' : 'Check'}</Text>
+        <Text style={styles.continueText}>{loading ? 'LOADING...' : 'CHECK'}</Text>
       </TouchableOpacity>
 
       <FeedbackModal
@@ -286,6 +286,7 @@ const styles = StyleSheet.create({
     width: 235,
     height: 230,
     resizeMode: 'contain',
+    marginVertical: '2%',
     // backgroundColor: 'black',
   },
   iconContainer: {
@@ -294,9 +295,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   header: {
+    marginTop: 20,
     fontSize: 23,
-    fontWeight: "bold",
-    marginLeft: '3%',
+    fontWeight: "900",
   },
   contentContainer: {
     paddingVertical: '5%',

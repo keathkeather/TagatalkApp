@@ -6,6 +6,7 @@ import FeedbackModal from '../feedbackModal';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
+import { checkTranscription } from '~/components/speech-to-text';
 
 const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onContinue : any, onWrongAttempt: any}) => {
   const [typedText, setTypedText] = useState('');
@@ -38,6 +39,7 @@ const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
   
   // Extract the correct answer from the text assets
   const correctAnswer: TextAsset | undefined = textAssets.find(asset => asset.isCorrectAnswer === true);
+  const correctText: string = correctAnswer?.textContent || "";
 
   // console.log(correctAnswer?.textContent)
 
@@ -79,10 +81,10 @@ const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
     setTypedText(text);
   };
 
-  const checkAnswer = () => {
+  async function checkAnswer () {
     if (!correctAnswer) return;
-
-    if (typedText.trim().toLowerCase() === correctAnswer.textContent.toLowerCase()) {
+    const result = await checkTranscription(typedText, correctText);
+    if (result === 1) {
       setFeedback('Correct!');
       setIsModalVisible(true);
     } else {
@@ -126,14 +128,15 @@ const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
         multiline={true}
         numberOfLines={3}
       />
-      <TouchableOpacity 
+      
+        </View>
+        <TouchableOpacity 
         style={[styles.continueButton, typedText.trim() === '' ? styles.disabledButton : null]}
         onPress={checkAnswer}
         disabled={typedText.trim() === ''}
       >
         <Text style={styles.continueText}>CHECK</Text>
       </TouchableOpacity>
-        </View>
       <FeedbackModal visible={isModalVisible}
         feedback={feedback}
         onClose={handleContinue}
@@ -151,22 +154,28 @@ const styles = StyleSheet.create({
     height: 43,
   },
   header: {
-    marginTop: 20,
     fontSize: 25,
     fontWeight: "900",
   },
   contentContainer: {
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
     alignItems: 'center',
   },
   speakerButton: {
-    marginTop: 50,
-    borderRadius: 35,
-    width: '30%',
-    height: 120,
+    borderRadius: 20,
+    width: '35%',
+    height: '20%',
+    marginTop: '10%',
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
     elevation: 5,
+    shadowColor: '#000', // For iOS
+    shadowOffset: { width: 0, height: 2 }, // For iOS
+    shadowOpacity: 0.25, // For iOS
+    shadowRadius: 3.84, // For iOS
   },
   choicesText: {
     fontSize: 23,
@@ -191,10 +200,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',
-    height: '7%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
-    elevation: 4,    
+    elevation: 4,
+    position: 'absolute' ,
+    bottom: 0,   
   },
   continueText: {
     fontSize: 18,
