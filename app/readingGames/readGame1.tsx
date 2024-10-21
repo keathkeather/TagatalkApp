@@ -32,7 +32,7 @@ const GameScreen = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onConti
 
   // Extract the conversation text from the textAssets
   const conversationText = textAssets.find(asset => asset.assetClassifier === "CONVERSATION")?.textContent;
-  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "GIVEN");
+  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "QUESTION");
   const questionText = givenTextAsset ? givenTextAsset.textContent : ''
   const correctAnswer = textAssets.find(asset => asset.isCorrectAnswer)?.textContent;
 
