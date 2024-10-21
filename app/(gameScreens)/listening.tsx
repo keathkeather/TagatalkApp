@@ -13,6 +13,7 @@ import LessonComplete from './lessonComplete';
 import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
+import FeedbackModal from '../feedbackModal';
 
 const shuffleArray = (array: any[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -34,6 +35,9 @@ const Listening = () => {
     const totalSteps = 3; // total number of items
     const progressIncrement = 100 / totalSteps; // calculate progress increment
     const currentCourse = courses[unitIndex]; //access current course using the passed unitIndex
+    const [wrongAttempts, setWrongAttempts] = useState(0);
+    const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+    const [feedback, setFeedback] = useState<string | null>(null);
 
     // Access the current lesson
     const currentLesson = currentCourse.lesson[lessonIndex]; // Change this index based on your needs
@@ -64,14 +68,33 @@ const Listening = () => {
         // Reset state when component is unmounted
         setCurrentStep(0);
         setProgress(0);
+        setWrongAttempts(0);
       };
     }, []);
 
     const handleContinue = () => {
         setCurrentStep(prevStep => prevStep + 1);
         setProgress(prevProgress => prevProgress + progressIncrement);
+        setWrongAttempts(0);
+      };
+  
+      const handleWrongAttempt = () => {
+        setWrongAttempts(prevAttempts => {
+          if (prevAttempts + 1 >= 5) {
+            setFeedback('Woopsie Daisy!');
+            setIsModalVisible(true);
+            return 0;
+          }
+          return prevAttempts + 1;
+        });
       };
     
+      const handleModalClose = () => {
+        if (feedback === 'Correct!' || feedback === 'Woopsie Daisy!') {
+          handleContinue();
+        }
+        setIsModalVisible(false);
+      };
       const renderCurrentGame = () => {
         const currentGame = games[currentStep]; // Get the current game based on step
   
@@ -82,13 +105,13 @@ const Listening = () => {
         switch (currentGame.gameType) {
           case 1:
             console.log(`Current Question:${Number(currentStep) + 1}`);
-            return <ListenGame1 gameId={currentGame.id} onContinue={handleContinue} />;
+            return <ListenGame1 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt}/>;
           case 2:
             console.log(`Current Question:${Number(currentStep) + 1}`);
-            return <ListenGame2 gameId={currentGame.id} onContinue={handleContinue} />;
+            return <ListenGame2 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt}/>;
           case 3:
             console.log(`Current Question:${Number(currentStep) + 1}`);
-            return <ListenGame3 gameId={currentGame.id} onContinue={handleContinue} />;
+            return <ListenGame3 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt}/>;
           default:
             return <LessonComplete lessonId={currentLesson.id}/>;
         }
@@ -111,6 +134,11 @@ const Listening = () => {
             }}>
                    {/* //TODO: Map the 3 gametypes of Listening skill here */}
                    {renderCurrentGame()}
+                   <FeedbackModal
+                    visible={isModalVisible}
+                    feedback={feedback}
+                    onClose={handleModalClose}
+              />
             </Container>
         </SafeAreaView>
     )

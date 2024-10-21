@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
+const GameScreen = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onContinue : any, onWrongAttempt: any}) => {
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [continueClicked, setContinueClicked] = useState<boolean>(false);
@@ -55,6 +55,9 @@ const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
     } else {
       setIsModalVisible(true);
       setFeedback("Woopsie Daisy!");
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
     
   }; 
@@ -80,7 +83,7 @@ const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
             <Image source={require('../assets/TeeTee.png')} style={styles.teetee} />
               <View style={styles.imgBubble}> 
                 <Text style={styles.questionText}>{conversationText}</Text>
-                <Image source={require('../assets/textbubble.png')} />
+
             </View>
           </View>
             <Text style={styles.subQuestionText}>{questionText}</Text>
@@ -98,19 +101,20 @@ const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
                       <Text style={styles.wordText}>{choice}</Text>
                   </TouchableOpacity>
                 ))}
-                  <TouchableOpacity 
-                    style={[
-                      styles.continueButton,
-                      continueClicked && styles.continueButtonDisabled,
-                      selectedWord === null && styles.continueButtonDisabled,
-                    ]}
-                    onPress={checkAnswer}
-                    disabled={!selectedWord}
-                    >
-                      <Text style={styles.continueText}>CHECK</Text>
-                    </TouchableOpacity>
+                  
               </View>
         </View>
+        <TouchableOpacity 
+            style={[
+              styles.continueButton,
+              continueClicked && styles.continueButtonDisabled,
+              selectedWord === null && styles.continueButtonDisabled,
+            ]}
+            onPress={checkAnswer}
+            disabled={!selectedWord}
+            >
+              <Text style={styles.continueText}>CHECK</Text>
+        </TouchableOpacity>
           {/* Render the modal */}
         <FeedbackModal
           visible={isModalVisible}
@@ -123,49 +127,56 @@ const GameScreen = ({gameId, onContinue} : {gameId: any, onContinue : any}) => {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    marginTop: 10,
+    // backgroundColor: '#F4F4F4',
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   header: {
-    fontSize: 25,
-    fontWeight: "900", 
-    marginTop: 20,
+    fontSize: 23,
+    fontWeight: "900",
+    marginLeft: '3%',
   },
   teetee: {
-    width: '55%',
+    width: '35%',
     height: 130,
+    resizeMode: 'contain',
   },
   imgHeader: {
     flexDirection: 'row',
   },
   imgBubble: {
-    position: 'relative',
+    width: '100%',
+    height: '20%',
+    marginLeft: '5%',
   },
   questionContainer: {
-    width: '50%',
+    width: '100%',
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: '5%',
   },
   questionText: {
     position: 'absolute',
-    lineHeight: 25,
-    width: '70%',
+    width: '60%',
+    height:'auto',
     fontSize: 15,
     fontWeight: "bold",
     color: "#F4F4F4", //change to #F4F4F4 if there is text bubble
-    zIndex: 1,
-    top: '10%',
-    left: '13%',
+    backgroundColor: '#FFB4C4',
+    padding: 20,
+    borderRadius: 10,
+    marginTop: '8%',
+  
   },
   subQuestionText: {
-    fontSize: 15,
-    fontWeight: "bold",
+    fontSize: 17,
     color: "black", //change to #F4F4F4 if there is text bubble
-    textAlign: "center",
-    marginBottom: 15,
+    marginLeft: '3%',
+    marginBottom: '2%',
   },
   wordContainer: {
     alignItems: 'center',
-    justifyContent: 'center',
   },
   wordButton: {
     paddingVertical: 10,
@@ -174,12 +185,12 @@ const styles = StyleSheet.create({
     borderRadius: 35,
     marginTop: 20,
     width: '85%',
-    height: 100,
+    height: 90,
     alignItems: 'center',
     justifyContent: 'center',
   },
   selectedWordButton: {
-    backgroundColor: '#00ADA7',
+    backgroundColor: 'gray',
   },
   wordText: {
     fontSize: 25,
@@ -187,15 +198,15 @@ const styles = StyleSheet.create({
     fontWeight: "600",
   },
   continueButton: {
-    marginTop: 30,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',
-    height: '10%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
+    elevation: 4,    
+    position: 'absolute' ,
+    bottom: 0,
   },
   continueButtonDisabled: {
     backgroundColor: 'gray',

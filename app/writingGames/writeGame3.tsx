@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, TouchableWithoutFeedback, Keyboard, KeyboardAvoidingView, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) => {
+const WriteGame3 = ({ gameId, onContinue, onWrongAttempt}: { gameId: any, onContinue: any, onWrongAttempt: any  }) => {
   const [typedText, setTypedText] = useState('');
   const [currentItem, setCurrentItem] = useState<{ given: string, correctAnswer: string[] } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -70,6 +70,9 @@ const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 
@@ -83,6 +86,10 @@ const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
   
     return (
       <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
+        <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+        <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
       <Text style={styles.header}>Read and Translate.</Text>
           <View style={styles.contentContainer}>
             {currentItem && (
@@ -99,18 +106,21 @@ const WriteGame3 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
           multiline
           numberOfLines={3}
         />
-        <TouchableOpacity 
+        
+          </View>
+          <TouchableOpacity 
           style={[styles.continueButton, typedText.trim() === '' ? styles.disabledButton : null]}
           onPress={checkAnswer}
           disabled={typedText.trim() === ''}
         >
-          <Text style={styles.continueText}>CONTINUE</Text>
+          <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
-          </View>
         <FeedbackModal visible={isModalVisible}
           feedback={feedback}
           onClose={handleModalClose}
         />
+        </KeyboardAvoidingView>
+        </TouchableWithoutFeedback>
         </View>
     );
   };
@@ -130,7 +140,9 @@ const styles = StyleSheet.create({
       fontWeight: "900",
     },
     contentContainer: {
-      marginTop: 10,
+      marginVertical: 20,
+      width: '100%',
+      height: '90%',
     },
     textBox: {
       width: '100%',
@@ -147,13 +159,15 @@ const styles = StyleSheet.create({
       padding: 20,
     },
     continueButton: {
-       backgroundColor: '#FD9F10',
-       borderRadius: 30,
-       width: '100%',
-       height: '7%',
-       alignItems: 'center',
-       justifyContent: 'center',
-       elevation: 4,
+      backgroundColor: '#FD9F10',
+      borderRadius: 30,
+      width: '100%',
+      height: '8%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      elevation: 4,
+      position: 'absolute' ,
+      bottom: 0,
     },
     continueText: {
       fontSize: 18,

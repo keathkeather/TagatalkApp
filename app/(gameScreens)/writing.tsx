@@ -13,6 +13,7 @@ import LessonComplete from './lessonComplete';
 import { AppDispatch, RootState } from '../redux/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRoute } from '@react-navigation/native';
+import FeedbackModal from '../feedbackModal';
 
 const shuffleArray = (array: any[]) => {
   for (let i = array.length - 1; i > 0; i--) {
@@ -21,7 +22,6 @@ const shuffleArray = (array: any[]) => {
   }
   return array;
 };
-
 
 const Writing = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,8 +32,11 @@ const Writing = () => {
   const navigation = useNavigation();
   const [currentStep, setCurrentStep] = useState(0);
   const [progress, setProgress] = useState(0);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
   const totalSteps = 3; // total number of items
   const progressIncrement = 100 / totalSteps; // calculate progress increment
+  const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
+  const [feedback, setFeedback] = useState<string | null>(null);
 
   // Access current course using the passed unitIndex
   const currentCourse = courses[unitIndex];
@@ -49,11 +52,6 @@ const Writing = () => {
 
   // Access the games safely - debug purposes only (//!will delete this later)
   const [games, setGames] = useState(currentLesson.game || []);
-  // if (games.length > 0) {
-  //     console.log(`Game Length: ${games.length}`); // Access game type
-  // } else {
-  //     console.log("No games available for the current lesson.");
-  // }
 
   const handleGoBack = () => {
     navigation.goBack();
@@ -67,6 +65,7 @@ const Writing = () => {
       // Reset state when component is unmounted
       setCurrentStep(0);
       setProgress(0);
+      setWrongAttempts(0);
     };
   }, []);
 
@@ -79,35 +78,54 @@ const Writing = () => {
   const handleContinue = () => {
     setCurrentStep(prevStep => prevStep + 1);
     setProgress(prevProgress => prevProgress + progressIncrement);
+    setWrongAttempts(0);
   };
-
+  
+  const handleWrongAttempt = () => {
+    setWrongAttempts(prevAttempts => {
+      if (prevAttempts + 1 >= 5) {
+        setFeedback('Woopsie Daisy!');
+        setIsModalVisible(true);
+        return 0;
+      }
+      return prevAttempts + 1;
+    });
+  };
+  
+  const handleModalClose = () => {
+    if (feedback === 'Correct!' || feedback === 'Woopsie Daisy!') {
+      handleContinue();
+    }
+    setIsModalVisible(false);
+  };
+  
   const renderCurrentGame = () => {
     const currentGame = games[currentStep]; // Get the current game based on step
-
+  
     if (!currentGame) {
       return <LessonComplete lessonId={currentLesson.id} />; // No more games to play
     }
-
+  
     console.log('Current Game:', currentGame);
-
+  
     switch (currentGame.gameType) {
       case 1:
         console.log(`Current Question:${Number(currentStep) + 1}`);
         console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`); //! this is for debugging purposes only
-        return <WriteGame1 gameId={currentGame.id} onContinue={handleContinue} />;
+        return <WriteGame1 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
       case 2:
         console.log(`${Number(currentStep) + 1}`);
         console.log(`Game type: ${currentGame.id} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
-        return <WriteGame2 gameId={currentGame.id} onContinue={handleContinue} />;
+        return <WriteGame2 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
       case 3:
         console.log(`${Number(currentStep) + 1}`);
         console.log(`Game type: ${currentGame.gameType} Lesson: ${Number(lessonIndex) + 1} Unit: ${Number(unitIndex) + 1}`);
-        return <WriteGame3 gameId={currentGame.id} onContinue={handleContinue} />;
+        return <WriteGame3 gameId={currentGame.id} onContinue={handleContinue} onWrongAttempt={handleWrongAttempt} />;
       default:
         return <LessonComplete lessonId={currentLesson.id} />;
     }
   };
-
+  
   return (
     <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -123,8 +141,12 @@ const Writing = () => {
         width: '100%',
         height: '100%',
       }}>
-        {/* //TODO: Map the 3 gametypes of Writing skill here (WriteGame1, WriteGame2, WriteGame3) */}
         {renderCurrentGame()}
+        <FeedbackModal
+          visible={isModalVisible}
+          feedback={feedback}
+          onClose={handleModalClose}
+        />
       </Container>
     </SafeAreaView>
   );

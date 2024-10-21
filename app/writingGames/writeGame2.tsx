@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) => {
+const WriteGame2 = ({ gameId, onContinue, onWrongAttempt}: { gameId: any, onContinue: any, onWrongAttempt: any  }) => {
   const [typedText, setTypedText] = useState('');
   const [currentItem, setCurrentItem] = useState<{ scenario: string, question: string, correctAnswers: string[] } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -75,6 +75,9 @@ const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 
@@ -88,6 +91,10 @@ const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
 
   return (
     <View style={{ backgroundColor: 'white', flex: 1, justifyContent: 'space-between' }}>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={{backgroundColor: 'white', width: '100%', justifyContent: 'space-between'}}>
       <Text style={styles.header}>Answer TeeTee's question!</Text>
       <View style={styles.contentContainer}>
         {currentItem && (
@@ -97,7 +104,6 @@ const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
               <Image source={require('../../app/assets/TeeTee.png')} style={styles.teetee} />
               <View style={styles.chatBubble}>
                 <Text style={styles.chatText}>{currentItem.question}</Text>
-                <Image source={require('../../app/assets/chatBbl.png')} style={styles.chatBbl} />
               </View>
             </View>
           </>
@@ -113,18 +119,21 @@ const WriteGame2 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
           multiline
           numberOfLines={3}
         />
-        <TouchableOpacity
+        
+      </View>
+      <TouchableOpacity
           style={[styles.continueButton, typedText.trim() === '' ? styles.disabledButton : null]}
           onPress={checkAnswer}
           disabled={typedText.trim() === ''}
         >
           <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
-      </View>
       <FeedbackModal visible={isModalVisible}
         feedback={feedback}
         onClose={handleModalClose}
       />
+      </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -133,16 +142,16 @@ export default WriteGame2;
 
 const styles = StyleSheet.create({
   questionContainer: {
-    marginTop: 50,
     flexDirection: 'row',
-    alignItems: 'center',
   },
   teetee: {
     width: '35%',
     height: 130,
+    resizeMode: 'contain',
   },
   chatBubble: {
-    position: 'relative',
+    width: '100%',
+    height: '20%',
   },
   chatText: {
     fontSize: 16,
@@ -150,25 +159,33 @@ const styles = StyleSheet.create({
     color: 'white',
     position: 'absolute',
     zIndex: 1,
-    top: '7%',
-    left: '13%',
+    top: '12%',
+    left: '3%',
+    width: '60%',
+    height:'auto',
+    backgroundColor: '#FFB4C4',
+    padding: 20,
+    borderRadius: 10,
+    marginTop: '8%',
   },
   chatBbl: {
     width: 230,
     height: 40,
   },
   word: {
+    marginTop: '3%',
     fontSize: 18,
     fontWeight: "normal",
     color: '#344054',
   },
   header: {
-    marginTop: 20,
     fontSize: 25,
     fontWeight: "900",
   },
   contentContainer: {
-    marginTop: 10,
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   textBox: {
     width: '100%',
@@ -176,7 +193,6 @@ const styles = StyleSheet.create({
     borderColor: '#D4D4D8',
     borderWidth: 1,
     borderRadius: 20,
-    marginTop: 40,
     marginBottom: 30,
     textAlign: 'left',
     textAlignVertical: 'top',
@@ -188,10 +204,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',
-    height: '7%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
+    position: 'absolute' ,
+    bottom: 0,
   },
   continueText: {
     fontSize: 18,

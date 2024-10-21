@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 
-const ListenGame3= ({gameId, onContinue} : {gameId : any, onContinue : any}) => {    
+const ListenGame3= ({gameId, onContinue, onWrongAttempt} : {gameId : any, onContinue : any, onWrongAttempt: any}) => {    
   // Get courses from the redux store
   const courses = useSelector((state: RootState) => state.courseTree.course);
 
@@ -97,6 +97,9 @@ const ListenGame3= ({gameId, onContinue} : {gameId : any, onContinue : any}) => 
     } else {
       setSelectedItem({ type: 'audio', value: match });
       await playSound(audio); // Play the audio
+      if (selectedItem && selectedItem.type === 'match' && selectedItem.value !== match && onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
   
@@ -106,6 +109,9 @@ const ListenGame3= ({gameId, onContinue} : {gameId : any, onContinue : any}) => 
       setSelectedItem(null);
     } else {
       setSelectedItem({ type: 'match', value: match });
+      if (selectedItem && selectedItem.type === 'audio' && selectedItem.value !== match && onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
   
@@ -180,6 +186,9 @@ const styles = StyleSheet.create({
   },
   choicesContainer: {
     flexDirection: 'column',
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   row: {
     flexDirection: 'row',
@@ -203,13 +212,15 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     backgroundColor: '#FD9F10',
-     borderRadius: 30,
-     width: '100%',
-     height: '7%',
-     alignItems: 'center',
-     justifyContent: 'center',
+    backgroundColor: '#FD9F10',
+    borderRadius: 30,
+    width: '100%',
+    height: '8%',
+    alignItems: 'center',
+    justifyContent: 'center',
     elevation: 4,    
+    position: 'absolute' ,
+    bottom: 0, 
   },
   continueText: {
     fontSize: 18,

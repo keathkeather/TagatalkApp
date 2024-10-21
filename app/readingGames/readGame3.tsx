@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { handleCourseTree } from '../redux/game/courseTreeSlice';
 import { GameAsset, TextAsset } from '../redux/game/courseTreeSlice';
 
-const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) => {
+const ReadGame3 = ({ gameId, onContinue, onWrongAttempt } : { gameId: string, onContinue: any, onWrongAttempt: any}) => {
   const [selectedChoice, setSelectedChoice] = useState<string | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [feedback, setFeedback] = useState<string>('');
@@ -48,6 +48,9 @@ const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 
@@ -63,26 +66,27 @@ const ReadGame3 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
       <Text style={styles.header}>Question and Answer.</Text>
       <Text style={styles.word}>{questionText}</Text>
         <View style={styles.contentContainer}>
-      <View style={styles.choicesContainer}>
-        {choices.map((choice, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={[styles.choices1, choice === selectedChoice && styles.matched]} 
-              onPress={() => handleChoicePress(choice)}
-            >
-              <Text style={styles.choicesText}>{choice}</Text>
-            </TouchableOpacity>
-          ))}
-        <TouchableOpacity 
+          <View style={styles.choicesContainer}>
+            {choices.map((choice, index) => (
+                <TouchableOpacity 
+                  key={index} 
+                  style={[styles.choices1, choice === selectedChoice && styles.matched]} 
+                  onPress={() => handleChoicePress(choice)}
+                >
+                  <Text style={styles.choicesText}>{choice}</Text>
+                </TouchableOpacity>
+              ))}
+            
+          </View>
+        </View>
+      <TouchableOpacity 
         style={[styles.checkButton, !selectedChoice && styles.disabledButton]}
         onPress={handleContinuePress}
         disabled={!selectedChoice}
       >
         <Text style={styles.checkText}>CHECK</Text>
       </TouchableOpacity>
-      </View>
-      </View>
-      
+
       <FeedbackModal 
         visible={isModalVisible}
         feedback={feedback}
@@ -96,17 +100,21 @@ export default ReadGame3
 
 const styles = StyleSheet.create({
   word: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: '#344054',
+    fontSize: 18,
+    fontWeight: "normal",
+    marginHorizontal: '3%',
+    marginTop: '5%',
   },
   contentContainer: {
-    marginTop: 10,
+    alignItems: "center",
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   header: {
-    fontSize: 25,
-    fontWeight: "900",
-    marginTop: 20,
+    fontSize: 23,
+    fontWeight: "bold",
+    marginLeft: '3%',
   },
   choicesContainer: {
     alignItems: "center",
@@ -118,10 +126,10 @@ const styles = StyleSheet.create({
   choices1: {
     fontSize: 25,
     fontWeight: "bold",
-    marginTop: 25,
+    marginVertical: '3%',
     borderRadius: 35,
-    width: '43%',
-    height: 90,
+    width: 210,
+    height: '18%',
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
@@ -133,7 +141,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
   checkButton: {
-    marginTop: 45,
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',
@@ -141,6 +148,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,    
+    position: 'absolute' ,
+    bottom: 0,
   },
   checkText: {
     fontSize: 18,

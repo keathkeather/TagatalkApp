@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 import FeedbackModal from '../feedbackModal';
 
-const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) => {
+const WriteGame1 = ({ gameId, onContinue, onWrongAttempt}: { gameId: any, onContinue: any, onWrongAttempt: any  }) => {
   const [typedText, setTypedText] = useState('');
   const [currentItem, setCurrentItem] = useState<{ given: string, correctAnswer: string[], image: any } | null>(null);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -74,6 +74,9 @@ const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
     } else {
       setFeedback('Woopsie Daisy!');
       setIsModalVisible(true);
+      if (onWrongAttempt) {
+        onWrongAttempt();
+      }
     }
   };
 
@@ -87,7 +90,11 @@ const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
   
   return (
     <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between'}}>
-      <Text style={styles.header}>Write what you see.</Text>
+      <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+     style={{backgroundColor: 'white', width: '100%', flex: 1, justifyContent: 'space-between'}}>
+      <Text style={styles.header}>Describe in one word.</Text>
       <View style={styles.contentContainer}>
         {currentItem && currentItem.image && (
           <Image source={currentItem.image} style={styles.image} />
@@ -103,19 +110,22 @@ const WriteGame1 = ({ gameId, onContinue }: { gameId: any, onContinue: any }) =>
           multiline
           numberOfLines={3}
         />
-        <TouchableOpacity 
+        
+      </View>
+      <TouchableOpacity 
           style={[styles.continueButton, typedText.trim() === '' ? styles.disabledButton : null]}
           onPress={checkAnswer}
           disabled={typedText.trim() === ''}
         >
           <Text style={styles.continueText}>CHECK</Text>
         </TouchableOpacity>
-      </View>
       <FeedbackModal
-        visible={feedback !== null}
+        visible={isModalVisible}
         feedback={feedback}
         onClose={handleModalClose}
       />
+      </KeyboardAvoidingView>
+      </TouchableWithoutFeedback>
     </View>
   );
 };
@@ -124,7 +134,6 @@ export default WriteGame1;
 
 const styles = StyleSheet.create({
   image: {
-    marginTop: 25,
     width: '100%',
     height: 200,
     resizeMode: 'contain',
@@ -136,7 +145,9 @@ const styles = StyleSheet.create({
     fontWeight: "900",
   },
   contentContainer: {
-    alignItems: 'center',
+    marginVertical: 20,
+    width: '100%',
+    height: '90%',
   },
   textBox: {
     width: '100%',
@@ -156,10 +167,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#FD9F10',
     borderRadius: 30,
     width: '100%',
-    height: '7%',
+    height: '8%',
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
+    position: 'absolute' ,
+    bottom: 0,
   },
   continueText: {
     fontSize: 18,

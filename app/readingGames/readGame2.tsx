@@ -95,7 +95,7 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
       setTimeout(() => {
         setSelectedItem(null);
         setIsWrongMatch(false); // Reset after showing the wrong color
-      }, 1000); //duration
+      }, 500); //duration
       setSelectedItem(item);
     }
   };
@@ -146,7 +146,9 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
         </View>
       ))}
 
-          <TouchableOpacity 
+          
+        </View>
+        <TouchableOpacity 
             style={[
                 styles.continueButton, 
                 (!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)) ? styles.disabledButton : null
@@ -154,8 +156,7 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
             disabled={!items.every(item => item.isMatched) || !matches.every(match => match.isMatched)}
             >
             <Text style={styles.continueText}>CHECK</Text>
-          </TouchableOpacity>
-        </View>
+         </TouchableOpacity>
         {/* Feedback Modals are subject to change */}
         <FeedbackModal visible={isModalVisible}
         feedback={"All words matched!"}
@@ -168,19 +169,25 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
 export default ReadGame2
 
 const styles = StyleSheet.create({
+  clickedChoice: {
+    backgroundColor: '#FFEB3B', // Change to your preferred clicked color
+    borderWidth: 2,
+    borderColor: 'black',
+  },
   wrongMatch: {
     borderWidth: 2,
     borderColor: 'red',
   },
   contentContainer: {
-    marginTop: 10,
     alignItems: "center",
-    justifyContent: "center",
+    marginVertical: 20,
+    width: '100%',
+    height: '100%',
   },
   header: {
-    fontSize: 25,
+    fontSize: 23,
     fontWeight: "900",
-    marginTop: 20,
+    marginLeft: '3%',
   },
   row: {
     flexDirection: 'row',
@@ -190,8 +197,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 25,
     borderRadius: 35,
-    width: '43%',
-    height: 90,
+    width: '45%',
+    maxWidth: 'auto',
+    height: 100,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#BF85FA",
@@ -203,8 +211,9 @@ const styles = StyleSheet.create({
     marginTop: 25,
     marginLeft: 20,
     borderRadius: 35,
-    width: '43%',
-    height: 90,
+    width: '45%',
+    maxWidth: 'auto',
+    height: 100,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#02B7E8",
@@ -216,7 +225,6 @@ const styles = StyleSheet.create({
     color: "white",
   },
    continueButton: {
-     marginTop: 100,
      backgroundColor: '#FD9F10',
      borderRadius: 30,
      width: '100%',
@@ -224,6 +232,8 @@ const styles = StyleSheet.create({
      alignItems: 'center',
      justifyContent: 'center',
      elevation: 4,    
+    position: 'absolute' ,
+    bottom: 0,  
   },
   continueText: {
     fontSize: 18,

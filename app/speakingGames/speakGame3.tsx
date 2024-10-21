@@ -3,12 +3,12 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import icons from '../../constants/icons';
 import FeedbackModal from '../feedbackModal';
 import { Audio } from 'expo-av';
-import { handleSpeechToText } from '~/components/speech-to-text';
+import { handleSpeechToText, transcribeAudioFile, checkTranscription  } from '~/components/speech-to-text';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store';
 import { GameAsset, TextAsset, FileAsset } from '../redux/game/courseTreeSlice';
 
-const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  => {
+const SpeakGame3 = ({gameId, onContinue, onWrongAttempt} : {gameId : any, onContinue : any, onWrongAttempt: any})  => {
   const [started, setStarted] = useState(false);
   const [recording, setRecording] = useState<Audio.Recording | undefined>(undefined); 
   const [permissionResponse, requestPermission] = Audio.usePermissions();
@@ -16,7 +16,10 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
   const [matchFound, setMatchFound] = useState(false);
+  const [transcription, setTranscription] = useState<string | null>(null); // State for transcription text
+  const [loading, setLoading] = useState(false); // Add loading state
   const courses = useSelector((state: RootState) => state.courseTree.course);
+  const [transcribing, setTranscribing] = useState(false); // New loading state for transcription
 
   // GET GAME ASSETS OF THE CURRENT GAME
   // Find the specific game by gameId
@@ -70,54 +73,57 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      console.log('Starting recording...');
       const { recording } = await Audio.Recording.createAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       setRecording(recording);
-      console.log('Recording started');
     } catch (err) {
       console.error('Failed to start recording', err);
     }
   };
 
   const stopRecording = async () => {
-    console.log('Stopping recording...');
     if (recording) {
       await recording.stopAndUnloadAsync();
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: false,
       });
       const uri = recording.getURI();
-      console.log(uri);
       setRecordedURI(uri);
-      console.log('Recording stopped and stored at', uri);
       setRecording(undefined);
+      
       if (uri) {
-        await handleTranscription(uri);
-      } else {
-        console.warn('Recording URI is null.');
+        setTranscribing(true); // Set transcribing to true before transcription
+        // Transcribe audio and set transcription to state
+        const transcription = await handleTranscribeAudioFile(uri);
+        setTranscription(transcription);
+        setTranscribing(false); // Reset transcribing after transcription
       }
-    } else {
-      console.warn('Recording does not exist.');
     }
   };
 
-  // Function to handle the transcription of the recorded audio
-  async function handleTranscription(uri:string){
-    try{
-      const result = await handleSpeechToText(uri, correctText);
-      console.log('Match:', result);
-      // setFeedback
-      if (result === true) {
-        setFeedback('Correct!');
-      } else {
-        setFeedback('Woopsie Daisy!');
+  async function handleTranscribeAudioFile(uri: string) {
+    try {
+      
+      const transcription = await transcribeAudioFile(uri);
+      setTranscription(transcription);
+      return transcription;
+    } catch (error) {
+      console.error('Error transcribing audio file:', error);
+      return null;
+    }
+  }
+
+  async function handleTranscription(uri: string) {
+    setLoading(true); // Start loading
+    const transcription = await handleTranscribeAudioFile(uri);
+  
+    if (transcription) {
+      const result = await checkTranscription(transcription, correctText);
+      setFeedback(result === 1 ? 'Correct!' : 'Woopsie Daisy!');
+      if (result !== 1 && onWrongAttempt) {
+        onWrongAttempt();
       }
-    // show modal
-    setIsModalVisible(true);
-    }catch(error){
-      console.log(error)
     }
   }
 
@@ -129,7 +135,18 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
     }
   };
 
+  const handleCheckPress = async () => {
+    if (recordedURI) {
+      await handleTranscription(recordedURI);
+      setLoading(false); // Start loading
+      setIsModalVisible(true); // Show modal after checking the transcription
+    } else {
+      console.warn('No recording found');
+    }
+  };
+
   const handleModalClose = () => {
+    setTranscription(null);
     if (feedback === 'Correct!' && onContinue) {
       onContinue();
     } else {
@@ -139,38 +156,66 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
 
   return (
     <View style={{backgroundColor: 'white', flex: 1, justifyContent: 'space-between',}}>
-      <Text style={styles.header}>Guess the image below.</Text>
+      <Text style={styles.header}>Guess the image in one word.</Text>
       <View style={styles.contentContainer}>
         <View style={styles.iconContainer}>
+          {/* Background Image */}
+          <Image
+            source={icons.loading} // Replace with your background image URL
+            style={styles.backgroundImage}
+          />
           {imageFile && (
             <Image
               source={{ uri: imageFile }}
               style={styles.icon}
             />
           )}
+          
         </View>
-        <TouchableOpacity
-          style={[styles.micButton, recording ? styles.micButtonActive : null]}
-          onPress={handleMicPress}
-          disabled={matchFound}>
-          <Image source={icons.mic} style={styles.micIcon} />
-        </TouchableOpacity>
-        <View style={styles.subheaderContainer}>
-          <Text style={styles.subheaderText}>
-            {!recording ? 'I-tap para magsalita' : 'Magsalita ka...'}
-          </Text>
+        <View style={[styles.micContainer, recording ? styles.micContainerActive : null]}>
+          <TouchableOpacity
+            style={[styles.micButton]}
+            onPress={handleMicPress}
+            disabled={matchFound}>
+           <Image source={recording ? icons.activeMic : icons.mic} style={styles.micIcon} />
+          </TouchableOpacity>
+          <View style={styles.subheaderContainer}>
+            <Text style={styles.subheaderText}>
+              {!recording ? 'Tap to record' : 'Tap to stop recording'}
+            </Text>
+          </View>
         </View>
-        <TouchableOpacity
-          style={[styles.continueButton, !matchFound ? styles.disabledButton : null]}
-          disabled={!matchFound}>
-          <Text style={styles.continueText}>CHECK</Text>
-        </TouchableOpacity>
       </View>
+      <TouchableOpacity
+        style={[styles.continueButton, transcription === null ? styles.disabledButton : null]}
+        onPress={handleCheckPress}
+        disabled={transcription === null}>
+        <Text style={styles.continueText}>{loading ? 'LOADING...' : 'CHECK'}</Text>
+      </TouchableOpacity>
+
       <FeedbackModal
         visible={isModalVisible}
         feedback={feedback}
         onClose={handleModalClose}
       />
+
+      {/* Loading Overlay */}
+      {transcribing && (
+        <View style={styles.loadingOverlay}>
+          <Text style={styles.loadingText}>Transcribing...</Text>
+        </View>
+      )}
+
+      {/* Transcription View */}
+      {transcription && (
+        <View style={styles.transcriptionView}>
+          <Text style={styles.transcriptionTitle}>Transcription:</Text>
+          <View style={styles.innerTranscriptionView}>
+            <Text style={styles.transcriptionText}>{transcription}</Text>
+          </View>
+        </View>
+      )}
+
     </View>
   );
 };
@@ -178,50 +223,60 @@ const SpeakGame3 = ({gameId, onContinue} : {gameId : any, onContinue : any})  =>
 export default SpeakGame3;
 
 const styles = StyleSheet.create({
-  backContainer: {
-    height: 43,
-    marginTop: 40,
-    marginLeft: 10,
-    flexDirection: 'row',
+  backgroundImage: {
+    position: 'absolute', 
+    width: 50, 
+    height: 50,
+    resizeMode: 'contain',
+    zIndex: -1, 
+  },
+  loadingOverlay: {
+    position: 'absolute',
+    bottom: '11.5%',
+    backgroundColor: '#BF85FA',
+    padding: 15,
+    borderRadius: 15,
+    width: '100%',
+    height: '15%',
     alignItems: 'center',
+    justifyContent: 'center',
   },
-  progressBarContainer: {
-    marginLeft: 20,
+  loadingText: {
+    fontSize: 24,
+    color: 'white',
+    fontWeight: 'bold',
   },
-  backArrow: {
-    width: 43,
-    height: 43,
+  transcriptionView: {
+    position: 'absolute',
+    bottom: '11.5%',
+    backgroundColor: '#BF85FA',
+    padding: 15,
+    borderRadius: 15,
+    width: '100%',
   },
-  formContainer: {
-    width: '48%',
-    height: 100,
-    padding: 18,
-    marginTop: -250,
-    marginLeft: 60,
-    marginBottom: 210,
-    backgroundColor: '#ffffff',
-    borderColor: '#D0D5DD',
-    borderWidth: 1,
-    flexDirection: 'column',
-    borderRadius: 20,
+  innerTranscriptionView: {
+    backgroundColor: 'white',
+    paddingTop: '5%',
+    paddingHorizontal: '5%',
+    borderRadius: 10,
   },
-  subSubheaderContainer: {
-    marginBottom: 30,
+  transcriptionTitle: {
+    fontSize: 18,
+    marginBottom: '3%',
+    color: 'white',
   },
-  subSubheaderText: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: "#344054",
+  transcriptionText: {
+    fontSize: 16,
   },
   subheaderContainer: {
-    marginBottom: 10,
     alignItems: "center",
+    width: '100%',
   },
   subheaderText: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: 'bold',
     color: "#D0D5DD",
-    marginBottom: 80,
+    textAlign: 'center',
   },
   micIcon: {
     width: 70,
@@ -231,57 +286,60 @@ const styles = StyleSheet.create({
     width: 235,
     height: 230,
     resizeMode: 'contain',
+    marginVertical: '2%',
+    // backgroundColor: 'black',
   },
   iconContainer: {
-    marginTop: 10,
-    marginBottom: 75,
-    alignItems: "center",
-  },
-  container: {
-    color: "white",
-  },
-  header: {
-    fontSize: 25,
-    fontWeight: "bold",
-    marginLeft: 20,
-  },
-  contentContainer: {
+    marginTop: '1%',
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 55,
+  },
+  header: {
+    marginTop: 20,
+    fontSize: 23,
+    fontWeight: "900",
+  },
+  contentContainer: {
+    paddingVertical: '5%',
+    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "center",
+    margin: '5%',
+    position: 'absolute',
+    width: '100%',
   },
   micButton: {
     fontSize: 25,
-    marginTop: 10,
-    marginLeft: 20,
-    borderRadius: 35,
     width: 70,
     height: 70,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#ffffff",
   },
   micButtonActive: {
-    backgroundColor: '#ffffff',
+    backgroundColor: '#ffff',
   },
-  choicesText: {
-    fontSize: 23,
-    fontWeight: "600",
-    color: "white",
-  },
-  textBox: {
-    width: 388,
-    height: 300,
-    borderColor: '#D4D4D8',
-    borderWidth: 1,
+  micContainerActive: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: '5%',
+    marginVertical: '5%',
     borderRadius: 20,
-    marginTop: 70,
-    marginBottom: 30,
-    textAlign: 'left',
-    textAlignVertical: 'top',
-    fontSize: 20,
-    fontWeight: '700',
-    padding: 20,
+    borderWidth: 2,
+    borderColor: '#FF5230',
+    width: '100%',
+  },
+  micContainer: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: '5%',
+
+    marginVertical: '5%',
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: '#545F714C',
+    width: '100%',
   },
   continueButton: {
     backgroundColor: '#FD9F10',
@@ -291,22 +349,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     elevation: 4,
-    marginBottom: 20,
+    position: 'absolute' ,
+    bottom: 0,
   },
   continueText: {
     fontSize: 18,
     color: 'white',
     fontWeight: 'bold',
   },
-  success: {
-    fontSize: 18,
-    color: 'black',
-    fontWeight: 'bold',
-  },
   disabledButton: {
-    backgroundColor: 'gray',
-  },
-  matched: {
     backgroundColor: 'gray',
   },
 });

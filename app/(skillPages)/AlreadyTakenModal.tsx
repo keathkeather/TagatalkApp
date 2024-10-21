@@ -18,10 +18,10 @@ const AlreadyTakenModal: React.FC<AlreadyTakenModalProps> = ({ visible, onClose,
         <View style={styles.modalView}>
           <Text style={styles.modalText}>Do you want to retake this lesson? No points will be added!</Text>
           <TouchableOpacity style={styles.yesButtonContainer} onPress={onProceed}>
-            <Text style={styles.yesModalButtonText}>Yes</Text>
+            <Text style={styles.yesModalButtonText}>YES</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.noButtonContainer} onPress={onClose}>
-            <Text style={styles.noModalButtonText}>No</Text>
+            <Text style={styles.noModalButtonText}>NO</Text>
           </TouchableOpacity>
         </View>
       </View>
