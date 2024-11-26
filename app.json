@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "com.whitelotus.tagatalk",
     "plugins": [
       "expo-router",
       [
@@ -19,7 +20,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/ssplash.png", 
+      "image": "./assets/ssplash.png",
       "resizeMode": "contain",
       "backgroundColor": "#FD9F10"
     },
@@ -40,6 +41,14 @@
         "android.permission.MODIFY_AUDIO_SETTINGS"
       ],
       "package": "com.whitelotus.tagatalk"
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "37baa903-928e-4cd2-bc00-85d5e6fa53f5"
+      }
     }
   }
 }
