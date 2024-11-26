@@ -31,14 +31,14 @@ const GameScreen = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onConti
   const textAssets: TextAsset[] = gameAsset.flatMap(asset => asset.textAssets);
 
   // Extract the conversation text from the textAssets
-  const conversationText = textAssets.find(asset => asset.assetClassifier === "conversation")?.textContent;
-  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "given");
+  const conversationText = textAssets.find(asset => asset.assetClassifier === "CONVERSATION")?.textContent;
+  const givenTextAsset = textAssets.find(asset => asset.assetClassifier === "QUESTION");
   const questionText = givenTextAsset ? givenTextAsset.textContent : ''
   const correctAnswer = textAssets.find(asset => asset.isCorrectAnswer)?.textContent;
 
   // Extract the choices
   const choices = textAssets
-  .filter(asset => asset.assetClassifier === "choices")
+  .filter(asset => asset.assetClassifier === "CHOICES")
   .map(choice => choice.textContent);
 
   console.log('Game Assets:', gameAsset);

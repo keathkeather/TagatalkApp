@@ -28,7 +28,7 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
 
   // Extract choices
   const given = textAssets
-  .filter(asset => asset.assetClassifier === "choices") 
+  .filter(asset => asset.assetClassifier === "CHOICES") 
   .map(choice => choice.textContent); 
 
   const handleGoBack = () => {
