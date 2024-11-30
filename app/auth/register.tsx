@@ -21,7 +21,10 @@ const Register: React.FC<RegisterProps> = ( ) =>{
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [shouldRegister, setShouldRegister] = useState(false);
+  const [loading, setLoading] = useState(false); // Add loading state
   const dispatch = useDispatch<AppDispatch>();
+
+
   useEffect(() => {
     console.log("Inside useEffect for registration");
     console.log("Email:", email);
@@ -73,6 +76,7 @@ const Register: React.FC<RegisterProps> = ( ) =>{
       );
       return;
     }
+    setLoading(true);
     setShouldRegister(true);  // trigger the registration effect
   };
 
@@ -101,10 +105,11 @@ const Register: React.FC<RegisterProps> = ( ) =>{
           <TextInput style={styles.textInput} onChangeText={text=>setPassword(text)}value={password}placeholder='Password' secureTextEntry={true}/>
           <TextInput style={styles.textInput} onChangeText={text=>setConfirmPassword(text)}value={confirmPassword}placeholder='Confirm Password' secureTextEntry={true} />
           <TouchableOpacity
-            style={styles.registerButton}
+            style={[styles.registerButton, loading && styles.disabledButton]}
             onPress={() => handleRegistration()}
+            disabled={loading} // Disable the button while loading
           >
-            <Text style={styles.buttonText}>Register</Text>
+            <Text style={styles.buttonText}>{loading ? 'LOADING...' : 'Register'}</Text>
           </TouchableOpacity>
           <View style={styles.formFooter}>
             <Text style={{ color: '#fff'}}>
@@ -115,26 +120,6 @@ const Register: React.FC<RegisterProps> = ( ) =>{
             </Text>
             </View>
         </View>
-        {/* 
-        <View style={styles.afterContainer}>
-          <View style={styles.line} />
-            <Text style={styles.bottomText}> or continue with </Text>
-          <View style={styles.line} />
-        </View>
-        <View style={{marginTop: 20}}>
-          <View style={{flexDirection:'row', gap: 20}}>
-            <TouchableOpacity style={styles.box}>
-              <Image source={require('../assets/Google.png')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box}>
-              <Image source={require('../assets/outlook.png')} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.box}>
-              <Image source={require('../assets/Facebook.png')} />
-            </TouchableOpacity>
-          </View>
-        </View>
-        */}
         <View style={styles.bottomContainer}>
         <Text style={styles.bottomText}>By continuing, you agree to TagaTalk’s 
         Terms of Service and acknowledge our Privacy and Policy.</Text>
@@ -196,6 +181,9 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  disabledButton: {
+    backgroundColor: 'gray',
   },
   buttonText: {
     color: '#fff', 

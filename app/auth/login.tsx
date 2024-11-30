@@ -21,6 +21,7 @@ const Login: React.FC<LoginProps> = ( ) =>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [shouldLogin, setShouldLogin] = useState(false);
+    const [loading, setLoading] = useState(false); // Add loading state
     
     const dispatch = useDispatch<AppDispatch>();
 
@@ -45,6 +46,8 @@ const Login: React.FC<LoginProps> = ( ) =>{
           }
         } catch (error) {
           console.error("Login error:", error);
+        } finally {
+          setLoading(false); // Stop loading
         }
       };
       
@@ -55,6 +58,7 @@ const Login: React.FC<LoginProps> = ( ) =>{
     }, [shouldLogin]);    
     
   const loginFunction = ()=>{
+    setLoading(true);
     setShouldLogin(true);
   }
  
@@ -92,10 +96,11 @@ const Login: React.FC<LoginProps> = ( ) =>{
                             </Link>
                         </Text>
                     <TouchableOpacity
-                        style={styles.registerButton}
+                        style={[styles.registerButton, loading && styles.disabledButton]}
                         onPress={() => loginFunction()}
+                        disabled={loading} // Disable the button while loading
                         >
-                        <Text style={styles.buttonText}>Sign in</Text>
+                        <Text style={styles.buttonText}>{loading ? 'LOADING...' : 'Sign in'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.RegisterHereContainer}>
@@ -164,6 +169,9 @@ const styles = StyleSheet.create({
       height: 40,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    disabledButton: {
+      backgroundColor: 'gray',
     },
     buttonText: {
       color: '#fff', 
