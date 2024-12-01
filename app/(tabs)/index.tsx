@@ -66,7 +66,6 @@ const Index = () => {
                 router.push('/(skillPages)/WritingSkillPage');
                 break;
               default:
-                // Do something if index is out of range
                 break;
             }
           }}

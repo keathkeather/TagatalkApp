@@ -34,16 +34,12 @@ const ReadGame2 = ({ gameId, onContinue } : { gameId: string, onContinue: any}) 
   const handleGoBack = () => {
     navigation.goBack();
   };
-
-  // Transform the given array to the desired initialWords format
+  
   // * format of the content should be "word-match" example: "umaga-morning"
   const initialWords = given.map(item => {
     const [word, match] = item.split('-'); // Split the string into word and match
     return { word, match, isMatched: false }; // Return the formatted object
   });
-
-  // This is for debugging purposes
-  // console.log(initialWords);
   
   const shuffleArray = (array: any[]) => {
       for (let i = array.length - 1; i > 0; i--) {

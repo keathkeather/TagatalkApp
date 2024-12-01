@@ -49,8 +49,7 @@ const Writing = () => {
   } else {
     console.log('Current Lesson:', currentLesson);
   }
-
-  // Access the games safely - debug purposes only (//!will delete this later)
+  
   const [games, setGames] = useState(currentLesson.game || []);
 
   const handleGoBack = () => {

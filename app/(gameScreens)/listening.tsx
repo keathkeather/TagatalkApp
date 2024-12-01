@@ -48,13 +48,7 @@ const Listening = () => {
         console.log(currentLesson);
     }
 
-    // Access the games safely - debbug purposes only (//!will delete this later)
     const [games, setGames] = useState(currentLesson.game || []);
-    // if (games.length > 0) {
-    //     console.log(`Game Length: ${games.length}`); // Access game type
-    // } else {
-    //     console.log("No games available for the current lesson.");
-    // }
 
     const handleGoBack = () => {
         navigation.goBack();
@@ -132,7 +126,6 @@ const Listening = () => {
                 width: '100%',
                 height: '100%',
             }}>
-                   {/* //TODO: Map the 3 gametypes of Listening skill here */}
                    {renderCurrentGame()}
                    <FeedbackModal
                     visible={isModalVisible}
