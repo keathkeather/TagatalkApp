@@ -133,7 +133,6 @@ const Speaking = () => {
                 width: '100%',
                 height: '100%',
             }}>
-                   {/* //TODO: Map the 3 gametypes of reading skill here */}
                    {renderCurrentGame()}
                    <FeedbackModal
                       visible={isModalVisible}

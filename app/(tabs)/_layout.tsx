@@ -23,7 +23,6 @@ export default function TabLayout() {
       }, [])
     
     return (
-    // <UserProvider>
         <Tabs screenOptions={{
             headerShown: false,
             tabBarStyle: {
@@ -64,36 +63,6 @@ export default function TabLayout() {
 
                 }}
             />
-            {/*
-            <Tabs.Screen
-                name="sandbox"
-                options={{
-                    title:"",
-                    tabBarIcon: ({focused}: {focused: boolean}) => {
-                        return (
-                            <View style={{
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                paddingTop: 15,
-                                paddingBottom: 8,
-                                borderBottomColor: focused ? '#FD9F10' : 'rgba(255, 255, 255, 0)',
-                                borderBottomWidth: 4,
-                                
-                            }}>
-                                <Image 
-                                    source={focused ? icons.sandboxOutline : icons.sandbox}
-                                    style={{
-                                        height: 24, 
-                                        width: 24,
-                                    }}
-                                />
-                            </View>
-                        )
-                    }
-
-                }}
-            />
-            */}
              <Tabs.Screen
                 name="leaderboard"
                 options={{
@@ -182,6 +151,5 @@ export default function TabLayout() {
                 }}
             />
         </Tabs>
-        // </UserProvider>
     )
 }

@@ -48,9 +48,7 @@ export default function Page() {
           <View style={{backgroundColor: '#FD9F10'}}/>
         </Main>
       ) : (
-        // Render your main content here instead of RootLayout
         <Main>
-          {/* Your main content */}
         </Main>
       )}
     </Container>
