@@ -40,16 +40,7 @@ const ListenGame2 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
   // Extract the correct answer from the text assets
   const correctAnswer: TextAsset | undefined = textAssets.find(asset => asset.isCorrectAnswer === true);
   const correctText: string = correctAnswer?.textContent || "";
-
-  // console.log(correctAnswer?.textContent)
-
-  // useEffect(() => {
-  //   // Select a random item from the array
-  //   const randomItem = items[Math.floor(Math.random() * items.length)];
-  //   setCurrentItem(randomItem);
-  // }, []);
   
-
   const playAudio = async () => {
     if (!audioFile) 
       return;

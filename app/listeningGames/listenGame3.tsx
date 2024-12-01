@@ -51,9 +51,6 @@ const ListenGame3= ({gameId, onContinue, onWrongAttempt} : {gameId : any, onCont
     };
   }).filter(Boolean); // Filter out any null values
 
-  // *Optional: Log to see if everything is matched correctly
-  // console.log('Initial Words:', initialWords.map(word => word?.match));
-
   const [matchedWords, setMatchedWords] = useState<string[]>([]);
   const [selectedItem, setSelectedItem] = useState<{ type: 'audio' | 'match', value: string } | null>(null);
 

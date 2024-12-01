@@ -47,8 +47,7 @@ const Profile = () => {
   const speakingProgress = speakingLessons ? Math.round(((speakingCompleted ?? 0) / speakingLessons) * 100) : 0;
   const writingProgress = writingLessons ? Math.round(((writingCompleted ?? 0) / writingLessons) * 100) : 0;
   const listeningProgress = listeningLessons ? Math.round(((listeningCompleted ?? 0) / listeningLessons) * 100) : 0;
-  // const streak = 12;
-  // const life = 5;
+
   const bio = useSelector((state: RootState) => state.user.profileDescription);
   const username = useSelector((state: RootState) => state.user.name);
   let profileImage =useSelector((state: RootState) => state.user.profileImage);

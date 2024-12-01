@@ -48,13 +48,7 @@ const shuffleArray = (array: any[]) => {
         console.log(currentLesson);
     }
 
-    // Access the games safely - debug purposes only (//!will delete this later)
     const [games, setGames] = useState(currentLesson.game || []);
-    // if (games.length > 0) {
-    //     console.log(`Game Length: ${games.length}`); // Access game type
-    // } else {
-    //     console.log("No games available for the current lesson.");
-    // }
 
     const handleGoBack = () => {
       navigation.goBack();
@@ -136,7 +130,6 @@ const shuffleArray = (array: any[]) => {
                 width: '100%',
                 height: '100%',
             }}>
-                   {/* Map the 3 gametypes of reading skill here/} */ }
                    {renderCurrentGame()}
         <FeedbackModal
           visible={isModalVisible}

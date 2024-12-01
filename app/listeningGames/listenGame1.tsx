@@ -98,14 +98,6 @@ const ListenGame1 = ({gameId, onContinue, onWrongAttempt} : {gameId: any, onCont
       }
     };
   }, [recording]);
-
-  // const handleMicPress = async () => {
-  //   if (!recording) {
-  //     await startRecording();
-  //   } else {
-  //     await stopRecording();
-  //   }
-  // };
   
   const startRecording = async () => {
     try {
