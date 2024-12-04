@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { handleLeaderBoard } from '../redux/user/userSlice'; 
 import { RootState, AppDispatch } from '../redux/store';
+
+const { height: screenHeight } = Dimensions.get('window');
 
 const LeaderboardScreen = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -28,12 +30,9 @@ const LeaderboardScreen = () => {
     };
 
     const renderItem = ({ item }: { item: { userId: string; userProfileImage: string; name: string | null; userPoints: number; rank: number; } }) => {
-        // Use the user's profile image or a placeholder if not available
         const profileImage = item.userProfileImage ? { uri: item.userProfileImage } : require('../assets/default_profile.png');
-        
-        // Fallback to "Anonymous" if the name is null, undefined, or an empty string
         const displayName = item.name && item.name.trim() !== '' ? item.name : 'Anonymous';
-    
+
         return (
             <View style={[styles.itemContainer, { backgroundColor: getBackgroundColor(item.rank) }]}>
                 <View style={styles.rankContainer}>
@@ -43,24 +42,16 @@ const LeaderboardScreen = () => {
                         style={styles.profileImage}
                         resizeMode='cover'
                     />
-                    <Text
-                        style={styles.nameText}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
+                    <Text style={styles.nameText} numberOfLines={1} ellipsizeMode="tail">
                         {displayName}
                     </Text>
-                    <Text
-                        style={styles.pointsText}
-                        numberOfLines={1}
-                        ellipsizeMode="tail"
-                    >
+                    <Text style={styles.pointsText} numberOfLines={1} ellipsizeMode="tail">
                         {item.userPoints} points
                     </Text>
                 </View>
             </View>
         );
-    };         
+    };
 
     return (
         <SafeAreaView style={{ backgroundColor: 'white', flex: 1 }}>
@@ -73,7 +64,8 @@ const LeaderboardScreen = () => {
                     data={leaderBoard}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.userId}
-                    contentContainerStyle={[styles.listContainer, { paddingBottom: 80 }]}
+                    contentContainerStyle={[styles.listContainer, { paddingBottom: screenHeight * 0.1 }]}
+                    showsVerticalScrollIndicator={false}
                 />
             </View>
         </SafeAreaView>
@@ -101,47 +93,38 @@ const styles = StyleSheet.create({
     itemContainer: {
         paddingVertical: 12,
         paddingHorizontal: 16,
-        borderRadius: 30, 
+        borderRadius: 30,
         marginBottom: 20,
     },
-    itemText: {
-        fontSize: 18,
-    },
-    errorText: {
-        color: 'red',
-        textAlign: 'center',
-        marginVertical: 10,
-    },
     rankContainer: {
-        flexDirection: 'row', 
-        alignItems: 'center', 
-        justifyContent: 'flex-start', 
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'flex-start',
     },
     rankText: {
         fontSize: 14,
-        fontWeight: 'bold', 
-        flexShrink: 1, 
-        textAlign: 'left', 
-        marginLeft: 15,
-        marginRight: 15,
+        fontWeight: 'bold',
+        marginHorizontal: 15,
     },
     profileImage: {
         width: 45,
         height: 45,
         borderRadius: 25,
         marginRight: 15,
-        flexShrink: 1,
     },
     nameText: {
         fontSize: 16,
-        flex: 3, 
-        textAlign: 'left',
+        flex: 3,
         marginRight: 15,
     },
     pointsText: {
         fontSize: 14,
-        flexShrink: 1, 
-        textAlign: 'left', 
+        flexShrink: 1,
         marginRight: 15,
+    },
+    errorText: {
+        color: 'red',
+        textAlign: 'center',
+        marginVertical: 10,
     },
 });
