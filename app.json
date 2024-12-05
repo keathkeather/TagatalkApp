@@ -17,7 +17,7 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/app_logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/ssplash.png",
@@ -49,6 +49,12 @@
       "eas": {
         "projectId": "37baa903-928e-4cd2-bc00-85d5e6fa53f5"
       }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/37baa903-928e-4cd2-bc00-85d5e6fa53f5"
     }
   }
 }
