@@ -104,6 +104,8 @@ const styles = StyleSheet.create({
     rankText: {
         fontSize: 14,
         fontWeight: 'bold',
+        width: 16, 
+        textAlign: 'center',
         marginHorizontal: 15,
     },
     profileImage: {
