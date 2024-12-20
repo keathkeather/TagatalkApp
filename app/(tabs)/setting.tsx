@@ -1,11 +1,29 @@
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
-import React from 'react'
+import React, { useState } from 'react'
 import { Container } from '~/tamagui.config'
+import HelpDesk from '../(settings)/helpDesk'
+import { logout } from '~/components/auth'
+import { handleLogout } from '../redux/auth/authSlice'
+import { Dispatch } from 'redux'
+import { AppDispatch } from '../redux/store'
+import { useDispatch } from 'react-redux'
+const Settings = () => {
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  const dispatch = useDispatch<AppDispatch>();
+  const logoutFunction = async()=>{
+    const resultAction = await dispatch(handleLogout());
+    if(handleLogout.fulfilled.match(resultAction)){
+      router.push('/auth/login');
+    }
 
-const Setting = () => {
+  }
+
+
+
   return (
-    <Container style={{backgroundColor: '#fff'}}>
+    <Container>
       <View style={styles.mainContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Settings</Text>
@@ -14,12 +32,12 @@ const Setting = () => {
           <Text style={styles.subHeaderText}>Account</Text>
         </View>
         <View style={styles.menu1Container}>
-          <TouchableOpacity
+          <TouchableOpacity 
             onPress={() =>router.push('/(settings)/changePassword')}>
             <Text style={styles.menu1Text}>Change Password</Text>
           </TouchableOpacity>
           <View style={styles.line} />
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=> logoutFunction()}>
             <Text style={styles.menu1Text}>Logout</Text>
           </TouchableOpacity>
         </View>
@@ -27,16 +45,18 @@ const Setting = () => {
           <Text style={styles.subHeaderText}>Help Desk</Text>
         </View>
         <View style={styles.menu1Container}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => setModalVisible(true)}>
             <Text style={styles.menu1Text}>Send Report or Feedback</Text>
           </TouchableOpacity>
         </View>
       </View>
+      <HelpDesk modalVisible={modalVisible} setModalVisible={setModalVisible} />
     </Container>
   )
 }
 
-export default Setting
+export default Settings
 
 const styles = StyleSheet.create({
   mainContainer: {

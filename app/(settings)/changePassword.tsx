@@ -1,11 +1,71 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput} from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, TextInput, Alert } from 'react-native'
 import { Stack, router } from 'expo-router'
 import { Container } from '~/tamagui.config'
 import icons from '../../constants/icons';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { handleChangePassword } from '../redux/auth/authSlice';
+import { AppDispatch } from '../redux/store';
+import { useDispatch } from 'react-redux';
+
 
 const ChangePassword = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [shouldChangePassword, setShouldChangePassword] = useState(false);  
+
+  useEffect(()=>{
+    console.log("Inside useEffect for change password");
+    console.log("oldPassword:", oldPassword);
+    console.log("newPassowrd:", newPassword);
+    console.log("confirmPassword:", confirmPassword);
+
+    const handlePasswordChange = async()=>{
+      console.log("Attempting change password...");
+      const resultAction = await dispatch(handleChangePassword({oldPassword, newPassword}));
+      if (handleChangePassword.fulfilled.match(resultAction)) {
+        console.log("Password successfully changed, triggering onChangePasswordSuccess...");
+        Alert.alert("Password changed successfully");
+        router.push('../(tabs)/setting');
+      } else if (handleChangePassword.rejected.match(resultAction)) {
+        console.log("Password change failed.");
+        Alert.alert("Failed to change password");
+      }
+    };
+    if (shouldChangePassword) {
+      handlePasswordChange();
+      setShouldChangePassword(false);  // reset the trigger
+    }
+  },[shouldChangePassword])
+
+  const ChangePasswordHandler = ()=>{
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/;
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      Alert.alert(
+        "Blank Entries",
+        "All fields are required."
+      );
+      return;
+    }
+    if (!passwordRegex.test(newPassword)) {
+      Alert.alert(
+        "Invalid Password",
+        "Password must have at least 8 characters, a capital letter, a number, and a special character."
+      );
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      Alert.alert(
+        "Unmatching Password",
+        "Ensure that password and confirm password are the same."
+      );
+      return;
+    }
+    setShouldChangePassword(true);
+  }
   return (
+    
     <Container style={{backgroundColor:'#fff'}}>
         <View>
             <Stack.Screen options={{ title: 'Change Password', headerShown: false }} />
@@ -23,13 +83,13 @@ const ChangePassword = () => {
             </View>
             <View style={styles.formContainer}>
                 <Text style={styles.label}>Current Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
+                <TextInput style={styles.textInput}onChangeText={text=>setOldPassword(text)} placeholder='Password' secureTextEntry={true}/>
                 <Text style={styles.label}>New Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
+                <TextInput style={styles.textInput}onChangeText={text=>setNewPassword(text)} placeholder='Password' secureTextEntry={true}/>
                 <Text style={styles.label}>Confirm Password</Text>
-                <TextInput style={styles.textInput} placeholder='Password' secureTextEntry={true}/>
+                <TextInput style={styles.textInput}onChangeText={text=>setConfirmPassword(text)} placeholder='Password' secureTextEntry={true}/>
                 <TouchableOpacity
-                    style={styles.saveButton}
+                    style={styles.saveButton} onPress={()=>ChangePasswordHandler()}
                     >
                     <Text style={styles.saveText}>Save Changes</Text>
                 </TouchableOpacity>

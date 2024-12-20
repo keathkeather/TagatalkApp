@@ -1,44 +1,85 @@
 import { Stack, Link, router } from 'expo-router';
 
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput} from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity, Alert, TextInput, StatusBar} from 'react-native'
 import { Container, Main, Title, Subtitle, Button, ButtonText } from '../../tamagui.config';
 import React, { useEffect, useState } from 'react'
+//import { login } from '~/components/auth'; 
+import { useAuth } from '../context/AuthContext';
+import { useSelector,useDispatch } from 'react-redux';
+import { AppDispatch, RootState } from '../redux/store';
+import { setAuthenticated, setToken } from '../redux/auth/authSlice';
 import { login } from '~/components/auth';
+import { handleLogin } from '../redux/auth/authSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
 
-const Login = () => {
+interface LoginProps {
+  onLoginSuccess: () => void;
+}
+
+const Login: React.FC<LoginProps> = ( ) =>{
+    const { onLogin } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [shouldLogin, setshouldLogin] = useState(false);
+    const [shouldLogin, setShouldLogin] = useState(false);
+    const [loading, setLoading] = useState(false); // Add loading state
+    
+    const dispatch = useDispatch<AppDispatch>();
 
-    useEffect(()=>{
-        const handleLogin = async() =>{
-          console.log(email)
-          console.log(password)
-          const succesful =await login(email, password);
-          if(succesful == true){
-            router.push('../(tabs)');
+
+    useEffect(() => {
+      console.log("Inside useEffect for login");
+      console.log("Email:", email);
+      console.log("Password:", password);
+    
+      const loginFunction = async () => {
+        console.log("Attempting login...");
+        try {
+          const resultAction = await dispatch(handleLogin({ email, password }));
+          console.log("Login successful:", resultAction);
+          if (handleLogin.fulfilled.match(resultAction)) {
+            console.log("Login successful, triggering onLoginSuccess...");
+            
+            router.push('/(tabs)')
+          } else if(handleLogin.rejected.match(resultAction)) {
+            alert("Invalid email or password. Please try again.");
+            console.log("Login failed.");
           }
-        };
-        if (shouldLogin) {
-          handleLogin();
-          setshouldLogin(false);  // reset the trigger
+        } catch (error) {
+          console.error("Login error:", error);
+        } finally {
+          setLoading(false); // Stop loading
         }
-      },[shouldLogin]
-    )
-  const handleRegistration = ()=>{
-    setshouldLogin(true);
+      };
+      
+      if (shouldLogin) {
+        loginFunction();
+        setShouldLogin(false); // reset the trigger
+      }
+    }, [shouldLogin]);    
+    
+  const loginFunction = ()=>{
+    setLoading(true);
+    setShouldLogin(true);
   }
-
+ 
   return (
-        <Container style={{backgroundColor:"#fff"}}>
-            <Main> 
+    <View style={{ flex: 1, width:'100%', justifyContent: 'center'}}>
+      <StatusBar backgroundColor="#FD9F10" barStyle="light-content" />
+      <Image source={require('../assets/loginRegisPassBg.png')} style={{position: 'absolute', width: '100%', height: '100%', }} />
+      <Main style={{width:'100%', padding:'5%'}}>
                 <Stack.Screen options={{ title: 'Login', headerShown: false }} />
                 <View style={styles.container}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>Sign in</Text>
                     </View>
                     <View>
-                        <Image source={require('../assets/logo1.png')} />
+                        <Image source={require('../assets/logo1.png')} 
+                        style={{
+                          width: 250,
+                          height:90,
+                          marginTop:20,
+                          resizeMode: 'contain',
+                        }}/>
                     </View> 
                     <View style={styles.subheaderContainer}>
                         <Text style={styles.subheaderText}>Welcome back, we</Text>
@@ -50,26 +91,29 @@ const Login = () => {
 
                         <Text style={styles.forgotPasswordText}>
                             <Text> Forgot password? </Text>
-                            <Text style={{ color: '#e8852c' }}>Click here!</Text>
+                            <Link href={'/auth/forgotPassword/forgotPassword'}>
+                              <Text style={{ color: '#e8852c' }}>Click here!</Text>
+                            </Link>
                         </Text>
                     <TouchableOpacity
-                        style={styles.registerButton}
-                        onPress={() => handleRegistration()}
+                        style={[styles.registerButton, loading && styles.disabledButton]}
+                        onPress={() => loginFunction()}
+                        disabled={loading} // Disable the button while loading
                         >
-                        <Text style={styles.buttonText}>Sign in</Text>
+                        <Text style={styles.buttonText}>{loading ? 'LOADING...' : 'Sign in'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={styles.RegisterHereContainer}>
                         <Text >
                             <Text> Don't have an account? </Text>
-                            <Link href={'../'}>
+                            <Link href={'/auth/register'}>
                                 <Text style={{ color: '#1e1e1e', fontWeight: "bold" }}>Register Here!</Text>
                             </Link>
                         </Text>
                     </View>
                 </View>
             </Main>
-        </Container>
+        </View>
     );
 };
 
@@ -77,7 +121,6 @@ export default Login
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
       backgroundColor: '#fff',
       alignItems: 'center',
     },
@@ -126,6 +169,9 @@ const styles = StyleSheet.create({
       height: 40,
       justifyContent: 'center',
       alignItems: 'center',
+    },
+    disabledButton: {
+      backgroundColor: 'gray',
     },
     buttonText: {
       color: '#fff', 

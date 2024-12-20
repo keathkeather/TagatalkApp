@@ -5,14 +5,22 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_LOCAL_IP":"tagatalk.net"
+      }
     },
     "preview": {
       "distribution": "internal"
     },
-    "production": {}
+    "production": {
+      "env": {
+        "EXPO_PUBLIC_LOCAL_IP":"tagatalk.net"
+      }
+    }
   },
   "submit": {
     "production": {}
   }
 }
+  
